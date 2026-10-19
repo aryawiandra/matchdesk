@@ -1,0 +1,107 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --text: #16191d;
+  --muted: #566070;
+  --border: #d5dae1;
+  --accent: #0b5cd5;
+  --home: #0b5cd5;
+  --away: #b3540a;
+  --grass: #2f7d3b;
+  --line: rgba(255, 255, 255, 0.85);
+  --chip: #e8eefb;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1216;
+    --surface: #171b21;
+    --text: #e8ebef;
+    --muted: #9aa5b4;
+    --border: #2b323c;
+    --accent: #6aa5ff;
+    --home: #79b0ff;
+    --away: #ffa15c;
+    --grass: #1f5a2b;
+    --chip: #1f2a3d;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+header, main, footer { max-width: 1100px; margin: 0 auto; padding: 16px; }
+header { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; justify-content: space-between; }
+h1 { margin: 0; font-size: 1.6rem; }
+.sub { margin: 0; color: var(--muted); }
+
+#controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+#controls label { display: grid; gap: 4px; font-size: 0.85rem; color: var(--muted); }
+input, select, button {
+  font: inherit; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; min-height: 40px;
+}
+input { width: 6.5rem; }
+button { background: var(--accent); color: #fff; border-color: var(--accent); cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+#scoreboard {
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px;
+}
+.club { font-weight: 600; }
+.score { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.clock { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.stage { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+.pitch-wrap { margin: 0; }
+#pitch { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--border); }
+.grass { fill: var(--grass); }
+.lines * { fill: none; stroke: var(--line); stroke-width: 0.4; }
+figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+
+.mk { stroke-width: 0.8; }
+.mk.H { fill: var(--home); stroke: #fff; }
+.mk.A { fill: none; stroke: var(--away); stroke-width: 1.2; }
+.mk-ring { fill: none; stroke: #fff; stroke-width: 0.5; opacity: 0.8; }
+@media (prefers-reduced-motion: no-preference) {
+  .mk-ring { animation: pulse 1.4s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes pulse { from { transform: scale(0.6); opacity: 0.9; } to { transform: scale(2.2); opacity: 0; } }
+}
+
+#cards { display: grid; gap: 10px; align-content: start; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.card h2 { margin: 0 0 4px; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.card p { margin: 0 0 6px; }
+.card.key_moment { border-left: 5px solid var(--accent); }
+.card.player_tag { border-left: 5px solid var(--muted); }
+.card ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.sentence {
+  all: unset; display: block; cursor: pointer; width: 100%; padding: 2px 0; text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.sentence:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.ids { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.ids[hidden] { display: none; }
+code, .chip {
+  background: var(--chip); border-radius: 4px; padding: 1px 6px; font-size: 0.78rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+#status { color: var(--muted); font-size: 0.9rem; }
+footer { color: var(--muted); font-size: 0.85rem; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (max-width: 760px) {
+  .stage { grid-template-columns: 1fr; }
+  header { align-items: start; }
+}

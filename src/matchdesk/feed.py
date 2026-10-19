@@ -1,14 +1,20 @@
 """Live feed: replays a seeded synthetic match as Server-Sent Events. The hidden truth is never sent."""
 import asyncio
 from collections.abc import AsyncIterator
+from pathlib import Path as FsPath
+from typing import Literal
 
 from fastapi import FastAPI, Path, Query
 from fastapi.responses import StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 from .config import GeneratorConfig
 from .generator import GeneratedMatch, generate_match
+from .overlay import Persona
+from .pipeline import overlay_stream
 from .sse import encode_frame
 
+WEB_DIR = FsPath(__file__).resolve().parents[2] / "web"
 MAX_SEED = 9999
 MIN_PERIOD_S = 60.0
 MAX_PERIOD_S = 2700.0
@@ -34,6 +40,16 @@ async def _frames(match: GeneratedMatch, speed: float) -> AsyncIterator[str]:
         yield encode_frame(event.model_dump(mode="json"))
 
 
+async def _overlay_frames(match: GeneratedMatch, persona: Persona, speed: float) -> AsyncIterator[str]:
+    previous_s = 0.0
+    for overlay in overlay_stream(match.events, match.info, persona=persona):
+        delay = pace_delay(previous_s, overlay.start_s, speed)
+        if delay > 0:
+            await asyncio.sleep(delay)
+        previous_s = max(previous_s, overlay.start_s)
+        yield encode_frame(overlay.model_dump(mode="json"))
+
+
 def create_app() -> FastAPI:
     app = FastAPI(title="MatchDesk feed")
 
@@ -54,4 +70,20 @@ def create_app() -> FastAPI:
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
 
+    @app.get("/overlays/seed/{seed}")
+    async def overlays(
+        seed: int = Path(ge=0, le=MAX_SEED),
+        period_s: float = Query(MAX_PERIOD_S, ge=MIN_PERIOD_S, le=MAX_PERIOD_S),
+        speed: float = Query(DEFAULT_SPEED, ge=0.0, le=MAX_SPEED),
+        persona: Persona = Query("fan"),
+        lang: Literal["en"] = Query("en"),  # English only until the Localizer exists
+    ) -> StreamingResponse:
+        match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
+        return StreamingResponse(
+            _overlay_frames(match, persona, speed),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+
+    app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="renderer")  # last: API routes win
     return app

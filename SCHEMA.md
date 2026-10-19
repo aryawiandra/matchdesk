@@ -81,20 +81,24 @@ Event order inside one moment: `pressure` (if any) precedes the `pass`/`shot`/`t
 
 `magnitude` is a [0, 1] severity: xG for `big_chance`/`goal`, |delta dominance| for swings, press level for spells, speed/45 for sprints.
 
-## 7. Overlay contract v1 (draft; implemented with the Producer)
+## 7. Overlay contract v1
 
-An overlay is one JSON object, validated by `schema/overlay.schema.json` (created with the Producer):
+An overlay is one JSON object, validated by `schema/overlay.schema.json`, which is generated from `src/matchdesk/overlay.py` (`uv run python scripts/export_overlay_schema.py`); a test fails if the two disagree.
 `{overlay_id, match_id, type, start_s, end_s, priority, lang, persona, payload, evidence_event_ids, a11y_text}`.
 
-| `type` | Payload | LLM involved? |
-|---|---|---|
-| `scoreboard` | score, clock | no |
-| `stat` | named stat with value | no |
-| `metric_tick` | `{metric, value, label}` for one metric in {pass_difficulty, momentum, control, pressure, ball_speed, shot_speed} | no (deterministic, feeds single-metric mode) |
-| `key_moment` | kind, headline | headline: yes, via Verifier |
-| `explanation` | sentence list, each with `evidence_event_ids` | yes, via Verifier |
-| `player_tag` | name, shirt, optional `speed_chip`, `distance_chip` | no |
-| `recap` | sections, each claim sentence with evidence ids | yes, via Verifier (claims only; connective words pass) |
+Common rules: `end_s > start_s`; times are match seconds; `priority` 1-5; `lang` in `en, id, es` and `persona` in `fan, analyst`; `a11y_text` is never blank; `evidence_event_ids` is required (at least one) for every type that makes a claim; unknown fields are rejected. Only English is produced until the Localizer exists, and the feed rejects other languages rather than mislabel English text.
+
+| `type` | Payload | Status | LLM involved? |
+|---|---|---|---|
+| `scoreboard` | `{score: {H, A}, clock "MM:SS", home, away}`; one every 10 s of match time, which also serves as the renderer's clock | built | no |
+| `key_moment` | `{kind, headline, team, x?, y?}`; `x, y` is the event position in the team-relative frame when the moment has one point | built | headline: Foundry or template, via Verifier |
+| `explanation` | `{sentences: [{text, evidence_event_ids}]}`; the detail beyond the headline, analyst view only, and only when there is any | built | Foundry or template, via Verifier |
+| `player_tag` | `{name, shirt, team, speed_chip_kmh?, distance_chip_km?}`; chips appear only when a threshold rule fired on that event (METRICS section 7) | built | no |
+| `stat` | named stat with value | not built | no |
+| `metric_tick` | `{metric, value, label}` for one metric in {pass_difficulty, momentum, control, pressure, ball_speed, shot_speed} | not built | no (deterministic, feeds single-metric mode) |
+| `recap` | sections, each claim sentence with evidence ids | not built | yes, via Verifier (claims only; connective words pass) |
+
+Overlay ids are deterministic: `OV-<match>-<type>-<kind>-<start*10>-<first evidence seq>-<lang>-<persona>`. A key moment lasts 4-8 s of match time by kind (`producer.DURATION_S`); the reference renderer also holds a card for at least 7 real seconds so replays faster than real time stay readable.
 
 ## 8. Versioning
 

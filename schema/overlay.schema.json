@@ -1,0 +1,571 @@
+{
+  "$defs": {
+    "ExplanationOverlay": {
+      "additionalProperties": false,
+      "properties": {
+        "a11y_text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "A11Y Text",
+          "type": "string"
+        },
+        "end_s": {
+          "title": "End S",
+          "type": "number"
+        },
+        "evidence_event_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "lang": {
+          "enum": [
+            "en",
+            "id",
+            "es"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "overlay_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Overlay Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/ExplanationPayload"
+        },
+        "persona": {
+          "enum": [
+            "fan",
+            "analyst"
+          ],
+          "title": "Persona",
+          "type": "string"
+        },
+        "priority": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "start_s": {
+          "minimum": 0.0,
+          "title": "Start S",
+          "type": "number"
+        },
+        "type": {
+          "const": "explanation",
+          "default": "explanation",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "overlay_id",
+        "match_id",
+        "start_s",
+        "end_s",
+        "priority",
+        "lang",
+        "persona",
+        "evidence_event_ids",
+        "a11y_text",
+        "payload"
+      ],
+      "title": "ExplanationOverlay",
+      "type": "object"
+    },
+    "ExplanationPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "sentences": {
+          "items": {
+            "$ref": "#/$defs/Sentence"
+          },
+          "minItems": 1,
+          "title": "Sentences",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "title": "ExplanationPayload",
+      "type": "object"
+    },
+    "KeyMomentOverlay": {
+      "additionalProperties": false,
+      "properties": {
+        "a11y_text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "A11Y Text",
+          "type": "string"
+        },
+        "end_s": {
+          "title": "End S",
+          "type": "number"
+        },
+        "evidence_event_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "lang": {
+          "enum": [
+            "en",
+            "id",
+            "es"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "overlay_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Overlay Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/KeyMomentPayload"
+        },
+        "persona": {
+          "enum": [
+            "fan",
+            "analyst"
+          ],
+          "title": "Persona",
+          "type": "string"
+        },
+        "priority": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "start_s": {
+          "minimum": 0.0,
+          "title": "Start S",
+          "type": "number"
+        },
+        "type": {
+          "const": "key_moment",
+          "default": "key_moment",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "overlay_id",
+        "match_id",
+        "start_s",
+        "end_s",
+        "priority",
+        "lang",
+        "persona",
+        "evidence_event_ids",
+        "a11y_text",
+        "payload"
+      ],
+      "title": "KeyMomentOverlay",
+      "type": "object"
+    },
+    "KeyMomentPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "headline": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Headline",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "goal",
+            "big_chance",
+            "momentum_swing",
+            "pressing_spell",
+            "sprint_burst"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "team": {
+          "enum": [
+            "H",
+            "A"
+          ],
+          "title": "Team",
+          "type": "string"
+        },
+        "x": {
+          "anyOf": [
+            {
+              "maximum": 105.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "X"
+        },
+        "y": {
+          "anyOf": [
+            {
+              "maximum": 68.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Y"
+        }
+      },
+      "required": [
+        "kind",
+        "headline",
+        "team"
+      ],
+      "title": "KeyMomentPayload",
+      "type": "object"
+    },
+    "PlayerTagOverlay": {
+      "additionalProperties": false,
+      "properties": {
+        "a11y_text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "A11Y Text",
+          "type": "string"
+        },
+        "end_s": {
+          "title": "End S",
+          "type": "number"
+        },
+        "evidence_event_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "lang": {
+          "enum": [
+            "en",
+            "id",
+            "es"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "overlay_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Overlay Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/PlayerTagPayload"
+        },
+        "persona": {
+          "enum": [
+            "fan",
+            "analyst"
+          ],
+          "title": "Persona",
+          "type": "string"
+        },
+        "priority": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "start_s": {
+          "minimum": 0.0,
+          "title": "Start S",
+          "type": "number"
+        },
+        "type": {
+          "const": "player_tag",
+          "default": "player_tag",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "overlay_id",
+        "match_id",
+        "start_s",
+        "end_s",
+        "priority",
+        "lang",
+        "persona",
+        "evidence_event_ids",
+        "a11y_text",
+        "payload"
+      ],
+      "title": "PlayerTagOverlay",
+      "type": "object"
+    },
+    "PlayerTagPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "distance_chip_km": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Chip Km"
+        },
+        "name": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "shirt": {
+          "maximum": 99,
+          "minimum": 1,
+          "title": "Shirt",
+          "type": "integer"
+        },
+        "speed_chip_kmh": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Speed Chip Kmh"
+        },
+        "team": {
+          "enum": [
+            "H",
+            "A"
+          ],
+          "title": "Team",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "shirt",
+        "team"
+      ],
+      "title": "PlayerTagPayload",
+      "type": "object"
+    },
+    "ScoreboardOverlay": {
+      "additionalProperties": false,
+      "properties": {
+        "a11y_text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "A11Y Text",
+          "type": "string"
+        },
+        "end_s": {
+          "title": "End S",
+          "type": "number"
+        },
+        "evidence_event_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "lang": {
+          "enum": [
+            "en",
+            "id",
+            "es"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "overlay_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Overlay Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/ScoreboardPayload"
+        },
+        "persona": {
+          "enum": [
+            "fan",
+            "analyst"
+          ],
+          "title": "Persona",
+          "type": "string"
+        },
+        "priority": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "start_s": {
+          "minimum": 0.0,
+          "title": "Start S",
+          "type": "number"
+        },
+        "type": {
+          "const": "scoreboard",
+          "default": "scoreboard",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "overlay_id",
+        "match_id",
+        "start_s",
+        "end_s",
+        "priority",
+        "lang",
+        "persona",
+        "evidence_event_ids",
+        "a11y_text",
+        "payload"
+      ],
+      "title": "ScoreboardOverlay",
+      "type": "object"
+    },
+    "ScoreboardPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "away": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Away",
+          "type": "string"
+        },
+        "clock": {
+          "pattern": "^\\d{2,3}:\\d{2}$",
+          "title": "Clock",
+          "type": "string"
+        },
+        "home": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Home",
+          "type": "string"
+        },
+        "score": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Score",
+          "type": "object"
+        }
+      },
+      "required": [
+        "score",
+        "clock",
+        "home",
+        "away"
+      ],
+      "title": "ScoreboardPayload",
+      "type": "object"
+    },
+    "Sentence": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_event_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "evidence_event_ids"
+      ],
+      "title": "Sentence",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "explanation": "#/$defs/ExplanationOverlay",
+      "key_moment": "#/$defs/KeyMomentOverlay",
+      "player_tag": "#/$defs/PlayerTagOverlay",
+      "scoreboard": "#/$defs/ScoreboardOverlay"
+    },
+    "propertyName": "type"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/ScoreboardOverlay"
+    },
+    {
+      "$ref": "#/$defs/KeyMomentOverlay"
+    },
+    {
+      "$ref": "#/$defs/ExplanationOverlay"
+    },
+    {
+      "$ref": "#/$defs/PlayerTagOverlay"
+    }
+  ]
+}

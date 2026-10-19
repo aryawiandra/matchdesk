@@ -2,6 +2,7 @@
 
 The Verifier resolves evidence only against this context, so an event id from the future, or an invented one,
 is unknown by construction."""
+from bisect import bisect_right
 from collections.abc import Sequence
 
 from .schema import Event, MatchInfo, Player
@@ -13,6 +14,7 @@ class MatchContext:
     def __init__(self, info: MatchInfo):
         self.info = info
         self._events: list[Event] = []
+        self._times: list[float] = []
         self._by_id: dict[str, Event] = {}
         self._score_after: dict[str, dict[str, int]] = {}
         self._score = {"H": 0, "A": 0}
@@ -24,6 +26,7 @@ class MatchContext:
         if event.type == "shot" and event.outcome == "goal":
             self._score[event.team] += 1
         self._events.append(event)
+        self._times.append(event.match_s)
         self._by_id[event.event_id] = event
         self._score_after[event.event_id] = dict(self._score)
 
@@ -38,6 +41,11 @@ class MatchContext:
 
     def club_name(self, team: str) -> str:
         return self.info.clubs[team].name
+
+    def score_at(self, match_s: float) -> dict[str, int]:
+        """The running score after every event with `match_s` at or before the given time."""
+        index = bisect_right(self._times, match_s)
+        return {"H": 0, "A": 0} if index == 0 else dict(self._score_after[self._events[index - 1].event_id])
 
     def score_after(self, event_id: str) -> dict[str, int] | None:
         score = self._score_after.get(event_id)

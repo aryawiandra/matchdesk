@@ -12,7 +12,9 @@ Evidence-cited, overlay-ready football match intelligence built on a synthetic e
 |---|---|
 | `SCHEMA.md` | Event, truth and overlay contracts, v1 |
 | `METRICS.md` | Exact formulas for every metric |
-| `src/matchdesk/` | Generator (with hidden truth), metrics, SSE feed, Analyst, later the agent workflow |
+| `src/matchdesk/` | Generator (with hidden truth), metrics, SSE feed, Analyst, Verifier and Explainer, Producer (overlays) |
+| `web/` | Reference overlay renderer (plain HTML, CSS and JS; no libraries, no other origins) |
+| `schema/overlay.schema.json` | JSON Schema for overlays, generated from the models |
 | `tests/` | Unit and property tests (80%+ coverage gate) |
 | `config/thresholds.toml` | Speed and distance indicator thresholds (assumptions, labelled) |
 
@@ -33,6 +35,8 @@ uv run uvicorn --factory matchdesk.feed:create_app --port 8000
 curl -N "http://localhost:8000/feed/seed/42?period_s=300&speed=60"   # SSE: match_info, then one event per frame
 uv run python scripts/analyst_report.py 30 30                          # Analyst precision/recall vs the hidden truth
 ```
+
+Open `http://localhost:8000/` for the reference renderer: a live scoreboard, a pitch with a marker at each key moment, and insight cards. Click a sentence to see the event ids behind it. Fan and analyst views differ; the feed itself is `GET /overlays/seed/{seed}?speed=120&persona=fan` (SSE, JSON overlays that validate against `schema/overlay.schema.json`).
 
 The feed never sends the truth. The Analyst (`src/matchdesk/analyst.py`) computes every number from the stream alone; detection rules and measured quality are in `METRICS.md` section 10.
 
