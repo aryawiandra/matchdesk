@@ -1,0 +1,17 @@
+# Indicator and detection thresholds. Every value is an assumption [A] unless a source is named.
+# Do not present any of these as a fact about real football. Operator: supply sources where marked.
+
+[indicators]
+# Speed chip fires when an acting player's speed is at or above this value.
+sprint_speed_kmh = 25.0          # [A: common sprint-threshold convention; basis unverified; operator to supply source]
+# Distance chip fires each time cumulative distance crosses another multiple of this step.
+distance_step_m = 2000.0         # [A: design choice to keep chips rare (about 5 per player per match)]
+# At most one speed chip per player in this window.
+speed_chip_cooldown_s = 60.0     # [A: design choice]
+
+[key_moments]
+big_chance_xg = 0.30             # [A: design constant]
+swing_delta_dominance = 0.70     # [A: design constant]
+pressing_spell_level = 0.65      # [A: design constant]
+pressing_spell_min_s = 180.0     # [A: design constant]
+sprint_min_seconds = 3           # [A: design constant]

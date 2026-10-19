@@ -21,7 +21,12 @@ Evidence-cited, overlay-ready football match intelligence built on a synthetic e
 ```bash
 uv sync
 uv run pytest
+uv run python -m matchdesk.cli --seed 42 --out data/generated
 ```
+
+Each run writes `<match>.jsonl` (the live stream) and `<match>.truth.json` (the hidden ground truth, never sent to the agents). Three published sample matches with truth are in `data/published/`.
+
+Check from a clean clone: `scripts/fresh_clone_check.sh .`
 
 ## Licence
 
