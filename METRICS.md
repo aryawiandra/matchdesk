@@ -138,6 +138,7 @@ A **claim** is a sentence, the event ids it cites, the numbers it states as **fa
 | Players | Every named player id exists in `match_info` and appears in a cited event (actor, recipient or target) |
 | Names in the text | A player named in the sentence (full name or a name part of 4+ letters) must be one the claim cites; a club named must be one the cited events involve |
 | Wording | Deterministic lexical rules [A]. Rejected: gendered pronouns (he, she, him, his, her ...) because the data has no gender; hype stems (brilliant, stunning, incredible, dominant, dramatic, spectacular, decisive ... including adverb forms such as "dramatically"); causal phrases (because, due to, thanks to, as a result, caused by, led to) |
+| Meaning | A claim can require that the sentence still say what happened and forbid words that would contradict it (`requires_any`, `forbids`). A goal must still say it was scored; a big chance must keep its outcome (saved, blocked, off target) and must not say it was scored; a pressing spell must still talk about pressing; a swing must still say momentum |
 
 Facts the Verifier can recompute: `minute`, `minute_at`, `shot_distance_m`, `shot_speed_kmh`, `actor_speed_kmh`, `score_home`, `score_away`, `pressure_per_min`, `momentum`.
 
@@ -160,13 +161,13 @@ Limits, stated plainly. These faults are mechanical corruptions we wrote, not re
 ## 12. A real model behind the gate (`narrator.py`, `scripts/model_report.py`)
 Model: `qwen2.5:3b` (1.9 GB) on a local Ollama 0.40.6 server, Apple M2 with 8 GB, called through a Microsoft Agent Framework `Agent` with `OllamaChatClient` (temperature 0.3, seed 7). The model only rewrites the template sentences. Facts, cited events and named players are copied from the template claim, so the Verifier judges the model's wording against them. A wrong shape, an invented number, a wrong or uncited name, a guessed gender, or hype is rejected with reasons, the model gets one retry with those reasons, and then the template is used.
 
-[M: `uv run python scripts/model_report.py --seeds 10 --first-seed 30` with and without `--careless`, 210 detections from 10 generated matches, 2026-10-19]
+[M: `uv run python scripts/model_report.py --seeds 10 --first-seed 30` with and without `--careless`, 210 detections from 10 generated matches, Verifier as of 2026-10-19 22:00 WIB]
 
 | Prompt | Accepted first try | Accepted after retry | Template fallback | Rejected calls | Latency per detection |
 |---|---|---|---|---|---|
-| Strict (rules and three examples) | 210 (100%) | 0 | 0 | 0 of 210 | mean 0.93 s, p95 1.52 s |
-| Careless (one line, no rules) | 112 (53.3%) | 1 (0.5%) | 97 (46.2%) | 195 of 308 (63.3%) | mean 1.29 s, p95 3.00 s |
+| Strict (rules and three examples) | 198 (94.3%) | 11 (5.2%) | 1 (0.5%) | 13 of 222 (5.9%) | mean 0.91 s, p95 2.55 s |
+| Careless (one line, no rules) | 84 (40.0%) | 23 (11.0%) | 103 (49.0%) | 229 of 336 (68.2%) | mean 1.42 s, p95 2.99 s |
 
-Careless-prompt rejection reasons: unsupported wording 149, wrong format 44, gendered pronoun 3, unsupported number 1. Every accepted answer differs from the template (an earlier prompt that told the model to keep everything made it copy the template in 37 of 37 cases [M: same script, 2 matches]).
+Rejection reasons, strict prompt: unsupported wording 8, "does not say what happened" 8 (a call can have several reasons). Careless prompt: unsupported wording 187, wrong format 44, invented number 3, gendered pronoun 3, "does not say what happened" 1. Every accepted answer differs from the template (an earlier prompt that told the model to keep everything made it copy the template in 37 of 37 cases [M: same script, 2 matches]).
 
-How to read this. The careless run shows the gate catching real model mistakes, not only the mechanical faults of section 11: nearly half of careless answers were replaced by the template. The strict run has no rejections, so it gives no real-model evidence of retry recovery; the one recovery seen came from the careless prompt. Limits: one small model, one range of seeds, synthetic English data. The wording rules are lexical, not semantic. A model call takes about a second on this machine, so the model path is capped at one open stream (`DEFAULT_MAX_MODEL_STREAMS`), and the public default is the template path.
+How to read this. The gate catches real model mistakes, not only the mechanical faults of section 11. Even with a strict prompt a 3B model reached for words like "swift" or "rockets", or rewrote a goal so that it no longer said it was scored; the Verifier rejected those, told the model why, and the model fixed 11 of 12 on the retry. With a careless prompt nearly half of explanations fell back to the template. An earlier run of the strict prompt against a gate without the meaning rule and the longer wording list reported 0 of 210 rejected: that number only meant "no listed word", and it should not be quoted without that caveat. Limits: one small model, one range of seeds, synthetic English data. The wording and meaning rules are lexical, not semantic, so a sentence can still be vague or odd. A model call takes about a second on this machine, so the live model path is capped at one open stream (`DEFAULT_MAX_MODEL_STREAMS`).

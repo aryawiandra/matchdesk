@@ -5,8 +5,7 @@
 model path has its own, smaller cap) so a crawler or a crowd cannot exhaust the server."""
 import asyncio
 import os
-from collections.abc import AsyncIterator, Iterator
-from contextlib import contextmanager
+from collections.abc import AsyncIterator, Callable
 from pathlib import Path as FsPath
 from typing import Literal
 
@@ -33,10 +32,6 @@ DEFAULT_MAX_MODEL_STREAMS = 1
 STREAM_HEADERS = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
 
 
-class Busy(Exception):
-    """Raised when a stream cannot take a slot."""
-
-
 class Slots:
     """A counter with a limit. The event loop is single-threaded, so no lock is needed."""
 
@@ -44,11 +39,8 @@ class Slots:
         self.limit = limit
         self.active = 0
 
-    def full(self) -> bool:
-        return self.active >= self.limit
-
     def take(self) -> bool:
-        if self.full():
+        if self.active >= self.limit:
             return False
         self.active += 1
         return True
@@ -57,18 +49,35 @@ class Slots:
         self.active -= 1
 
 
-@contextmanager
-def hold(*slots: Slots) -> Iterator[None]:
+class GuardedStream(StreamingResponse):
+    """A streaming response that gives its slots back when it ends, however it ends (finished, cancelled, or never
+    started because the client left)."""
+
+    def __init__(self, content: AsyncIterator[str], release: Callable[[], None]):
+        super().__init__(content, media_type="text/event-stream", headers=STREAM_HEADERS)
+        self._release = release
+
+    async def __call__(self, scope, receive, send) -> None:
+        try:
+            await super().__call__(scope, receive, send)
+        finally:
+            self._release()
+
+
+def take_slots(*slots: Slots) -> Callable[[], None] | None:
+    """Take every slot or none. Returns the function that gives them back, or None when one is full."""
     taken: list[Slots] = []
-    try:
-        for slot in slots:
-            if not slot.take():
-                raise Busy
-            taken.append(slot)
-        yield
-    finally:
-        for slot in taken:
-            slot.give()
+    for slot in slots:
+        if not slot.take():
+            for held in taken:
+                held.give()
+            return None
+        taken.append(slot)
+    def release() -> None:
+        for held in taken:
+            held.give()
+
+    return release
 
 
 def pace_delay(previous_s: float, current_s: float, speed: float) -> float:
@@ -78,35 +87,27 @@ def pace_delay(previous_s: float, current_s: float, speed: float) -> float:
     return max(0.0, current_s - previous_s) / speed
 
 
-async def _frames(match: GeneratedMatch, speed: float, streams: Slots) -> AsyncIterator[str]:
-    try:
-        with hold(streams):
-            yield encode_frame(match.info.model_dump(mode="json"))
-            previous_s = 0.0
-            for event in match.events:
-                delay = pace_delay(previous_s, event.match_s, speed)
-                if delay > 0:
-                    await asyncio.sleep(delay)
-                previous_s = event.match_s
-                yield encode_frame(event.model_dump(mode="json"))
-    except Busy:
-        return
+async def _frames(match: GeneratedMatch, speed: float) -> AsyncIterator[str]:
+    yield encode_frame(match.info.model_dump(mode="json"))
+    previous_s = 0.0
+    for event in match.events:
+        delay = pace_delay(previous_s, event.match_s, speed)
+        if delay > 0:
+            await asyncio.sleep(delay)
+        previous_s = event.match_s
+        yield encode_frame(event.model_dump(mode="json"))
 
 
 async def _overlay_frames(
-    match: GeneratedMatch, persona: Persona, speed: float, model: Model | None, streams: Slots, model_streams: Slots,
+    match: GeneratedMatch, persona: Persona, speed: float, model: Model | None,
 ) -> AsyncIterator[str]:
-    try:
-        with hold(streams, *([model_streams] if model is not None else [])):
-            previous_s = 0.0
-            async for overlay in overlay_stream_async(match.events, match.info, persona=persona, model=model):
-                delay = pace_delay(previous_s, overlay.start_s, speed)
-                if delay > 0:
-                    await asyncio.sleep(delay)
-                previous_s = max(previous_s, overlay.start_s)
-                yield encode_frame(overlay.model_dump(mode="json"))
-    except Busy:
-        return
+    previous_s = 0.0
+    async for overlay in overlay_stream_async(match.events, match.info, persona=persona, model=model):
+        delay = pace_delay(previous_s, overlay.start_s, speed)
+        if delay > 0:
+            await asyncio.sleep(delay)
+        previous_s = max(previous_s, overlay.start_s)
+        yield encode_frame(overlay.model_dump(mode="json"))
 
 
 def create_app(
@@ -131,10 +132,15 @@ def create_app(
         period_s: float = Query(MAX_PERIOD_S, ge=MIN_PERIOD_S, le=MAX_PERIOD_S),
         speed: float = Query(DEFAULT_SPEED, ge=0.0, le=MAX_SPEED),
     ) -> StreamingResponse:
-        if streams.full():
+        release = take_slots(streams)
+        if release is None:
             raise HTTPException(status_code=429, detail="too many open streams, try again shortly")
-        match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
-        return StreamingResponse(_frames(match, speed, streams), media_type="text/event-stream", headers=STREAM_HEADERS)
+        try:
+            match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
+        except BaseException:
+            release()
+            raise
+        return GuardedStream(_frames(match, speed), release)
 
     @app.get("/overlays/seed/{seed}")
     async def overlays(
@@ -148,11 +154,15 @@ def create_app(
         use_model = explainer == "model"
         if use_model and model is None:
             raise HTTPException(status_code=400, detail="no model is configured on this server (set MATCHDESK_MODEL)")
-        if streams.full() or (use_model and model_streams.full()):
+        release = take_slots(streams, *([model_streams] if use_model else []))
+        if release is None:
             raise HTTPException(status_code=429, detail="too many open streams, try again shortly")
-        match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
-        frames = _overlay_frames(match, persona, speed, model if use_model else None, streams, model_streams)
-        return StreamingResponse(frames, media_type="text/event-stream", headers=STREAM_HEADERS)
+        try:
+            match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
+        except BaseException:
+            release()
+            raise
+        return GuardedStream(_overlay_frames(match, persona, speed, model if use_model else None), release)
 
     app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="renderer")  # last: API routes win
     return app

@@ -168,6 +168,31 @@ def test_hype_the_data_cannot_support_is_rejected(ctx, word):
     assert any("unsupported wording" in r for r in reasons(verify_claims([claim], ctx)))
 
 
+@pytest.mark.parametrize("word", ["swift", "rockets", "blazing", "thunderous", "scorcher", "blistering", "lethal"])
+def test_more_embellishment_is_rejected(ctx, word):
+    claim = goal_claim(text=f"A {word} effort in minute 3 from 10 m.")
+    assert any("unsupported wording" in r for r in reasons(verify_claims([claim], ctx)))
+
+
+def test_a_claim_that_must_say_what_happened_is_rejected_when_it_does_not(ctx):
+    claim = goal_claim(requires_any=("scored", "scores"), text="Wills Hartley hit the target in minute 3 from 10 m.")
+    assert any("expected one of" in r and "scored" in r for r in reasons(verify_claims([claim], ctx)))
+    assert verify_claims([goal_claim(requires_any=("scored", "scores"))], ctx).ok
+
+
+def test_a_claim_may_forbid_words_that_would_contradict_it(ctx):
+    claim = goal_claim(forbids=("scored",))
+    assert any("must not say 'scored'" in r for r in reasons(verify_claims([claim], ctx)))
+    assert verify_claims([goal_claim(forbids=("goalkeeper",))], ctx).ok
+
+
+def test_required_and_forbidden_words_match_whole_words_and_phrases(ctx):
+    only_goalkeeper = goal_claim(text="The goalkeeper watched it in minute 3 from 10 m.", requires_any=("goal",))
+    assert any("expected one of" in r for r in reasons(verify_claims([only_goalkeeper], ctx)))
+    phrase = goal_claim(text="Wills Hartley is off target in minute 3 from 10 m.", requires_any=("off target",))
+    assert verify_claims([phrase], ctx).ok
+
+
 @pytest.mark.parametrize("phrase", ["because", "thanks to", "due to", "as a result"])
 def test_causal_stories_the_data_cannot_support_are_rejected(ctx, phrase):
     claim = goal_claim(text=f"A goal in minute 3 from 10 m {phrase} pressure.")

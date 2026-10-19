@@ -29,7 +29,7 @@ SYSTEM = (
     "formatted as '1. <sentence>'. Nothing else.\n"
     "Examples of the style (the names and numbers below are only examples):\n"
     "Input: 1. Sam Roe (Blue FC) scored in minute 40 from 6 m, making it 1-0.\n"
-    "Output: 1. Minute 40: Sam Roe of Blue FC finishes from 6 m and it is 1-0.\n"
+    "Output: 1. Minute 40: Sam Roe of Blue FC scores from 6 m and it is 1-0.\n"
     "Input: 1. Red FC pressed at 3.5 pressures per minute over the last three minutes, up to minute 29.\n"
     "Output: 1. Red FC keep the pressure on, 3.5 pressures per minute across the last three minutes up to minute 29.\n"
     "Input: 1. Alex Doe (Red FC) reached 31 km/h in minute 12.\n"

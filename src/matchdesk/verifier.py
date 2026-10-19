@@ -18,7 +18,8 @@ PRONOUNS = frozenset({"he", "him", "his", "himself", "she", "her", "hers", "hers
 # Stems, so that "dramatic", "dramatically" and "dramatics" are all caught.
 HYPE_STEMS = (
     "brilliant", "stunning", "incredib", "dominan", "dominat", "dramatic", "sensation", "superb", "spectacul",
-    "unstoppab", "magnific", "clinical", "world-class", "decisiv",
+    "unstoppab", "magnific", "clinical", "world-class", "decisiv", "swift", "rocket", "blaz", "thunder", "scorch",
+    "fierce", "blister", "lethal", "stunner", "screamer", "howitzer", "unleash", "magical",
 )
 CAUSAL = ("because", "due to", "thanks to", "as a result", "caused by", "led to")
 
@@ -117,6 +118,20 @@ def _wording_reasons(claim: Claim) -> list[str]:
     return reasons
 
 
+def _says(text: str, phrase: str) -> bool:
+    return re.search(rf"\b{re.escape(phrase.lower())}\b", text) is not None
+
+
+def _meaning_reasons(claim: Claim) -> list[str]:
+    """The sentence must still say what happened (a goal stays a goal) and must not say what would contradict it."""
+    text = claim.text.lower()
+    reasons = []
+    if claim.requires_any and not any(_says(text, phrase) for phrase in claim.requires_any):
+        reasons.append("does not say what happened (expected one of: " + ", ".join(claim.requires_any) + ")")
+    reasons += [f"must not say '{phrase}'" for phrase in claim.forbids if _says(text, phrase)]
+    return reasons
+
+
 def check_claim(claim: Claim, ctx: MatchContext) -> list[str]:
     reasons = [] if claim.text.strip() else ["empty text"]
     reasons += _evidence_reasons(claim, ctx)
@@ -125,6 +140,7 @@ def check_claim(claim: Claim, ctx: MatchContext) -> list[str]:
     reasons += _player_reasons(claim, ctx)
     reasons += _name_reasons(claim, ctx)
     reasons += _wording_reasons(claim)
+    reasons += _meaning_reasons(claim)
     return reasons
 
 

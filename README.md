@@ -59,7 +59,7 @@ ollama pull qwen2.5:3b                         # about 1.9 GB
 MATCHDESK_MODEL=ollama:qwen2.5:3b uv run uvicorn --factory matchdesk.feed:create_app_from_env --port 8000
 ```
 
-Then choose **Explainer: AI model** on the page, or call `/overlays/seed/42?explainer=model`. Measured on 210 detections with `qwen2.5:3b` on an M2 with 8 GB (`scripts/model_report.py`, METRICS.md section 12): with the strict prompt every answer was accepted first try (0.93 s mean); with a careless prompt 63% of calls were rejected and 46% of explanations fell back to the template, so the gate is doing real work. The public default is the template path; the model path is capped at one open stream.
+Then choose **Explainer: AI model** on the page, or call `/overlays/seed/42?explainer=model`. Measured on 210 detections with `qwen2.5:3b` on an M2 with 8 GB (`scripts/model_report.py`, METRICS.md section 12): with the strict prompt 94% of answers were accepted first try, 5% after a retry with the reasons, and 0.5% fell back to the template (0.91 s mean); with a careless prompt 68% of calls were rejected and 49% of explanations fell back to the template. The gate does real work on a real model. The public default is the template path; the model path is capped at one open stream.
 
 The feed never sends the truth. The Analyst (`src/matchdesk/analyst.py`) computes every number from the stream alone; detection rules and measured quality are in `METRICS.md` section 10.
 

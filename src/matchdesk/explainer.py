@@ -15,6 +15,11 @@ from .verifier import verify_claims
 Source = Literal["model", "model_retry", "template"]
 Model = Callable[[Detection, MatchContext, tuple[str, ...]], Sequence[Claim]]
 OUTCOME_PHRASE = {"goal": "a goal", "saved": "saved", "blocked": "blocked", "off_target": "off target"}
+# Words a rewording must keep (what happened) or must not use (what would contradict it); see verifier._meaning_reasons.
+SCORED_WORDS = ("scored", "scores", "goal", "net", "netted")
+NOT_A_GOAL = ("scored", "scores", "scoring", "netted")
+OUTCOME_WORDS = {"saved": ("saved", "save"), "blocked": ("blocked", "block"),
+                 "off_target": ("off target", "wide", "missed", "miss")}
 
 
 @dataclass(frozen=True)
@@ -57,6 +62,7 @@ def _goal(detection: Detection, ctx: MatchContext) -> tuple[Claim, ...]:
         (Fact("minute", minute, shot.event_id), Fact("shot_distance_m", distance, shot.event_id),
          Fact("score_home", score["H"], shot.event_id), Fact("score_away", score["A"], shot.event_id)),
         (shot.player_id,),
+        requires_any=SCORED_WORDS,
     )
     speed = Claim(
         f"The shot left at {shot.shot_speed_kmh:.0f} km/h.", (shot.event_id,),
@@ -74,6 +80,7 @@ def _big_chance(detection: Detection, ctx: MatchContext) -> tuple[Claim, ...]:
         (shot.event_id,),
         (Fact("minute", minute, shot.event_id), Fact("shot_distance_m", distance, shot.event_id)),
         (shot.player_id,),
+        requires_any=OUTCOME_WORDS[shot.outcome], forbids=NOT_A_GOAL,
     ),)
 
 
@@ -85,6 +92,7 @@ def _sprint(detection: Detection, ctx: MatchContext) -> tuple[Claim, ...]:
         (event.event_id,),
         (Fact("actor_speed_kmh", event.actor_speed_kmh, event.event_id), Fact("minute", minute, event.event_id)),
         (detection.player_id,),
+        forbids=NOT_A_GOAL,
     ),)
 
 
@@ -97,6 +105,7 @@ def _pressing(detection: Detection, ctx: MatchContext) -> tuple[Claim, ...]:
         detection.event_ids,
         (Fact("pressure_per_min", level, team=detection.team, at_s=detection.end_s),
          Fact("minute_at", minute, at_s=detection.end_s)),
+        requires_any=("press", "pressed", "pressing", "pressure", "pressures"), forbids=NOT_A_GOAL,
     ),)
 
 
@@ -106,6 +115,7 @@ def _swing(detection: Detection, ctx: MatchContext) -> tuple[Claim, ...]:
         f"Momentum swung toward {ctx.club_name(detection.team)} around minute {minute}.",
         detection.event_ids,
         (Fact("minute_at", minute, at_s=detection.end_s),),
+        requires_any=("momentum",),
     ),)
 
 

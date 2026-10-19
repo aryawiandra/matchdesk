@@ -97,6 +97,14 @@ def test_a_gendered_pronoun_is_fed_back_and_a_corrected_answer_is_accepted(goal)
     assert "gendered pronoun" in prompts[1]
 
 
+def test_a_goal_that_no_longer_says_it_was_scored_is_blocked(goal):
+    detection, context = goal
+    vague = lambda system, prompt: reword(prompt).replace("found the net", "hit the target")
+    result = explain(detection, context, model=Narrator(vague), max_retries=0)
+    assert result.source == "template"
+    assert any("expected one of" in r for f in result.rejections for r in f.reasons)
+
+
 def test_naming_the_wrong_player_is_blocked(goal):
     detection, context = goal
     shot = context.event(detection.event_ids[-1])

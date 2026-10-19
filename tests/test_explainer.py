@@ -76,6 +76,30 @@ def test_every_template_claim_cites_events_and_states_only_backed_numbers(replay
             assert verify_claims([claim], context).ok
 
 
+def test_templates_pin_down_what_happened_and_what_must_not_be_said(replayed):
+    context, found = replayed
+    goal = template_claims(first_of(found, "goal"), context)[0]
+    assert "scored" in goal.requires_any and not goal.forbids
+    for kind in ("big_chance", "sprint_burst", "pressing_spell"):
+        if not any(d.kind == kind for d in found):
+            continue
+        claim = template_claims(first_of(found, kind), context)[0]
+        assert "scored" in claim.forbids
+    swing = template_claims(first_of(found, "momentum_swing"), context)[0]
+    assert "momentum" in swing.requires_any
+
+
+def test_a_big_chance_must_keep_its_outcome_and_may_not_become_a_goal(replayed):
+    context, found = replayed
+    chance = next((d for d in found if d.kind == "big_chance"), None)
+    if chance is None:
+        pytest.skip("this match has no big chance")
+    claim = template_claims(chance, context)[0]
+    outcome = context.event(chance.event_ids[-1]).outcome
+    assert any(word in claim.requires_any for word in {"saved": ("saved",), "blocked": ("blocked",),
+                                                       "off_target": ("off target",)}[outcome])
+
+
 # ---- flow
 def test_without_a_model_the_template_is_used_and_nothing_is_rejected(replayed):
     context, found = replayed

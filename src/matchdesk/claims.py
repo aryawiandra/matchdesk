@@ -23,6 +23,8 @@ class Claim:
     evidence_ids: tuple[str, ...]
     facts: tuple[Fact, ...] = ()
     player_ids: tuple[str, ...] = ()
+    requires_any: tuple[str, ...] = ()  # the sentence must use at least one of these words or phrases (what happened)
+    forbids: tuple[str, ...] = ()       # the sentence must use none of these (words that would contradict it)
 
 
 # Absolute tolerance when comparing a stated fact with the recomputed value [A: display rounding].

@@ -1,4 +1,5 @@
 """Overlay feed endpoint and the static reference renderer."""
+import asyncio
 import json
 
 import pytest
@@ -132,6 +133,26 @@ def test_the_number_of_open_streams_is_capped_and_slots_are_released():
         with one_at_a_time.stream("GET", f"/overlays/seed/{SEED}?period_s=60&speed=0") as response:
             assert response.status_code == 200
             list(response.iter_lines())
+
+
+def test_concurrent_requests_get_a_stream_or_a_429_never_an_empty_200():
+    import httpx
+
+    app = create_app(max_streams=5)
+
+    async def hit(client, seed):
+        async with client.stream("GET", f"/overlays/seed/{seed}?period_s=60&speed=600") as response:
+            body = b"".join([chunk async for chunk in response.aiter_bytes()])
+            return response.status_code, len(body)
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+            return await asyncio.gather(*(hit(client, seed) for seed in range(30)))
+
+    results = asyncio.run(go())
+    assert all(status == 429 or (status == 200 and size > 0) for status, size in results), results
+    assert any(status == 429 for status, _ in results)
+    assert any(status == 200 for status, _ in results)
 
 
 def test_the_app_reads_its_model_from_the_environment(monkeypatch):
