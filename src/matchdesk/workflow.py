@@ -7,6 +7,7 @@ model is supplied. `pipeline.overlay_stream` is the synchronous reference this w
 
 One workflow run handles one event; the executors keep their state for the whole match (verified in
 20-build/sponsor-digest.md section 5), so build one `MatchDeskPipeline` per match."""
+import asyncio
 from collections.abc import AsyncIterator, Callable, Iterable
 from dataclasses import dataclass
 from typing import Never
@@ -105,15 +106,16 @@ class ExplainerExecutor(Executor):
 
     @handler
     async def propose(self, round_: Round, wf: WorkflowContext[Drafts]) -> None:
-        drafts = tuple(self._draft(pending) for pending in round_.retry)
+        drafts = tuple([await self._draft(pending) for pending in round_.retry])
         await wf.send_message(Drafts(round_.event_s, drafts, round_.resolved))
 
-    def _draft(self, pending: Pending) -> Draft:
+    async def _draft(self, pending: Pending) -> Draft:
         if self._model is None or pending.final:
             return Draft(pending, template_claims(pending.detection, self._ctx), "template", None, pending.attempts)
         attempts = pending.attempts + 1
         try:
-            claims = tuple(self._model(pending.detection, self._ctx, pending.feedback))
+            # A model call can take seconds; run it in a worker thread so the event loop (and other streams) keep going.
+            claims = tuple(await asyncio.to_thread(self._model, pending.detection, self._ctx, pending.feedback))
         except Exception as error:  # a failing model must never blank the screen
             return Draft(pending, (), "model", f"explainer error: {type(error).__name__}: {error}", attempts)
         return Draft(pending, claims, "model", None, attempts)

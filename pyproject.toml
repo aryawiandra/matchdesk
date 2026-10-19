@@ -7,6 +7,7 @@ license = { file = "LICENSE" }
 requires-python = ">=3.12"
 dependencies = [
     "agent-framework-core>=1.22.0",
+    "agent-framework-ollama>=1.0.0b261015",
     "fastapi>=0.147.0",
     "pydantic>=2.7",
     "uvicorn>=0.54.0",

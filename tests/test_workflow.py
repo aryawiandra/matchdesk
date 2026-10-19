@@ -3,6 +3,7 @@
 The synchronous `overlay_stream` is the reference. The workflow must produce exactly the same overlays and the same
 explanations, including when the model fails, answers badly, or recovers on retry."""
 import asyncio
+import time
 
 import pytest
 
@@ -104,6 +105,34 @@ def test_a_rejected_answer_goes_back_to_the_explainer_through_the_verifier(full_
     assert during.count("analyst") == 1
     assert during.count("explainer") == 2 and during.count("verifier") == 2
     assert during.count("producer") == 1
+
+
+def test_a_slow_model_does_not_block_the_event_loop(full_match):
+    events = list(full_match.events)
+    goal_index = next(i for i, e in enumerate(events) if e.type == "shot" and e.outcome == "goal")
+
+    def slow(detection, ctx, feedback):
+        time.sleep(0.3)
+        return template_claims(detection, ctx)
+
+    async def go():
+        pipeline = MatchDeskPipeline(full_match.info, model=slow)
+        for event in events[:goal_index]:
+            await pipeline.feed(event)
+        beats = 0
+
+        async def heartbeat():
+            nonlocal beats
+            while True:
+                await asyncio.sleep(0.02)
+                beats += 1
+
+        task = asyncio.create_task(heartbeat())
+        await pipeline.feed(events[goal_index])
+        task.cancel()
+        return beats
+
+    assert run_async(go()) >= 8  # about 15 when the loop stays free; about 0 when the model call blocks it
 
 
 def test_a_quiet_event_skips_the_explainer_and_the_verifier(short_match):

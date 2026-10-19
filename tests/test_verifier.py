@@ -71,11 +71,11 @@ def test_a_fact_that_contradicts_the_events_is_rejected(ctx):
 
 
 def test_a_number_in_the_text_without_a_backing_fact_is_rejected(ctx):
-    claim = goal_claim(text="Wills Hartley scored his 3rd goal of the season in minute 3 from 10 m.",
+    claim = goal_claim(text="Wills Hartley scored the 3rd goal of the season in minute 3 from 10 m.",
                        facts=(Fact("minute", 3, event_id=GOAL_ID), Fact("shot_distance_m", 10.0, event_id=GOAL_ID)))
     ok = verify_claims([claim], ctx)
     assert ok.ok  # 3 is backed by the minute fact, so this phrasing slips through by value: documented limit
-    unbacked = goal_claim(text="Wills Hartley scored his 7th goal in minute 3 from 10 m.")
+    unbacked = goal_claim(text="Wills Hartley scored the 7th goal in minute 3 from 10 m.")
     assert any("unsupported number 7" in r for r in reasons(verify_claims([unbacked], ctx)))
 
 
@@ -126,6 +126,56 @@ def test_pressure_and_momentum_facts_are_recomputed_from_the_stream(ctx):
     assert not verify_claims([bad], ctx).ok
     momentum = metrics.momentum_at(events, 300.0)
     claim = Claim(f"Momentum read {momentum:.1f}.", press_ids, (Fact("momentum", round(momentum, 1), at_s=300.0),))
+    assert verify_claims([claim], ctx).ok
+
+
+# ---- who and what the text names
+def test_naming_a_player_the_claim_does_not_cite_is_rejected(ctx):
+    other = ctx.player("H05").name
+    result = verify_claims([goal_claim(text=f"{other} scored in minute 3 from 10 m.")], ctx)
+    assert any(f"names player {other}" in r for r in reasons(result))
+
+
+def test_a_first_name_alone_of_an_uncited_player_is_also_caught(ctx):
+    first = ctx.player("H05").name.split()[0]
+    result = verify_claims([goal_claim(text=f"{first} scored in minute 3 from 10 m.")], ctx)
+    assert any("names player" in r for r in reasons(result))
+
+
+def test_the_cited_player_may_be_named_in_full_or_by_one_part(ctx):
+    full = ctx.player("H09").name
+    for text in (f"{full} scored in minute 3 from 10 m.", f"{full.split()[-1]} scored in minute 3 from 10 m."):
+        assert verify_claims([goal_claim(text=text)], ctx).ok
+
+
+def test_naming_a_club_the_cited_events_do_not_involve_is_rejected(ctx):
+    home, away = ctx.club_name("H"), ctx.club_name("A")
+    assert verify_claims([goal_claim(text=f"{home} scored in minute 3 from 10 m.")], ctx).ok
+    result = verify_claims([goal_claim(text=f"{away} scored in minute 3 from 10 m.")], ctx)
+    assert any(f"names club {away}" in r for r in reasons(result))
+
+
+@pytest.mark.parametrize("pronoun", ["his", "her", "he", "She", "himself"])
+def test_gendered_pronouns_are_rejected_because_the_data_has_no_gender(ctx, pronoun):
+    claim = goal_claim(text=f"Scored in minute 3 from 10 m to give {pronoun} side the lead.")
+    assert any("gendered pronoun" in r for r in reasons(verify_claims([claim], ctx)))
+
+
+@pytest.mark.parametrize("word", ["brilliant", "dramatic", "Spectacular", "world-class", "dramatically", "decisively",
+                                  "Brilliantly", "incredibly", "stunningly", "dominating", "sensationally"])
+def test_hype_the_data_cannot_support_is_rejected(ctx, word):
+    claim = goal_claim(text=f"A {word} goal in minute 3 from 10 m.")
+    assert any("unsupported wording" in r for r in reasons(verify_claims([claim], ctx)))
+
+
+@pytest.mark.parametrize("phrase", ["because", "thanks to", "due to", "as a result"])
+def test_causal_stories_the_data_cannot_support_are_rejected(ctx, phrase):
+    claim = goal_claim(text=f"A goal in minute 3 from 10 m {phrase} pressure.")
+    assert any("unsupported causal wording" in r for r in reasons(verify_claims([claim], ctx)))
+
+
+def test_ordinary_words_that_contain_a_banned_word_are_not_caught(ctx):
+    claim = goal_claim(text="Wills Hartley scored in minute 3 from 10 m, where the hero of there was.")
     assert verify_claims([claim], ctx).ok
 
 

@@ -21,6 +21,19 @@ wheels = [
 ]
 
 [[package]]
+name = "agent-framework-ollama"
+version = "1.0.0b261015"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "agent-framework-core" },
+    { name = "ollama" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b9/5d/441423c7720c51f1fe0d5d313ae62a54cb6ccd5f145c6518b3657fc9d710/agent_framework_ollama-1.0.0b261015.tar.gz", hash = "sha256:3af9c21c51c63c0542eadd2f03cb34b401e7a0567eba079c987a7a26b29343e7", size = 12222, upload-time = "2026-10-15T09:59:46.249Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/63/e3/19e97d18bc7b89747c119e5309aaebabd375632d3df8b02f6ef633288fbf/agent_framework_ollama-1.0.0b261015-py3-none-any.whl", hash = "sha256:87ff325b462fcd7111f4f07b132b8790aac1002d563517a208553b4c09e57c28", size = 13907, upload-time = "2026-10-15T09:59:09.152Z" },
+]
+
+[[package]]
 name = "annotated-doc"
 version = "0.0.5"
 source = { registry = "https://pypi.org/simple" }
@@ -367,6 +380,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "agent-framework-core" },
+    { name = "agent-framework-ollama" },
     { name = "fastapi" },
     { name = "pydantic" },
     { name = "uvicorn" },
@@ -385,6 +399,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "agent-framework-core", specifier = ">=1.22.0" },
+    { name = "agent-framework-ollama", specifier = ">=1.0.0b261015" },
     { name = "fastapi", specifier = ">=0.147.0" },
     { name = "pydantic", specifier = ">=2.7" },
     { name = "uvicorn", specifier = ">=0.54.0" },
@@ -540,6 +555,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/b7/b5/4da41c328788f575838f97a098fe8ca691ebc6f6fd73ad4a262ee40b184d/numpy-2.5.4-cp315-cp315t-win32.whl", hash = "sha256:ad62a416ddcf863bf44bba76fbf6b53366ab0692e294f51cae4b5fbe0d246788", size = 6335804, upload-time = "2026-10-10T20:05:19.921Z" },
     { url = "https://files.pythonhosted.org/packages/98/94/6482ddfa3d312490cb9358f375bf2ad56427dbea8769187158e94d653753/numpy-2.5.4-cp315-cp315t-win_amd64.whl", hash = "sha256:38f47be9f74ab870d2633b5456ae519c43758a8d1fd05342f0ce4ecc034396ee", size = 12890095, upload-time = "2026-10-10T20:05:21.875Z" },
     { url = "https://files.pythonhosted.org/packages/48/7f/c2d1b436b6e7cfebac140c2579a298344b85f2991a2ce5c3615cefb29400/numpy-2.5.4-cp315-cp315t-win_arm64.whl", hash = "sha256:7a14a461d9340f1b46b8648578aed9cdb8b3b018a8fac6c1dde2c9192a01a87f", size = 10883718, upload-time = "2026-10-10T20:05:28.547Z" },
+]
+
+[[package]]
+name = "ollama"
+version = "0.5.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/91/6d/ae96027416dcc2e98c944c050c492789502d7d7c0b95a740f0bb39268632/ollama-0.5.3.tar.gz", hash = "sha256:40b6dff729df3b24e56d4042fd9d37e231cee8e528677e0d085413a1d6692394", size = 43331, upload-time = "2025-08-07T21:44:10.422Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/be/f6/2091e50b8b6c3e6901f6eab283d5efd66fb71c86ddb1b4d68766c3eeba0f/ollama-0.5.3-py3-none-any.whl", hash = "sha256:a8303b413d99a9043dbf77ebf11ced672396b59bec27e6d5db67c88f01b279d2", size = 13490, upload-time = "2025-08-07T21:44:09.353Z" },
 ]
 
 [[package]]
