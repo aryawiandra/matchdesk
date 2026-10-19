@@ -1,11 +1,12 @@
 """Fault injection for the Verifier: corrupt a good claim in a known way. Used by tests and the eval harness to
 measure how many wrong claims the Verifier blocks."""
+import re
 from collections.abc import Callable
 from dataclasses import replace
 
 from .claims import Claim, Fact
 from .context import MatchContext
-from .verifier import NUMBER, PLAYER_FIELDS, half_unit
+from .verifier import NUMBER, PLAYER_FIELDS, half_unit, number_value
 
 WRONG_FACT_DELTA = 7.0
 UNBACKED_SUFFIX = " That is the 97th such moment."
@@ -26,11 +27,13 @@ def _wrong_fact(claim: Claim, ctx: MatchContext) -> Claim | None:
     for index, fact in enumerate(claim.facts):
         for match in NUMBER.finditer(claim.text):
             token = match.group()
-            if abs(float(token) - abs(fact.value)) > half_unit(token):
+            if abs(number_value(token) - abs(fact.value)) > half_unit(token):
                 continue
-            decimals = len(token.split(".")[1]) if "." in token else 0
+            parts = re.split(r"[.,]", token)
+            decimals = len(parts[1]) if len(parts) > 1 else 0
             new_value = abs(fact.value) + WRONG_FACT_DELTA
-            text = claim.text[:match.start()] + f"{new_value:.{decimals}f}" + claim.text[match.end():]
+            written = f"{new_value:.{decimals}f}".replace(".", "," if "," in token else ".")
+            text = claim.text[:match.start()] + written + claim.text[match.end():]
             facts = list(claim.facts)
             facts[index] = Fact(fact.name, new_value, fact.event_id, fact.team, fact.at_s)
             return replace(claim, text=text, facts=tuple(facts))

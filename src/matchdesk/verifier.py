@@ -7,21 +7,43 @@ from dataclasses import dataclass
 from .claims import TOLERANCE, Claim, recompute
 from .context import MatchContext
 
-NUMBER = re.compile(r"\d+(?:\.\d+)?")
+NUMBER = re.compile(r"\d+(?:[.,]\d+)?")  # Indonesian writes 3,5 where English writes 3.5
 WORD = re.compile(r"[a-z][a-z'-]*")
 PLAYER_FIELDS = ("player_id", "recipient_id", "target_id")
 MIN_NAME_PART = 4  # shorter name parts ("Al", "Van") are too ambiguous to match on their own
 # Words shared by many club names; they never identify one club on their own.
 GENERIC_CLUB_WORDS = frozenset({"fc", "town", "athletic", "rovers", "united", "city", "county", "wanderers", "albion"})
-# Wording the data cannot support [A: deterministic lexical rules, METRICS.md section 11].
-PRONOUNS = frozenset({"he", "him", "his", "himself", "she", "her", "hers", "herself"})
-# Stems, so that "dramatic", "dramatically" and "dramatics" are all caught.
-HYPE_STEMS = (
-    "brilliant", "stunning", "incredib", "dominan", "dominat", "dramatic", "sensation", "superb", "spectacul",
-    "unstoppab", "magnific", "clinical", "world-class", "decisiv", "swift", "rocket", "blaz", "thunder", "scorch",
-    "fierce", "blister", "lethal", "stunner", "screamer", "howitzer", "unleash", "magical",
+# Wording the data cannot support, per language [A: deterministic lexical rules, METRICS.md section 11].
+# Hype is matched by stem so that "dramatic" and "dramatically" are both caught; multi-word entries match as phrases.
+# `foreign` holds common words of the OTHER language: finding one means the sentence is in the wrong language.
+@dataclass(frozen=True)
+class Lexicon:
+    pronouns: frozenset[str]
+    hype_stems: tuple[str, ...]
+    causal: tuple[str, ...]
+    foreign: frozenset[str]
+
+
+ENGLISH = Lexicon(
+    pronouns=frozenset({"he", "him", "his", "himself", "she", "her", "hers", "herself"}),
+    hype_stems=(
+        "brilliant", "stunning", "incredib", "dominan", "dominat", "dramatic", "sensation", "superb", "spectacul",
+        "unstoppab", "magnific", "clinical", "world-class", "decisiv", "swift", "rocket", "blaz", "thunder", "scorch",
+        "fierce", "blister", "lethal", "stunner", "screamer", "howitzer", "unleash", "magical",
+    ),
+    causal=("because", "due to", "thanks to", "as a result", "caused by", "led to"),
+    foreign=frozenset({"yang", "dengan", "pada", "dari", "dan", "untuk", "dalam", "adalah", "hingga", "selama"}),
 )
-CAUSAL = ("because", "due to", "thanks to", "as a result", "caused by", "led to")
+INDONESIAN = Lexicon(
+    pronouns=ENGLISH.pronouns,  # Indonesian "dia" and "ia" carry no gender; only an English slip-through is caught
+    hype_stems=(
+        "luar biasa", "spektakul", "menakjubkan", "memukau", "fantastis", "dramatis", "dominan", "dominasi", "brilian",
+        "mematikan", "tak terbendung", "gemilang", "sensasional", "hebat", "menawan", "ajaib", "mengerikan",
+    ),
+    causal=("karena", "sebab", "berkat", "akibat", "sehingga", "gara-gara", "disebabkan"),
+    foreign=frozenset({"the", "of", "and", "with", "from", "scored", "minute", "after", "into", "during", "while"}),
+)
+LEXICONS = {"en": ENGLISH, "id": INDONESIAN}
 
 
 @dataclass(frozen=True)
@@ -40,8 +62,13 @@ class VerificationResult:
         return bool(self.accepted) and not self.rejected
 
 
+def number_value(token: str) -> float:
+    return float(token.replace(",", "."))
+
+
 def half_unit(token: str) -> float:
-    decimals = len(token.split(".")[1]) if "." in token else 0
+    parts = re.split(r"[.,]", token)
+    decimals = len(parts[1]) if len(parts) > 1 else 0
     return 0.5 * 10 ** -decimals
 
 
@@ -65,7 +92,7 @@ def _fact_reasons(claim: Claim, ctx: MatchContext) -> list[str]:
 def _number_reasons(claim: Claim) -> list[str]:
     reasons = []
     for token in NUMBER.findall(claim.text):
-        number = float(token)
+        number = number_value(token)
         backed = any(
             abs(number - abs(fact.value)) <= max(TOLERANCE.get(fact.name, 0.0), half_unit(token))
             for fact in claim.facts
@@ -109,12 +136,22 @@ def _name_reasons(claim: Claim, ctx: MatchContext) -> list[str]:
     return reasons
 
 
+def _hype_hits(words: set[str], text: str, stems: tuple[str, ...]) -> list[str]:
+    hits = [w for w in sorted(words) if w.startswith(tuple(s for s in stems if " " not in s))]
+    hits += [s for s in stems if " " in s and re.search(rf"\b{re.escape(s)}", text)]
+    return hits
+
+
 def _wording_reasons(claim: Claim) -> list[str]:
+    lexicon = LEXICONS.get(claim.lang)
+    if lexicon is None:
+        return [f"no wording rules for language {claim.lang!r}"]
     text = claim.text.lower()
     words = set(WORD.findall(text))
-    reasons = [f"gendered pronoun '{w}' (the data does not give players' gender)" for w in sorted(words & PRONOUNS)]
-    reasons += [f"unsupported wording '{w}'" for w in sorted(words) if w.startswith(HYPE_STEMS)]
-    reasons += [f"unsupported causal wording '{p}'" for p in CAUSAL if re.search(rf"\b{re.escape(p)}\b", text)]
+    reasons = [f"gendered pronoun '{w}' (the data does not give players' gender)" for w in sorted(words & lexicon.pronouns)]
+    reasons += [f"unsupported wording '{w}'" for w in _hype_hits(words, text, lexicon.hype_stems)]
+    reasons += [f"unsupported causal wording '{p}'" for p in lexicon.causal if re.search(rf"\b{re.escape(p)}\b", text)]
+    reasons += [f"wrong language: '{w}' is not {claim.lang}" for w in sorted(words & lexicon.foreign)]
     return reasons
 
 
@@ -132,8 +169,10 @@ def _meaning_reasons(claim: Claim) -> list[str]:
     return reasons
 
 
-def check_claim(claim: Claim, ctx: MatchContext) -> list[str]:
+def check_claim(claim: Claim, ctx: MatchContext, lang: str | None = None) -> list[str]:
     reasons = [] if claim.text.strip() else ["empty text"]
+    if lang is not None and claim.lang != lang:
+        reasons.append(f"claim language {claim.lang} does not match the requested language {lang}")
     reasons += _evidence_reasons(claim, ctx)
     reasons += _fact_reasons(claim, ctx)
     reasons += _number_reasons(claim)
@@ -144,11 +183,11 @@ def check_claim(claim: Claim, ctx: MatchContext) -> list[str]:
     return reasons
 
 
-def verify_claims(claims: Sequence[Claim], ctx: MatchContext) -> VerificationResult:
+def verify_claims(claims: Sequence[Claim], ctx: MatchContext, lang: str | None = None) -> VerificationResult:
     accepted: list[Claim] = []
     rejected: list[Rejection] = []
     for claim in claims:
-        reasons = check_claim(claim, ctx)
+        reasons = check_claim(claim, ctx, lang)
         if reasons:
             rejected.append(Rejection(claim, tuple(reasons)))
         else:

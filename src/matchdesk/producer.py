@@ -22,6 +22,13 @@ PRIORITY = {"goal": 5, "big_chance": 4, "momentum_swing": 3, "pressing_spell": 3
 POINT_EVENT = {"goal": -1, "big_chance": -1, "sprint_burst": 0}
 
 
+# Words the Producer writes itself (accessibility text); the sentences come from the Explainer.
+STRINGS = {
+    "en": {"tag": "Player tag", "shirt": "shirt", "kmh": "km/h", "covered": "km covered"},
+    "id": {"tag": "Label pemain", "shirt": "nomor", "kmh": "km/jam", "covered": "km ditempuh"},
+}
+
+
 def clock(match_s: float) -> str:
     minutes, seconds = divmod(int(match_s), 60)
     return f"{minutes:02d}:{seconds:02d}"
@@ -83,9 +90,10 @@ class Producer:
         speed = event.actor_speed_kmh if "speed" in fired else None
         distance = (math.floor(event.actor_distance_m / self._th.distance_step_m) * self._th.distance_step_m / 1000.0
                     if "distance" in fired else None)
-        text = f"Player tag: {player.name}, shirt {player.shirt}"
-        text += f", {speed:.0f} km/h" if speed is not None else ""
-        text += f", {distance:.0f} km covered" if distance is not None else ""
+        words = STRINGS[common["lang"]]
+        text = f"{words['tag']}: {player.name}, {words['shirt']} {player.shirt}"
+        text += f", {speed:.0f} {words['kmh']}" if speed is not None else ""
+        text += f", {distance:.0f} {words['covered']}" if distance is not None else ""
         return PlayerTagOverlay(
             overlay_id=overlay_id, end_s=common["start_s"] + TAG_DURATION_S, priority=TAG_PRIORITY,
             evidence_event_ids=(event.event_id,), a11y_text=text + ".", **common,

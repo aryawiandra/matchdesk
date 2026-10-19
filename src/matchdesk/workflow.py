@@ -20,7 +20,7 @@ from .claims import Claim
 from .config import Thresholds, load_thresholds
 from .context import MatchContext
 from .explainer import AttemptFailure, Explanation, Model, Source, template_claims
-from .overlay import Lang, Overlay, Persona
+from .overlay import SUPPORTED_LANGS, Lang, Overlay, Persona
 from .producer import TICK_S, Producer
 from .schema import Event, MatchInfo
 from .verifier import verify_claims
@@ -101,10 +101,11 @@ class AnalystExecutor(Executor):
 class ExplainerExecutor(Executor):
     """Proposes claims: from the model when there is one and retries remain, otherwise from the template."""
 
-    def __init__(self, ctx: MatchContext, model: Model | None):
+    def __init__(self, ctx: MatchContext, model: Model | None, lang: str):
         super().__init__(id="explainer")
         self._ctx = ctx
         self._model = model
+        self._lang = lang
 
     @handler
     async def propose(self, round_: Round, wf: WorkflowContext[Drafts]) -> None:
@@ -113,7 +114,7 @@ class ExplainerExecutor(Executor):
 
     async def _draft(self, pending: Pending) -> Draft:
         if self._model is None or pending.final:
-            return Draft(pending, template_claims(pending.detection, self._ctx), "template", None, pending.attempts)
+            return Draft(pending, template_claims(pending.detection, self._ctx, self._lang), "template", None, pending.attempts)
         attempts = pending.attempts + 1
         try:
             # A model call can take seconds; run it in a worker thread so the event loop (and other streams) keep going.
@@ -126,10 +127,11 @@ class ExplainerExecutor(Executor):
 class VerifierExecutor(Executor):
     """The gate. Accepts an answer, or sends the reasons back to the Explainer, or demands the template."""
 
-    def __init__(self, ctx: MatchContext, max_retries: int):
+    def __init__(self, ctx: MatchContext, max_retries: int, lang: str):
         super().__init__(id="verifier")
         self._ctx = ctx
         self._max_retries = max_retries
+        self._lang = lang
         self.suppressed: list[str] = []
 
     @handler
@@ -147,7 +149,7 @@ class VerifierExecutor(Executor):
     def _judge(self, draft: Draft) -> Explanation | Pending | None:
         pending = draft.pending
         if draft.source == "template":
-            check = verify_claims(draft.claims, self._ctx)
+            check = verify_claims(draft.claims, self._ctx, self._lang)
             if not check.ok:
                 # A bug, never a reason to stop the match: drop this insight, say so loudly, keep streaming.
                 reasons = [r for rejection in check.rejected for r in rejection.reasons]
@@ -159,7 +161,7 @@ class VerifierExecutor(Executor):
         if draft.error is not None:
             feedback, rejected = (draft.error,), 0
         else:
-            result = verify_claims(draft.claims, self._ctx)
+            result = verify_claims(draft.claims, self._ctx, self._lang)
             if result.ok:
                 source: Source = "model" if draft.attempts == 1 else "model_retry"
                 return Explanation(pending.detection, draft.claims, source, draft.attempts, pending.failures)
@@ -211,13 +213,13 @@ class MatchDeskPipeline:
         tick_s: float = TICK_S,
         on_explanation: Callable[[Explanation], None] | None = None,
     ):
-        if lang != "en":
-            raise ValueError("only English is produced until the Localizer exists")
+        if lang not in SUPPORTED_LANGS:
+            raise ValueError(f"only English and Bahasa Indonesia are produced, not {lang!r}")
         thresholds = thresholds or load_thresholds()
         ctx = MatchContext(info)
         analyst = AnalystExecutor(ctx, Analyst(thresholds))
-        explainer = ExplainerExecutor(ctx, model)
-        verifier = VerifierExecutor(ctx, max_retries)
+        explainer = ExplainerExecutor(ctx, model, lang)
+        verifier = VerifierExecutor(ctx, max_retries, lang)
         producer = ProducerExecutor(Producer(ctx, thresholds), persona, lang, tick_s, on_explanation)
         self.workflow = (
             WorkflowBuilder(start_executor=analyst, output_from=[producer])

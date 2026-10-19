@@ -10,6 +10,7 @@ from .explainer import Source
 from .schema import Frozen, KeyMomentKind, Team, X, Y
 
 Lang = Literal["en", "id", "es"]
+SUPPORTED_LANGS = ("en", "id")  # produced today; "es" is in the contract but has no templates or rules yet
 Persona = Literal["fan", "analyst"]
 EventIds = Annotated[tuple[str, ...], Field(min_length=1)]
 NonBlank = Annotated[str, Field(min_length=1, pattern=r"\S")]

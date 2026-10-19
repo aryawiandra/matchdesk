@@ -201,9 +201,9 @@ def test_a_model_that_always_fails_leaves_the_overlays_unchanged(full_match, str
     assert seen and all(e.source == "template" and e.rejections for e in seen)
 
 
-def test_only_english_is_produced_until_the_localizer_exists(full_match):
+def test_a_language_without_templates_is_refused(full_match):
     with pytest.raises(ValueError, match="English"):
-        list(overlay_stream(full_match.events, full_match.info, lang="id"))
+        list(overlay_stream(full_match.events, full_match.info, lang="es"))
 
 
 def test_persona_and_language_flow_into_every_overlay():

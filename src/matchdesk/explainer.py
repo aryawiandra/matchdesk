@@ -10,6 +10,7 @@ from .analyst import Detection
 from .claims import Claim, Fact
 from .context import MatchContext
 from .geometry import GOAL_Y, PITCH_L
+from .templates_id import TEMPLATES as TEMPLATES_ID
 from .verifier import verify_claims
 
 Source = Literal["model", "model_retry", "template"]
@@ -125,15 +126,23 @@ _TEMPLATES = {
 }
 
 
-def template_claims(detection: Detection, ctx: MatchContext) -> tuple[Claim, ...]:
-    builder = _TEMPLATES.get(detection.kind)
+TEMPLATES_BY_LANG = {"en": _TEMPLATES, "id": TEMPLATES_ID}
+
+
+def template_claims(detection: Detection, ctx: MatchContext, lang: str = "en") -> tuple[Claim, ...]:
+    templates = TEMPLATES_BY_LANG.get(lang)
+    if templates is None:
+        raise ValueError(f"no templates for language {lang!r}; available: {sorted(TEMPLATES_BY_LANG)}")
+    builder = templates.get(detection.kind)
     if builder is None:
         raise ValueError(f"no template for key moment kind {detection.kind!r}")
     return builder(detection, ctx)
 
 
 # ---- explain -> verify -> retry -> template
-def explain(detection: Detection, ctx: MatchContext, model: Model | None = None, max_retries: int = 1) -> Explanation:
+def explain(
+    detection: Detection, ctx: MatchContext, model: Model | None = None, max_retries: int = 1, lang: str = "en",
+) -> Explanation:
     failures: list[AttemptFailure] = []
     feedback: tuple[str, ...] = ()
     attempts = 0
@@ -145,13 +154,13 @@ def explain(detection: Detection, ctx: MatchContext, model: Model | None = None,
             feedback = (f"explainer error: {type(error).__name__}: {error}",)
             failures.append(AttemptFailure(attempt, feedback, 0))
             continue
-        result = verify_claims(claims, ctx)
+        result = verify_claims(claims, ctx, lang)
         if result.ok:
             return Explanation(detection, claims, "model" if attempt == 1 else "model_retry", attempt, tuple(failures))
         feedback = tuple(r for rejection in result.rejected for r in rejection.reasons) or ("no claims returned",)
         failures.append(AttemptFailure(attempt, feedback, len(result.rejected)))
-    fallback = template_claims(detection, ctx)
-    check = verify_claims(fallback, ctx)
+    fallback = template_claims(detection, ctx, lang)
+    check = verify_claims(fallback, ctx, lang)
     if not check.ok:
         reasons = [r for rejection in check.rejected for r in rejection.reasons]
         raise RuntimeError(f"template claims failed verification for {detection.kind}: {reasons}")

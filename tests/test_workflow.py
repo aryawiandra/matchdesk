@@ -52,9 +52,9 @@ def test_the_workflow_has_four_distinct_executors(short_match):
     assert set(pipeline.workflow.executors) == {"analyst", "explainer", "verifier", "producer"}
 
 
-def test_only_english_is_produced_until_the_localizer_exists(short_match):
+def test_a_language_without_templates_is_refused(short_match):
     with pytest.raises(ValueError, match="English"):
-        MatchDeskPipeline(short_match.info, lang="id")
+        MatchDeskPipeline(short_match.info, lang="es")
 
 
 # ---- equivalence with the reference

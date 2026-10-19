@@ -5,7 +5,7 @@ from .analyst import Analyst
 from .config import Thresholds, load_thresholds
 from .context import MatchContext
 from .explainer import Explanation, Model, explain
-from .overlay import Lang, Overlay, Persona
+from .overlay import SUPPORTED_LANGS, Lang, Overlay, Persona
 from .producer import TICK_S, Producer
 from .schema import Event, MatchInfo
 
@@ -21,8 +21,8 @@ def overlay_stream(
     on_explanation: Callable[[Explanation], None] | None = None,
     max_retries: int = 1,
 ) -> Iterator[Overlay]:
-    if lang != "en":
-        raise ValueError("only English is produced until the Localizer exists")
+    if lang not in SUPPORTED_LANGS:
+        raise ValueError(f"only English and Bahasa Indonesia are produced, not {lang!r}")
     thresholds = thresholds or load_thresholds()
     ctx = MatchContext(info)
     analyst, producer = Analyst(thresholds), Producer(ctx, thresholds)
@@ -34,7 +34,7 @@ def overlay_stream(
             batch.append(producer.scoreboard(next_tick, tick_s, lang, persona))
             next_tick += tick_s
         for detection in analyst.ingest(event):
-            explanation = explain(detection, ctx, model, max_retries)
+            explanation = explain(detection, ctx, model, max_retries, lang)
             if on_explanation is not None:
                 on_explanation(explanation)
             batch.extend(producer.for_explanation(explanation, lang, persona))

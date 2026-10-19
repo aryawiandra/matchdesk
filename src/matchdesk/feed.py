@@ -17,7 +17,7 @@ from .config import GeneratorConfig
 from .explainer import Model
 from .generator import GeneratedMatch, generate_match
 from .narrator import narrator_from_spec
-from .overlay import Persona
+from .overlay import Lang, Persona
 from .recorded import RecordedModel, Recording, load_directory
 from .sse import encode_frame
 from .workflow import overlay_stream_async
@@ -101,10 +101,10 @@ async def _frames(match: GeneratedMatch, speed: float) -> AsyncIterator[str]:
 
 
 async def _overlay_frames(
-    match: GeneratedMatch, persona: Persona, speed: float, model: Model | None,
+    match: GeneratedMatch, persona: Persona, speed: float, model: Model | None, lang: Lang,
 ) -> AsyncIterator[str]:
     previous_s = 0.0
-    async for overlay in overlay_stream_async(match.events, match.info, persona=persona, model=model):
+    async for overlay in overlay_stream_async(match.events, match.info, persona=persona, model=model, lang=lang):
         delay = pace_delay(previous_s, overlay.start_s, speed)
         if delay > 0:
             await asyncio.sleep(delay)
@@ -167,7 +167,7 @@ def create_app(
         period_s: float = Query(MAX_PERIOD_S, ge=MIN_PERIOD_S, le=MAX_PERIOD_S),
         speed: float = Query(DEFAULT_SPEED, ge=0.0, le=MAX_SPEED),
         persona: Persona = Query("fan"),
-        lang: Literal["en"] = Query("en"),  # English only until the Localizer exists
+        lang: Literal["en", "id"] = Query("en"),
         explainer: Literal["template", "model", "recorded"] = Query("template"),
     ) -> StreamingResponse:
         use_model = explainer == "model"
@@ -184,7 +184,7 @@ def create_app(
         except BaseException:
             release()
             raise
-        return GuardedStream(_overlay_frames(match, persona, speed, chosen), release)
+        return GuardedStream(_overlay_frames(match, persona, speed, chosen, lang), release)
 
     app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="renderer")  # last: API routes win
     return app
