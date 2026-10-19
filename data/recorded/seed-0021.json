@@ -1,0 +1,82 @@
+{
+  "schema_version": "1",
+  "seed": 21,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "answers": {
+    "momentum_swing:M0021-00135,M0021-00140,M0021-00141,M0021-00142,M0021-00143": [
+      "By minute 6, momentum shifted in favor of Telmar City."
+    ],
+    "momentum_swing:M0021-00269,M0021-00272,M0021-00276,M0021-00278,M0021-00279": [
+      "By minute 11, momentum shifted in favor of Telmar City."
+    ],
+    "momentum_swing:M0021-00482,M0021-00483,M0021-00484,M0021-00485,M0021-00486": [
+      "By minute 22, momentum shifted in favor of Corvale FC."
+    ],
+    "momentum_swing:M0021-00632,M0021-00636,M0021-00640,M0021-00641,M0021-00643": [
+      "By minute 29, momentum shifted in favor of Telmar City."
+    ],
+    "momentum_swing:M0021-00749,M0021-00750,M0021-00752,M0021-00753,M0021-00755": [
+      "By minute 35, momentum shifted in favor of Telmar City."
+    ],
+    "pressing_spell:M0021-00814,M0021-00831,M0021-00836,M0021-00846,M0021-00848,M0021-00860,M0021-00871,M0021-00874,M0021-00876": [
+      "Corvale FC maintained a pressure rate of 4.0 per minute in the last three minutes, reaching up to minute 39."
+    ],
+    "sprint_burst:M0021-00895": [
+      "Minute 40 saw Othlo Draani of Telmar City hit a speed of 26 km/h."
+    ],
+    "pressing_spell:M0021-01181,M0021-01191,M0021-01204,M0021-01215,M0021-01218,M0021-01225,M0021-01240,M0021-01242,M0021-01244,M0021-01269": [
+      "Corvale FC maintained a pressure rate of 3.5 per minute over the last three minutes, reaching up to minute 54."
+    ],
+    "sprint_burst:M0021-01275": [
+      "Nikvin Sarford of Telmar City clocks 27 km/h in minute 54."
+    ],
+    "sprint_burst:M0021-01368": [
+      "Minute 57 saw Renmo Draley of Telmar City hit 29 km/h."
+    ],
+    "pressing_spell:M0021-01282,M0021-01288,M0021-01310,M0021-01312,M0021-01319,M0021-01333,M0021-01335,M0021-01346,M0021-01351,M0021-01357,M0021-01368": [
+      "Telmar City maintains a pressure rate of 4.5 per minute in the last three minutes, reaching up to minute 57."
+    ],
+    "momentum_swing:M0021-01435,M0021-01440,M0021-01444,M0021-01445,M0021-01447": [
+      "By minute 59, momentum shifted in favor of Corvale FC."
+    ],
+    "goal:M0021-01593,M0021-01594,M0021-01595,M0021-01598": [
+      "Minute 64: Nikdan Talndale of Corvale FC scores from 3 m and it's 1-0.",
+      "The shot travels at 104 km/h."
+    ],
+    "momentum_swing:M0021-01590,M0021-01591,M0021-01593,M0021-01594,M0021-01598": [
+      "By minute 65, momentum shifted in favor of Corvale FC."
+    ],
+    "pressing_spell:M0021-01543,M0021-01545,M0021-01559,M0021-01571,M0021-01573,M0021-01575,M0021-01586,M0021-01589,M0021-01596,M0021-01614": [
+      "Telmar City maintains a pressure rate of 3.5 per minute over the last three minutes, reaching up to minute 66."
+    ],
+    "goal:M0021-01706,M0021-01707,M0021-01710,M0021-01711": [
+      "Sylek Sarani of Corvale FC scores in minute 70 from 7 m, now 2-0.",
+      "The shot reaches 86 km/h."
+    ],
+    "goal:M0021-01727,M0021-01730,M0021-01731,M0021-01732": [
+      "In minute 71, Sylek Sarani of Corvale FC scores from 8 m, taking the score to 3-0.",
+      "The shot leaves at 75 km/h."
+    ],
+    "sprint_burst:M0021-01738": [
+      "Minute 72 saw Nikdan Talndale of Corvale FC hit a speed of 29 km/h."
+    ],
+    "sprint_burst:M0021-01928": [
+      "In the 79th minute, Dalvin Sarovic of Corvale FC reaches a speed of 27 km/h."
+    ],
+    "sprint_burst:M0021-01984": [
+      "Dalvin Sarovic of Corvale FC reaches 31 km/h in the 81st minute."
+    ],
+    "momentum_swing:M0021-02053,M0021-02054,M0021-02061,M0021-02062,M0021-02063": [
+      "By minute 84, momentum shifted in favor of Telmar City."
+    ],
+    "sprint_burst:M0021-02109": [
+      "Callo Brekani of Telmar City reaches 30 km/h in the 86th minute."
+    ],
+    "sprint_burst:M0021-02317": [
+      "In the final minute, Sylek Sarani of Corvale FC reaches a speed of 26 km/h."
+    ]
+  }
+}

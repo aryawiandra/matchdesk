@@ -38,7 +38,7 @@ const els = {
   live: document.getElementById("live"),
 };
 
-const state = { now: 0, scoreboard: null, items: [], cards: new Map(), controller: null };
+const state = { now: 0, scoreboard: null, items: [], cards: new Map(), controller: null, recorded: null };
 
 function setStatus(text) {
   els.status.textContent = text;
@@ -88,8 +88,14 @@ async function start(event) {
   setStatus("Connecting to the synthetic feed...");
   try {
     const response = await fetch(feedUrl(), { signal: state.controller.signal });
-    if (!response.ok) throw new Error(`the feed answered ${response.status}`);
-    setStatus("Live.");
+    if (!response.ok) {
+      const problem = await response.json().catch(() => ({}));
+      throw new Error(problem.detail || `the feed answered ${response.status}`);
+    }
+    setStatus(state.recorded && els.explainer.value === "recorded"
+      ? `Live. Replaying sentences a real model wrote (${state.recorded.model}, recorded ${state.recorded.recorded_at}); `
+        + "the Verifier checks every one again now."
+      : "Live.");
     await readFrames(response.body, handleOverlay);
     setStatus("Full time. Click a sentence to see the events behind it, or replay another seed.");
   } catch (error) {
@@ -220,10 +226,18 @@ async function enableModelChoice() {
   try {
     const response = await fetch("/capabilities");
     const capabilities = await response.json();
-    const option = els.explainer.querySelector('option[value="model"]');
+    const live = els.explainer.querySelector('option[value="model"]');
     if (capabilities.model) {
-      option.disabled = false;
-      option.textContent = "AI model (local, checked)";
+      live.disabled = false;
+      live.textContent = "AI model, live (checked)";
+    }
+    const recorded = els.explainer.querySelector('option[value="recorded"]');
+    if (capabilities.recorded) {
+      state.recorded = capabilities.recorded;
+      recorded.disabled = false;
+      recorded.textContent = `AI model, recorded run (${capabilities.recorded.model})`;
+      els.explainer.value = "recorded";
+      els.seed.title = `Recorded seeds: ${capabilities.recorded.seeds.join(", ")}`;
     }
   } catch (error) {
     // Without the capabilities call the page still works with the template explainer.

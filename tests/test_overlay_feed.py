@@ -90,16 +90,55 @@ def model_frames(app_client, query=""):
         return list(decode_frames(response.iter_lines()))
 
 
-def test_capabilities_say_whether_a_model_is_available(client):
-    assert client.get("/capabilities").json() == {"model": False, "max_streams": 20}
+def recording_for(seed=SEED, period_s=PERIOD_S):
+    from matchdesk.recorded import record_answers
+
+    match = generate_match(GeneratorConfig(seed=seed, period_s=period_s))
+    return record_answers(match, fake_narrator(), period_s=period_s, model="fake:1", server="test", recorded_at="2026-10-19")
+
+
+def test_capabilities_say_whether_a_model_or_a_recording_is_available(client):
+    assert client.get("/capabilities").json() == {"model": False, "recorded": None, "max_streams": 20}
     with_model = TestClient(create_app(model=fake_narrator(), max_streams=5))
-    assert with_model.get("/capabilities").json() == {"model": True, "max_streams": 5}
+    assert with_model.get("/capabilities").json() == {"model": True, "recorded": None, "max_streams": 5}
+    with_recording = TestClient(create_app(recordings={SEED: recording_for()}))
+    assert with_recording.get("/capabilities").json()["recorded"] == {
+        "seeds": [SEED], "model": "fake:1", "recorded_at": "2026-10-19", "period_s": PERIOD_S}
+
+
+def test_the_recorded_explainer_replays_a_models_sentences_through_the_verifier():
+    recorded = TestClient(create_app(recordings={SEED: recording_for()}))
+    with recorded.stream("GET", f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=recorded") as response:
+        assert response.status_code == 200
+        moments = [p for p in decode_frames(response.iter_lines()) if p["type"] == "key_moment"]
+    live = TestClient(create_app(model=fake_narrator()))
+    assert moments and {p["payload"]["source"] for p in moments} == {"model"}
+    assert [p["payload"]["headline"] for p in moments] == [
+        p["payload"]["headline"] for p in model_frames(live) if p["type"] == "key_moment"]
+
+
+@pytest.mark.parametrize("query, fragment", [
+    (f"seed=6&period_s={PERIOD_S}", "no recording for seed 6"),
+    (f"seed={SEED}&period_s=600.0", "recorded for"),
+])
+def test_the_recorded_explainer_says_clearly_when_it_has_nothing_for_the_request(query, fragment):
+    recorded = TestClient(create_app(recordings={SEED: recording_for()}))
+    seed = query.split("&")[0].split("=")[1]
+    rest = query.split("&", 1)[1]
+    response = recorded.get(f"/overlays/seed/{seed}?{rest}&speed=0&explainer=recorded")
+    assert response.status_code == 400 and fragment in response.json()["detail"]
+
+
+def test_asking_for_a_recording_when_there_are_none_is_a_clear_error(client):
+    response = client.get(f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=recorded")
+    assert response.status_code == 400 and "no recordings" in response.json()["detail"]
 
 
 def test_the_renderer_offers_the_model_choice_and_shows_where_words_came_from(client):
     assert "/capabilities" in client.get("/app.js").text
     assert 'id="explainer"' in client.get("/").text
     assert "source" in client.get("/app.js").text
+    assert 'value="recorded"' in client.get("/").text
 
 
 def test_the_default_explainer_is_the_template(client):

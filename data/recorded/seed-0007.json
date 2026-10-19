@@ -1,0 +1,72 @@
+{
+  "schema_version": "1",
+  "seed": 7,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "answers": {
+    "pressing_spell:M0007-00325,M0007-00329,M0007-00337,M0007-00339,M0007-00341,M0007-00362,M0007-00370,M0007-00377,M0007-00384,M0007-00388,M0007-00390": [
+      "Over the last three minutes, Ashcombe Town maintained a pressure rate of 3.5 per minute up to minute 14."
+    ],
+    "momentum_swing:M0007-00858,M0007-00859,M0007-00860,M0007-00861,M0007-00862": [
+      "By minute 34, momentum shifted in favor of Corvale FC."
+    ],
+    "sprint_burst:M0007-00915": [
+      "Minute 35: Fenmo Breksen of Ashcombe Town reaches 28 km/h."
+    ],
+    "sprint_burst:M0007-00998": [
+      "Minute 38: Mirtan Kolani of Ashcombe Town reaches a speed of 28 km/h."
+    ],
+    "sprint_burst:M0007-01015": [
+      "Minute 39: Fenvin Brekmere of Ashcombe Town hits 26 km/h."
+    ],
+    "momentum_swing:M0007-01473,M0007-01478,M0007-01481,M0007-01486,M0007-01488": [
+      "By minute 58, momentum shifted in favor of Corvale FC."
+    ],
+    "goal:M0007-01535,M0007-01537,M0007-01541,M0007-01543": [
+      "Minute 60: Sylmo Ravndale of Corvale FC scores from 4 m, and it's 0-1.",
+      "The shot was clocked at 89 km/h."
+    ],
+    "momentum_swing:M0007-01559,M0007-01564,M0007-01566,M0007-01568,M0007-01569": [
+      "By minute 62, momentum shifted in favor of Corvale FC."
+    ],
+    "sprint_burst:M0007-01605": [
+      "In minute 63, Othvin Osbrek of Ashcombe Town reaches a speed of 25 km/h."
+    ],
+    "pressing_spell:M0007-01615,M0007-01617,M0007-01622,M0007-01629,M0007-01644,M0007-01646,M0007-01651,M0007-01653,M0007-01655,M0007-01657,M0007-01665,M0007-01667,M0007-01690": [
+      "Ashcombe Town exert 4.5 pressures per minute in the last three minutes, reaching up to minute 66."
+    ],
+    "momentum_swing:M0007-01687,M0007-01690,M0007-01691,M0007-01693,M0007-01695": [
+      "Around minute 66, momentum shifted in favor of Ashcombe Town."
+    ],
+    "sprint_burst:M0007-01801": [
+      "Minute 69: Fenmo Breksen of Ashcombe Town reaches 32 km/h."
+    ],
+    "momentum_swing:M0007-01896,M0007-01898,M0007-01904,M0007-01907,M0007-01917": [
+      "Around minute 74, momentum shifted in favor of Corvale FC."
+    ],
+    "momentum_swing:M0007-02061,M0007-02063,M0007-02066,M0007-02067,M0007-02069": [
+      "Around minute 80, momentum shifted in favor of Corvale FC."
+    ],
+    "goal:M0007-02217,M0007-02220,M0007-02223,M0007-02224": [
+      "Daldan Quinley of Ashcombe Town scores from 1 m in minute 85, tying the score at 1-1.",
+      "The shot leaves at 107 km/h."
+    ],
+    "sprint_burst:M0007-02238": [
+      "In the 86th minute, Loren Halley of Ashcombe Town reaches a speed of 30 km/h."
+    ],
+    "momentum_swing:M0007-02238,M0007-02241,M0007-02242,M0007-02244,M0007-02245": [
+      "By minute 87, momentum shifted in favor of Ashcombe Town."
+    ],
+    "pressing_spell:M0007-02230,M0007-02238,M0007-02241,M0007-02255,M0007-02259,M0007-02265,M0007-02278,M0007-02283,M0007-02285,M0007-02288,M0007-02290,M0007-02303": [
+      "Over the last three minutes, Ashcombe Town maintained a pressure rate of 4.0 per minute up to minute 89."
+    ],
+    "sprint_burst:M0007-02439": [
+      "In the final minute, Veldan Vashley of Corvale FC reaches a speed of 28 km/h."
+    ],
+    "momentum_swing:M0007-02442,M0007-02444,M0007-02445,M0007-02448,M0007-02452": [
+      "Around minute 94, momentum shifted in favor of Corvale FC."
+    ]
+  }
+}

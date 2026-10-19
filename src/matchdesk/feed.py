@@ -5,7 +5,7 @@
 model path has its own, smaller cap) so a crawler or a crowd cannot exhaust the server."""
 import asyncio
 import os
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Callable, Mapping
 from pathlib import Path as FsPath
 from typing import Literal
 
@@ -18,10 +18,12 @@ from .explainer import Model
 from .generator import GeneratedMatch, generate_match
 from .narrator import narrator_from_spec
 from .overlay import Persona
+from .recorded import RecordedModel, Recording, load_directory
 from .sse import encode_frame
 from .workflow import overlay_stream_async
 
 WEB_DIR = FsPath(__file__).resolve().parents[2] / "web"
+RECORDINGS_DIR = FsPath(__file__).resolve().parents[2] / "data" / "recorded"
 MAX_SEED = 9999
 MIN_PERIOD_S = 60.0
 MAX_PERIOD_S = 2700.0
@@ -110,21 +112,38 @@ async def _overlay_frames(
         yield encode_frame(overlay.model_dump(mode="json"))
 
 
+def _recorded_model(recordings: Mapping[int, Recording], seed: int, period_s: float) -> Model:
+    if not recordings:
+        raise HTTPException(status_code=400, detail="no recordings are available on this server")
+    recording = recordings.get(seed)
+    if recording is None:
+        raise HTTPException(status_code=400, detail=f"no recording for seed {seed}; recorded seeds: {sorted(recordings)}")
+    if recording.period_s != period_s:
+        raise HTTPException(status_code=400, detail=f"seed {seed} was recorded for period_s={recording.period_s}")
+    return RecordedModel(recording)
+
+
 def create_app(
     model: Model | None = None,
     max_streams: int = DEFAULT_MAX_STREAMS,
     max_model_streams: int = DEFAULT_MAX_MODEL_STREAMS,
+    recordings: Mapping[int, Recording] | None = None,
 ) -> FastAPI:
     app = FastAPI(title="MatchDesk feed")
     streams, model_streams = Slots(max_streams), Slots(max_model_streams)
+    recordings = dict(recordings or {})
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
         return {"status": "ok"}
 
     @app.get("/capabilities")
-    async def capabilities() -> dict[str, bool | int]:
-        return {"model": model is not None, "max_streams": max_streams}
+    async def capabilities() -> dict:
+        first = recordings[min(recordings)] if recordings else None
+        recorded = None if first is None else {
+            "seeds": sorted(recordings), "model": first.model, "recorded_at": first.recorded_at,
+            "period_s": first.period_s}
+        return {"model": model is not None, "recorded": recorded, "max_streams": max_streams}
 
     @app.get("/feed/seed/{seed}")
     async def feed(
@@ -149,11 +168,14 @@ def create_app(
         speed: float = Query(DEFAULT_SPEED, ge=0.0, le=MAX_SPEED),
         persona: Persona = Query("fan"),
         lang: Literal["en"] = Query("en"),  # English only until the Localizer exists
-        explainer: Literal["template", "model"] = Query("template"),
+        explainer: Literal["template", "model", "recorded"] = Query("template"),
     ) -> StreamingResponse:
         use_model = explainer == "model"
         if use_model and model is None:
             raise HTTPException(status_code=400, detail="no model is configured on this server (set MATCHDESK_MODEL)")
+        chosen: Model | None = model if use_model else None
+        if explainer == "recorded":
+            chosen = _recorded_model(recordings, seed, period_s)
         release = take_slots(streams, *([model_streams] if use_model else []))
         if release is None:
             raise HTTPException(status_code=429, detail="too many open streams, try again shortly")
@@ -162,12 +184,15 @@ def create_app(
         except BaseException:
             release()
             raise
-        return GuardedStream(_overlay_frames(match, persona, speed, model if use_model else None), release)
+        return GuardedStream(_overlay_frames(match, persona, speed, chosen), release)
 
     app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="renderer")  # last: API routes win
     return app
 
 
 def create_app_from_env() -> FastAPI:
-    """uvicorn factory: `MATCHDESK_MODEL=ollama:<model>` (and optionally `OLLAMA_HOST`) enables the model explainer."""
-    return create_app(model=narrator_from_spec(os.environ.get("MATCHDESK_MODEL"), os.environ.get("OLLAMA_HOST")))
+    """uvicorn factory: `MATCHDESK_MODEL=ollama:<model>` (and optionally `OLLAMA_HOST`) enables the live model
+    explainer; recorded model answers are read from `data/recorded` (or `MATCHDESK_RECORDINGS`)."""
+    recordings = load_directory(os.environ.get("MATCHDESK_RECORDINGS", RECORDINGS_DIR))
+    return create_app(model=narrator_from_spec(os.environ.get("MATCHDESK_MODEL"), os.environ.get("OLLAMA_HOST")),
+                      recordings=recordings)

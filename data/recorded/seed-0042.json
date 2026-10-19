@@ -1,0 +1,75 @@
+{
+  "schema_version": "1",
+  "seed": 42,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "answers": {
+    "sprint_burst:M0042-00337": [
+      "In minute 13, Syltan Marovic of Marlow Athletic reached a speed of 26 km/h."
+    ],
+    "momentum_swing:M0042-00343,M0042-00346,M0042-00348,M0042-00349,M0042-00352": [
+      "Around minute 13, momentum shifted in favor of Marlow Athletic."
+    ],
+    "sprint_burst:M0042-00712": [
+      "Minute 28 saw Kesmo Draley of Marlow Athletic hit 31 km/h."
+    ],
+    "sprint_burst:M0042-00738": [
+      "Minute 28: Javlo Sarley of Marlow Athletic reaches a speed of 30 km/h."
+    ],
+    "pressing_spell:M0042-00684,M0042-00686,M0042-00688,M0042-00690,M0042-00696,M0042-00712,M0042-00723,M0042-00739,M0042-00747,M0042-00750,M0042-00757,M0042-00763": [
+      "Marlow Athletic exert 3.5 pressures per minute in the last three minutes, reaching up to minute 29."
+    ],
+    "sprint_burst:M0042-00780": [
+      "In minute 30, Brenvin Marmere of Marlow Athletic reaches a speed of 25 km/h."
+    ],
+    "momentum_swing:M0042-00805,M0042-00807,M0042-00810,M0042-00812,M0042-00814": [
+      "Around minute 31, momentum shifted in favor of Marlow Athletic."
+    ],
+    "goal:M0042-01027,M0042-01029,M0042-01030,M0042-01032": [
+      "In minute 40, Brenvin Ravtov of Marlow Athletic hits the goal from 6 m, and it's 1-0.",
+      "The shot flies at a speed of 73 km/h."
+    ],
+    "momentum_swing:M0042-01077,M0042-01079,M0042-01080,M0042-01081,M0042-01082": [
+      "Around minute 43, the momentum shifted in favor of Halden Rovers."
+    ],
+    "momentum_swing:M0042-01160,M0042-01166,M0042-01171,M0042-01177,M0042-01183": [
+      "By minute 48, the momentum shifted in favor of Halden Rovers."
+    ],
+    "sprint_burst:M0042-01503": [
+      "Minute 60 saw Kesmo Draley of Marlow Athletic hit 31 km/h."
+    ],
+    "sprint_burst:M0042-01505": [
+      "By minute 60, Syltan Marovic of Marlow Athletic had reached a speed of 26 km/h."
+    ],
+    "goal:M0042-01511,M0042-01512,M0042-01513,M0042-01514": [
+      "Minute 61: Syltan Marovic of Marlow Athletic scores from 5 m, tying the score at 2-1.",
+      "The shot whizzes past at 83 km/h."
+    ],
+    "sprint_burst:M0042-01535": [
+      "In minute 62, Othtan Brekovic of Halden Rovers reaches a speed of 30 km/h."
+    ],
+    "momentum_swing:M0042-01569,M0042-01571,M0042-01572,M0042-01573,M0042-01575": [
+      "Around minute 63, momentum shifted in favor of Marlow Athletic."
+    ],
+    "sprint_burst:M0042-01597": [
+      "In minute 63, Brenvin Ravtov of Marlow Athletic reaches a speed of 27 km/h."
+    ],
+    "pressing_spell:M0042-01565,M0042-01567,M0042-01570,M0042-01579,M0042-01588,M0042-01617,M0042-01623,M0042-01625,M0042-01627,M0042-01629,M0042-01631,M0042-01645,M0042-01647,M0042-01649,M0042-01655,M0042-01664": [
+      "Over the last three minutes, Halden Rovers applied 6.5 pressures per minute, reaching up to minute 65."
+    ],
+    "pressing_spell:M0042-01614,M0042-01620,M0042-01640,M0042-01652,M0042-01667,M0042-01676,M0042-01682,M0042-01684,M0042-01692,M0042-01697,M0042-01714": [
+      "Minute 66: Marlow Athletic applies 4.0 pressures per minute in the last three minutes."
+    ],
+    "momentum_swing:M0042-01901,M0042-01906,M0042-01912,M0042-01917,M0042-01919": [
+      "Around minute 75, momentum shifted in favor of Halden Rovers."
+    ],
+    "pressing_spell:M0042-01945,M0042-01962,M0042-01966,M0042-01992,M0042-01994,M0042-02002,M0042-02004,M0042-02022,M0042-02030": [
+      "Marlow Athletic apply 3.0 pressures per minute in the last three minutes, reaching up to minute 79."
+    ],
+    "sprint_burst:M0042-02157": [
+      "In the 84th minute, Brendan Quinani of Halden Rovers reaches a speed of 28 km/h."
+    ]
+  }
+}
