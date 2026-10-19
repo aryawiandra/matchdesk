@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.hypothesis/
+.coverage
+coverage.xml
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Secrets and local config: never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+secrets/
+.azure/
+
+# Hidden ground truth is generated, not published with the live feed
+data/truth/
+*.truth.json
+!data/published/*.truth.json
+
+# Editor and OS
+.DS_Store
+.idea/
+.vscode/
