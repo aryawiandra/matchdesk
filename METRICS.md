@@ -20,7 +20,7 @@ D = 1 / (1 + exp(-z))
 Bands [A]: easy `D < 0.25`, medium `0.25 <= D < 0.55`, hard `D >= 0.55`.
 Worked examples: 10 m sideways, unpressed: z = -1.70, D = 0.154 (easy). 40 m, 30 m forward, pressed, into the box: z = 2.25, D = 0.905 (hard).
 Pass over-performance (PAX) for a set of passes = sum over passes of `(1[complete] - (1 - D))`. Positive means the player completed more than difficulty predicts.
-Honesty note: the generator draws completion from a different functional form that also uses player skill and tracking geometry. D is a transparent observable rating, so the AUC of D against incompletion is a consistency check, not independent validation.
+Honesty note: the generator draws completion from a logit that uses the same four features as D (distance, forward metres, pressure, into-box) with different coefficients, plus player skill, match dominance and tracking geometry that the stream does not expose. D is a transparent observable rating, so the AUC of D against incompletion is a consistency check against the generator, not independent validation.
 
 ## 3. Momentum M(t) in [-1, 1] (positive favours home)
 ```
@@ -34,7 +34,7 @@ w(e) for an event e of team T:
 S_T(t) = sum over events e of team T with t_e <= t of  w(e) * 0.5^((t - t_e) / 120)      # half-life 120 s [A]
 M(t)   = (S_H - S_A) / (S_H + S_A)   if S_H + S_A >= 1.0 [A: minimum mass], else 0
 ```
-Away-team momentum is `-M`. Agreement with truth: Pearson r between the per-minute mean of `M` and `dominance_by_minute`.
+Away-team momentum is `-M`. Agreement with truth: for minute `i` (0-based) compare `M(60*(i+1))` with `dominance_by_minute[i]`; report Pearson r per match and its mean.
 
 ## 4. Control vs chaos
 Window `W = 60 s` ending at `t`.
@@ -75,20 +75,20 @@ A tag is emitted when (i) the event is a key moment's evidence, (ii) the player 
 ## 8. Player card
 Touches (events with that `player_id`), pass accuracy, mean D, PAX, top `actor_speed_kmh`, latest `actor_distance_m`, shots and their best `shot_speed_kmh`.
 
-## 9. Tuning log (generator v1, 2026-10-19, 40 seeds, full-length matches) [M]
-Self-report of the generator before any comparison with real data. The calibration plan decides which of these are acceptable.
+## 9. Tuning log (generator v1, 2026-10-19) [M]
+Reproduce with `uv run python scripts/tuning_report.py 40` (seeds 0-39, full-length matches; 12 s). Self-report before any comparison with real data; the calibration plan decides which numbers are acceptable.
 
-| Quantity | Result (mean over 40 matches) | Note |
+| Quantity | Mean (min - max) over 40 matches | Note |
 |---|---|---|
-| Events per match | 2,387 | |
-| Pass completion | 0.74 (range 0.69-0.79) | Tuned up from 0.54 by raising the completion intercept; real-world reference to be sourced [A] |
-| Shots per match (both teams) | 26.0 | |
-| Goals per match | 3.15 | Known high; reference to be sourced. Calibration target |
-| Pressure events per team-minute | 1.9 | After making pressure rate depend on press level squared |
-| Pressure intensity P inside planted spells | median 3.0 per min (p10 1.5) | |
+| Events per match | 2,389 (2,234 - 2,637) | |
+| Pass completion | 0.744 (0.691 - 0.787) | Raised from 0.54 by changing the completion intercept; real-world reference to be sourced [A] |
+| Shots per match, both teams | 26.0 (12 - 39) | |
+| Goals per match | 3.15 (0 - 6) | Known high versus the sources the plan will use; calibration target |
+| Pressure events per team-minute | 1.93 (1.54 - 2.46) | Pressure rate depends on press level squared |
+| Pressure intensity P inside planted spells | median 3.0 per min (p10 1.5) | From the first survey run, same seeds |
 | P in low-press phases (level < 0.4) | median 1.0, p90 2.5 | Basis for `P_HI = 2.5` |
-| Max player speed in a match | 32.6 km/h | Below the 45 km/h schema cap |
-| Mean player distance | 10.0 km | Tuned with `JOG_FRACTION` |
-| Momentum vs truth dominance (per-minute Pearson r) | 0.73 (min 0.58) | Target for the Analyst: r >= 0.6 on average [A] |
-| Pass difficulty AUC against incompletion | 0.64 (min 0.60) | A consistency check against the generator only, not independent validation |
-| Planted key moments per match | goal 3.2, momentum_swing 4.2, pressing_spell 3.8, sprint_burst 1.9, big_chance 0.5 | `big_chance` is rare; the evaluation reports it separately |
+| Fastest player speed in a match | mean 32.6 km/h (max over matches 33.9) | Schema cap is 45 km/h |
+| Mean player distance | 10.03 km (9.66 - 10.32) | Set by `JOG_FRACTION` |
+| Momentum vs truth dominance, per-match Pearson r | 0.73 (0.61 - 0.87) | Target for the Analyst: mean r >= 0.6 [A] |
+| Pass difficulty AUC against incompletion | 0.64 (0.58 - 0.69) | Consistency check against the generator only |
+| Planted key moments per match | goal 3.15, momentum_swing 4.17, pressing_spell 3.75, sprint_burst 1.88, big_chance 0.5 | `big_chance` is rare; the evaluation reports it separately |

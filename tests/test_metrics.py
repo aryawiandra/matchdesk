@@ -139,3 +139,14 @@ def test_pearson():
     assert metrics.pearson([1, 2, 3], [2, 4, 6]) == pytest.approx(1.0)
     assert metrics.pearson([1, 2, 3], [3, 2, 1]) == pytest.approx(-1.0)
     assert metrics.pearson([1, 1, 1], [1, 2, 3]) == 0.0
+
+
+def test_indicator_chips_fire_exactly_at_the_thresholds():
+    th = Thresholds(sprint_speed_kmh=25.0, distance_step_m=2000.0, speed_chip_cooldown_s=60.0)
+    at = [mk_pass(1, 10, speed=25.0, dist=2000.0)]
+    got = [(c.kind) for c in metrics.indicator_chips(at, th)]
+    assert got == ["speed", "distance"]
+    below = [mk_pass(1, 10, speed=24.99, dist=1999.99)]
+    assert metrics.indicator_chips(below, th) == []
+    twice = at + [mk_pass(2, 200, speed=10.0, dist=2000.0)]
+    assert [c.kind for c in metrics.indicator_chips(twice, th)] == ["speed", "distance"]
