@@ -12,6 +12,7 @@ from matchdesk.recorded import RecordedModel, Recording, load_directory, load_re
 from tests.test_narrator import reword
 
 META = dict(period_s=2700.0, model="fake:1", server="test-server", recorded_at="2026-10-19")
+INDONESIAN_META = dict(META, lang="id")
 KINDS = {"goal", "big_chance", "sprint_burst", "pressing_spell", "momentum_swing"}
 
 
@@ -64,7 +65,7 @@ def test_a_directory_of_recordings_is_loaded_by_seed(tmp_path, full_match):
     save_recording(record_answers(full_match, fake(), **META), tmp_path / "a.json")
     save_recording(Recording(seed=99, answers={}, **META), tmp_path / "b.json")
     (tmp_path / "notes.txt").write_text("not a recording")
-    assert set(load_directory(tmp_path)) == {11, 99}
+    assert set(load_directory(tmp_path)) == {("en", 11), ("en", 99)}
     assert load_directory(tmp_path / "missing") == {}
 
 
@@ -73,19 +74,20 @@ SHIPPED = load_directory(RECORDINGS_DIR)
 
 
 def test_the_repo_ships_recordings_of_a_real_model():
-    assert 42 in SHIPPED and len(SHIPPED) >= 5
+    assert ("en", 42) in SHIPPED and len([k for k in SHIPPED if k[0] == "en"]) >= 5
     assert all(r.model and r.server.startswith("ollama") and r.answers for r in SHIPPED.values())
 
 
-@pytest.mark.parametrize("seed", sorted(SHIPPED))
-def test_a_shipped_recording_still_passes_the_verifier_when_replayed(seed):
+@pytest.mark.parametrize("lang, seed", sorted(SHIPPED))
+def test_a_shipped_recording_still_passes_the_verifier_when_replayed(lang, seed):
     from matchdesk.config import GeneratorConfig
     from matchdesk.generator import generate_match
 
-    recording = SHIPPED[seed]
+    recording = SHIPPED[(lang, seed)]
+    assert recording.lang == lang
     match = generate_match(GeneratorConfig(seed=seed, period_s=recording.period_s))
     seen = []
-    list(overlay_stream(match.events, match.info, model=RecordedModel(recording), on_explanation=seen.append))
+    list(overlay_stream(match.events, match.info, model=RecordedModel(recording), lang=lang, on_explanation=seen.append))
     model_written = [e for e in seen if e.source in ("model", "model_retry")]
     assert seen and len(model_written) / len(seen) >= 0.9, "rules changed: re-record with scripts/record_model.py"
 
@@ -128,3 +130,34 @@ def test_a_recording_with_the_wrong_number_of_sentences_falls_back_to_the_templa
     goals = [e for e in seen if e.detection.kind == "goal"]
     assert goals and all(e.source == "template" for e in goals)
     assert any(e.source == "model" for e in seen if e.detection.kind != "goal")
+
+
+# ---- Bahasa Indonesia
+def indonesian_fake() -> Narrator:
+    def generate(system, prompt):
+        lines = [ln.split(". ", 1) for ln in prompt.splitlines() if ln[:1].isdigit()]
+        return "\n".join(f"{n}. {text.replace('mencetak gol', 'menjebol gawang')}" for n, text in lines)
+
+    return Narrator(generate, lang="id")
+
+
+def test_an_indonesian_recording_replays_to_the_same_overlays_as_the_live_indonesian_model(full_match):
+    recording = record_answers(full_match, indonesian_fake(), **INDONESIAN_META)
+    assert recording.lang == "id" and recording.answers
+    live = list(overlay_stream(full_match.events, full_match.info, model=indonesian_fake(), lang="id"))
+    replayed = list(overlay_stream(full_match.events, full_match.info, model=RecordedModel(recording), lang="id"))
+    assert replayed == live and key_moment_sources(replayed) == {"model"}
+
+
+def test_an_english_recording_replayed_in_indonesian_mode_is_blocked_by_the_verifier(full_match):
+    english = record_answers(full_match, fake(), **META)
+    seen = []
+    list(overlay_stream(full_match.events, full_match.info, model=RecordedModel(english), lang="id",
+                        on_explanation=seen.append))
+    assert seen and all(e.source == "template" for e in seen)
+
+
+def test_recordings_in_two_languages_for_one_seed_are_kept_apart(tmp_path, full_match):
+    save_recording(record_answers(full_match, fake(), **META), tmp_path / "seed-0011.json")
+    save_recording(record_answers(full_match, indonesian_fake(), **INDONESIAN_META), tmp_path / "seed-0011.id.json")
+    assert set(load_directory(tmp_path)) == {("en", 11), ("id", 11)}

@@ -1,0 +1,87 @@
+{
+  "schema_version": "1",
+  "seed": 30,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "lang": "id",
+  "answers": {
+    "momentum_swing:M0030-00082,M0030-00084,M0030-00088,M0030-00094,M0030-00096": [
+      "4 menit, momentum beralih ke Kesterly Park."
+    ],
+    "momentum_swing:M0030-00182,M0030-00185,M0030-00186,M0030-00187,M0030-00188": [
+      "Pada menit 8, momentum berbalik ke Sennet Wanderers."
+    ],
+    "momentum_swing:M0030-00313,M0030-00315,M0030-00317,M0030-00319,M0030-00322": [
+      "Pada menit 13, momentum berbalik ke Sennet Wanderers."
+    ],
+    "sprint_burst:M0030-00412": [
+      "Pada menit 17, Calric Vashani dari Sennet Wanderers berlari sampai 30 km/jam."
+    ],
+    "sprint_burst:M0030-00520": [
+      "20: Pada menit 20, Caltan Vashford dari Kesterly Park berlari sampai 28 km/jam."
+    ],
+    "pressing_spell:M0030-00461,M0030-00464,M0030-00471,M0030-00477,M0030-00485,M0030-00487,M0030-00489,M0030-00497,M0030-00507": [
+      "Pada menit 21, Sennet Wanderers terus menekan dengan 3,0 tekanan per menit selama tiga menit terakhir."
+    ],
+    "momentum_swing:M0030-00563,M0030-00571,M0030-00574,M0030-00586,M0030-00591": [
+      "Momentum berbalik ke Kesterly Park sekitar menit 24."
+    ],
+    "momentum_swing:M0030-00830,M0030-00836,M0030-00838,M0030-00844,M0030-00848": [
+      "Pada menit 33, momentum berpindah ke Sennet Wanderers."
+    ],
+    "momentum_swing:M0030-00952,M0030-00954,M0030-00957,M0030-00959,M0030-00961": [
+      "38 menit: Momentum beralih ke Kesterly Park."
+    ],
+    "sprint_burst:M0030-00994": [
+      "39: Pada menit 39, Javen Wensen dari Sennet Wanderers berlari sampai 27 km/jam."
+    ],
+    "momentum_swing:M0030-01043,M0030-01045,M0030-01049,M0030-01051,M0030-01057": [
+      "Pada menit 42, momentum berbalik ke Sennet Wanderers."
+    ],
+    "sprint_burst:M0030-01095": [
+      "43: Pada menit 43, Brenric Talani dari Sennet Wanderers berlari sampai 29 km/jam."
+    ],
+    "pressing_spell:M0030-01049,M0030-01051,M0030-01057,M0030-01067,M0030-01082,M0030-01084,M0030-01086,M0030-01093,M0030-01095,M0030-01108,M0030-01110,M0030-01115,M0030-01117,M0030-01119,M0030-01126": [
+      "Pada tiga menit terakhir, Sennet Wanderers terus menekan dengan 5,5 tekanan per menit hingga menit 44."
+    ],
+    "sprint_burst:M0030-01305": [
+      "Pada menit 50, Dalius Wenmere dari Sennet Wanderers berlari sampai 27 km/jam."
+    ],
+    "goal:M0030-01305,M0030-01306,M0030-01307,M0030-01309": [
+      "Pada menit 51, Dalius Wenmere dari Sennet Wanderers mencetak gol dari jarak 2 m, skor menjadi 0-1.",
+      "Tembakan itu melaju 110 km/jam."
+    ],
+    "sprint_burst:M0030-01322": [
+      "51: Pada menit 51, Brenric Talani dari Sennet Wanderers berlari sampai 32 km/jam."
+    ],
+    "momentum_swing:M0030-01371,M0030-01373,M0030-01376,M0030-01378,M0030-01386": [
+      "54 menit: Momentum beralih ke Kesterly Park."
+    ],
+    "sprint_burst:M0030-01527": [
+      "59: Pada menit 59, Brenric Talani dari Sennet Wanderers berlari sampai 27 km/jam."
+    ],
+    "momentum_swing:M0030-01527,M0030-01528,M0030-01533,M0030-01535,M0030-01538": [
+      "Pada menit 60, momentum beralih ke Sennet Wanderers."
+    ],
+    "momentum_swing:M0030-01754,M0030-01757,M0030-01763,M0030-01765,M0030-01768": [
+      "Pada menit 68, momentum beralih ke Kesterly Park."
+    ],
+    "pressing_spell:M0030-01694,M0030-01700,M0030-01703,M0030-01708,M0030-01710,M0030-01712,M0030-01726,M0030-01732,M0030-01744,M0030-01746,M0030-01757,M0030-01763,M0030-01765": [
+      "Pada menit 68, Kesterly Park terus menekan dengan 4,5 tekanan per menit."
+    ],
+    "sprint_burst:M0030-01837": [
+      "Pada menit 71, Javen Wensen dari Sennet Wanderers berlari sampai 27 km/jam."
+    ],
+    "momentum_swing:M0030-01894,M0030-01895,M0030-01896,M0030-01898,M0030-01900": [
+      "Pada menit 74, momentum berpindah ke Sennet Wanderers."
+    ],
+    "momentum_swing:M0030-02099,M0030-02105,M0030-02115,M0030-02116,M0030-02119": [
+      "Pada menit 83, momentum beralih ke Kesterly Park."
+    ],
+    "momentum_swing:M0030-02394,M0030-02395,M0030-02401,M0030-02402,M0030-02404": [
+      "Pada menit 93, momentum berbalik ke Sennet Wanderers."
+    ]
+  }
+}

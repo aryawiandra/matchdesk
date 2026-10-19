@@ -23,16 +23,16 @@ def ollama_version(host: str) -> str:
         return f"ollama {json.load(response)['version']}"
 
 
-def main(seeds: list[int], model: str, out: Path, host: str) -> None:
+def main(seeds: list[int], model: str, out: Path, host: str, lang: str) -> None:
     server = ollama_version(host)
     out.mkdir(parents=True, exist_ok=True)
     for seed in seeds:
         config = GeneratorConfig(seed=seed)
         match = generate_match(config)
-        narrator = Narrator(ollama_generate(model, host))
+        narrator = Narrator(ollama_generate(model, host), lang)
         recording = record_answers(match, narrator, period_s=config.period_s, model=model, server=server,
-                                   recorded_at=datetime.date.today().isoformat())
-        path = out / f"seed-{seed:04d}.json"
+                                   recorded_at=datetime.date.today().isoformat(), lang=lang)
+        path = out / (f"seed-{seed:04d}.json" if lang == "en" else f"seed-{seed:04d}.{lang}.json")
         save_recording(recording, path)
         print(f"seed {seed}: {len(recording.answers)} model-written answers, {narrator.calls} model calls, "
               f"{narrator.seconds:.0f} s -> {path}")
@@ -44,5 +44,6 @@ if __name__ == "__main__":
     parser.add_argument("--model", default="qwen2.5:3b")
     parser.add_argument("--out", type=Path, default=Path("data/recorded"))
     parser.add_argument("--host", default=OLLAMA_URL)
+    parser.add_argument("--lang", choices=("en", "id"), default="en")
     args = parser.parse_args()
-    main(args.seeds, args.model, args.out, args.host)
+    main(args.seeds, args.model, args.out, args.host, args.lang)

@@ -27,6 +27,7 @@ class Recording(Frozen):
     model: str
     server: str
     recorded_at: str
+    lang: str = "en"
     answers: dict[str, tuple[str, ...]]  # detection key -> the sentences the model wrote, in claim order
 
 
@@ -42,6 +43,7 @@ def record_answers(
     model: str,
     server: str,
     recorded_at: str,
+    lang: str = "en",
     thresholds: Thresholds | None = None,
 ) -> Recording:
     """Run the match through the Analyst and the Explainer with a real model; keep what the model wrote and the
@@ -51,11 +53,11 @@ def record_answers(
     for event in match.events:
         ctx.add(event)
         for detection in analyst.ingest(event):
-            result = explain(detection, ctx, model=narrator)
+            result = explain(detection, ctx, model=narrator, lang=lang)
             if result.source in ("model", "model_retry"):
                 answers[detection_key(detection)] = tuple(claim.text for claim in result.claims)
     return Recording(seed=match.truth.seed, period_s=period_s, model=model, server=server,
-                     recorded_at=recorded_at, answers=answers)
+                     recorded_at=recorded_at, lang=lang, answers=answers)
 
 
 class RecordedModel:
@@ -63,12 +65,13 @@ class RecordedModel:
 
     def __init__(self, recording: Recording):
         self._answers = recording.answers
+        self._lang = recording.lang
 
     def __call__(self, detection: Detection, ctx: MatchContext, feedback: Sequence[str]) -> tuple[Claim, ...]:
         sentences = self._answers.get(detection_key(detection))
         if sentences is None:
             raise LookupError("no recorded answer for this detection")
-        base = template_claims(detection, ctx)
+        base = template_claims(detection, ctx, self._lang)
         if len(sentences) != len(base):
             raise ValueError(f"recorded answer has {len(sentences)} sentences, expected {len(base)}")
         return tuple(replace(claim, text=sentence) for claim, sentence in zip(base, sentences))
@@ -82,10 +85,10 @@ def load_recording(path: Path | str) -> Recording:
     return Recording.model_validate_json(Path(path).read_text(encoding="utf-8"))
 
 
-def load_directory(directory: Path | str) -> dict[int, Recording]:
-    """Every `*.json` recording in a folder, by seed. A missing folder means no recordings."""
+def load_directory(directory: Path | str) -> dict[tuple[str, int], Recording]:
+    """Every `*.json` recording in a folder, by (language, seed). A missing folder means no recordings."""
     folder = Path(directory)
     if not folder.is_dir():
         return {}
     recordings = [load_recording(path) for path in sorted(folder.glob("*.json"))]
-    return {recording.seed: recording for recording in recordings}
+    return {(recording.lang, recording.seed): recording for recording in recordings}

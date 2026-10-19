@@ -5,6 +5,7 @@
   "model": "qwen2.5:3b",
   "server": "ollama 0.40.6",
   "recorded_at": "2026-10-19",
+  "lang": "en",
   "answers": {
     "momentum_swing:M0030-00082,M0030-00084,M0030-00088,M0030-00094,M0030-00096": [
       "By minute 4, the momentum shifted in favor of Kesterly Park."

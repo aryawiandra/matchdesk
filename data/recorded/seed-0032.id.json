@@ -1,0 +1,78 @@
+{
+  "schema_version": "1",
+  "seed": 32,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "lang": "id",
+  "answers": {
+    "momentum_swing:M0032-00138,M0032-00140,M0032-00141,M0032-00143,M0032-00146": [
+      "Sekitar menit 7, momentum berpindah ke Marlow Athletic."
+    ],
+    "momentum_swing:M0032-00489,M0032-00493,M0032-00494,M0032-00498,M0032-00499": [
+      "Pada menit 22, momentum berpindah ke Marlow Athletic."
+    ],
+    "pressing_spell:M0032-01039,M0032-01044,M0032-01046,M0032-01069,M0032-01077,M0032-01079,M0032-01082,M0032-01085,M0032-01095,M0032-01097,M0032-01119,M0032-01125": [
+      "Pada menit 46, Marlow Athletic terus menekan dengan 4,5 tekanan per menit."
+    ],
+    "sprint_burst:M0032-01137": [
+      "46: Mirius Haltov dari Marlow Athletic berlari sampai 26 km/jam."
+    ],
+    "momentum_swing:M0032-01157,M0032-01160,M0032-01161,M0032-01162,M0032-01164": [
+      "Pada menit 48, momentum berbalik ke Marlow Athletic."
+    ],
+    "momentum_swing:M0032-01315,M0032-01317,M0032-01324,M0032-01328,M0032-01332": [
+      "Pada menit 54, momentum berpindah ke Brightmoor United."
+    ],
+    "sprint_burst:M0032-01458": [
+      "58: Othvin Osley dari Brightmoor United berlari sampai 28 km/jam."
+    ],
+    "sprint_burst:M0032-01605": [
+      "Pada menit 64, Othvin Osley dari Brightmoor United berlari sampai 29 km/jam."
+    ],
+    "goal:M0032-01749,M0032-01750,M0032-01751,M0032-01753": [
+      "Pada menit 70, Othvin Osley dari Brightmoor United mencetak gol dari jarak 2 m, skor tetap 0-1.",
+      "Tembakan itu melaju 104 km/jam."
+    ],
+    "pressing_spell:M0032-01757,M0032-01767,M0032-01778,M0032-01784,M0032-01787,M0032-01807,M0032-01810,M0032-01813,M0032-01816,M0032-01824": [
+      "Pada menit 73, Brightmoor United terus menekan dengan 4,0 tekanan per menit."
+    ],
+    "sprint_burst:M0032-01827": [
+      "Pada menit 73, Othvin Osley dari Brightmoor United berlari sampai 27 km/jam."
+    ],
+    "goal:M0032-01827,M0032-01829,M0032-01830,M0032-01833": [
+      "Pada menit 73, Othvin Osley dari Brightmoor United mencetak gol dari jarak 3 m, skor kini 0-2.",
+      "Tembakan itu melaju dengan kecepatan 100 km/jam."
+    ],
+    "sprint_burst:M0032-01945": [
+      "Pada menit 78, Othvin Osley dari Brightmoor United berlari sampai 27 km/jam."
+    ],
+    "goal:M0032-01964,M0032-01966,M0032-01967,M0032-01969": [
+      "Pada menit 78, Othvin Osley dari Brightmoor United mencetak gol dari jarak 3 m, skor kini 0-3.",
+      "Tembakan itu melaju 90 km/jam."
+    ],
+    "goal:M0032-01981,M0032-01983,M0032-01984,M0032-01985": [
+      "Pada menit 79, Othvin Osley dari Brightmoor United mencetak gol dari jarak 7 m, skor tetap 0-4.",
+      "Tembakan itu melaju 100 km/jam."
+    ],
+    "big_chance:M0032-02033": [
+      "Pada menit 81, Fentan Ostov dari Marlow Athletic mendapat peluang besar, namun tembakannya dari jarak 6 m ditepis kiper."
+    ],
+    "momentum_swing:M0032-02031,M0032-02032,M0032-02033,M0032-02035,M0032-02036": [
+      "Pada menit 82, momentum berpindah ke Marlow Athletic."
+    ],
+    "big_chance:M0032-02041": [
+      "Pada menit 82, Renlo Martov dari Marlow Athletic mendapat peluang besar dengan tembakan dari jarak 4 m yang melebar."
+    ],
+    "pressing_spell:M0032-02101,M0032-02106,M0032-02108,M0032-02110,M0032-02112,M0032-02115,M0032-02117,M0032-02125,M0032-02127,M0032-02135,M0032-02152,M0032-02157,M0032-02164,M0032-02174,M0032-02186,M0032-02188,M0032-02197,M0032-02199": [
+      "Pada menit 87, Marlow Athletic terus menekan dengan 4,0 tekanan per menit."
+    ],
+    "sprint_burst:M0032-02202": [
+      "Pada menit 87, Nikvin Ravbrek dari Marlow Athletic berlari sampai 28 km/jam."
+    ],
+    "momentum_swing:M0032-02318,M0032-02319,M0032-02320,M0032-02325,M0032-02328": [
+      "Pada menit 92, momentum berbalik ke Brightmoor United."
+    ]
+  }
+}

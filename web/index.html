@@ -10,32 +10,38 @@
 <header>
   <div>
     <h1>MatchDesk</h1>
-    <p class="sub">Evidence-cited match insight on a synthetic feed</p>
+    <p class="sub" data-i18n="subtitle">Evidence-cited match insight on a synthetic feed</p>
   </div>
   <form id="controls" aria-label="Replay controls">
-    <label>Match seed <input id="seed" type="number" min="0" max="9999" value="42"></label>
-    <label>Speed
+    <label><span data-i18n="seed">Match seed</span> <input id="seed" type="number" min="0" max="9999" value="42"></label>
+    <label><span data-i18n="speed">Speed</span>
       <select id="speed">
         <option value="60">60x</option>
         <option value="120" selected>120x</option>
         <option value="400">400x</option>
-        <option value="0">Instant</option>
+        <option value="0" data-i18n="instant">Instant</option>
       </select>
     </label>
-    <label>Explainer
+    <label><span data-i18n="explainer">Explainer</span>
       <select id="explainer">
-        <option value="template" selected>Template</option>
+        <option value="template" selected data-i18n="template">Template</option>
         <option value="recorded" disabled>AI model, recorded run (not available here)</option>
         <option value="model" disabled>AI model, live (not available here)</option>
       </select>
     </label>
-    <label>View
+    <label><span data-i18n="view">View</span>
       <select id="persona">
-        <option value="fan" selected>Fan</option>
-        <option value="analyst">Analyst</option>
+        <option value="fan" selected data-i18n="fan">Fan</option>
+        <option value="analyst" data-i18n="analyst">Analyst</option>
       </select>
     </label>
-    <button type="submit">Replay</button>
+    <label><span data-i18n="language">Language</span>
+      <select id="language">
+        <option value="en" selected>English</option>
+        <option value="id">Bahasa Indonesia</option>
+      </select>
+    </label>
+    <button type="submit" data-i18n="replay">Replay</button>
   </form>
 </header>
 
@@ -62,7 +68,7 @@
         </g>
         <g id="markers"></g>
       </svg>
-      <figcaption>Home attacks right. A filled marker is the home team, a ring is the away team.</figcaption>
+      <figcaption data-i18n="caption">Home attacks right. A filled marker is the home team, a ring is the away team.</figcaption>
     </figure>
     <div id="cards" aria-label="Insights"></div>
   </section>
@@ -71,7 +77,7 @@
   <div id="live" class="sr-only" aria-live="polite"></div>
 </main>
 
-<footer>Synthetic data only. Every club, player and number is generated. Click a sentence to see the events behind it.</footer>
+<footer data-i18n="footer">Synthetic data only. Every club, player and number is generated. Click a sentence to see the events behind it.</footer>
 <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,83 @@
+{
+  "schema_version": "1",
+  "seed": 11,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "lang": "id",
+  "answers": {
+    "momentum_swing:M0011-00090,M0011-00091,M0011-00093,M0011-00096,M0011-00099": [
+      "Pada menit 4, momentum berbalik ke Vorwick Albion."
+    ],
+    "momentum_swing:M0011-00300,M0011-00301,M0011-00303,M0011-00304,M0011-00306": [
+      "Pada menit 13, momentum beralih ke Kesterly Park."
+    ],
+    "big_chance:M0011-00364": [
+      "Pada menit 15, Kesric Osford dari Kesterly Park mendapat peluang besar, namun tembakannya dari jarak 7 m ditepis kiper."
+    ],
+    "pressing_spell:M0011-00306,M0011-00313,M0011-00319,M0011-00331,M0011-00344,M0011-00354,M0011-00366,M0011-00368,M0011-00370,M0011-00382,M0011-00385": [
+      "Pada menit 16, Kesterly Park terus menekan dengan 4,0 tekanan per menit."
+    ],
+    "sprint_burst:M0011-00437": [
+      "Pada menit 17, Torvin Sartov dari Kesterly Park berlari sampai 26 km/jam."
+    ],
+    "sprint_burst:M0011-00694": [
+      "Pada menit 27, Dalen Halsen dari Vorwick Albion berlari sampai 25 km/jam."
+    ],
+    "momentum_swing:M0011-00718,M0011-00721,M0011-00724,M0011-00726,M0011-00727": [
+      "Momentum berbalik ke Vorwick Albion sekitar menit 29."
+    ],
+    "momentum_swing:M0011-00905,M0011-00909,M0011-00912,M0011-00917,M0011-00920": [
+      "Pada menit 36, momentum berpindah ke Vorwick Albion."
+    ],
+    "pressing_spell:M0011-00946,M0011-00956,M0011-00962,M0011-00969,M0011-00971,M0011-00976,M0011-00997,M0011-01005": [
+      "Dalam tiga menit terakhir, Vorwick Albion terus menekan dengan 3,0 tekanan per menit hingga menit 40."
+    ],
+    "goal:M0011-01240,M0011-01241,M0011-01242,M0011-01244": [
+      "Pada menit 48, Kesric Osford dari Kesterly Park mencetak gol dari jarak 2 m.",
+      "Tembakan itu melaju 90 km/jam."
+    ],
+    "momentum_swing:M0011-01236,M0011-01238,M0011-01240,M0011-01242,M0011-01244": [
+      "49 Menit: Momentum beralih ke Kesterly Park."
+    ],
+    "sprint_burst:M0011-01250": [
+      "49: Pada menit 49, Tordan Quinford dari Kesterly Park berlari sampai 26 km/jam."
+    ],
+    "sprint_burst:M0011-01344": [
+      "52: Arvin Talbrek dari Kesterly Park berlari sampai 28 km/jam."
+    ],
+    "sprint_burst:M0011-01357": [
+      "Pada menit 52, Syllo Vashwick dari Kesterly Park berlari sampai 27 km/jam."
+    ],
+    "pressing_spell:M0011-01282,M0011-01285,M0011-01312,M0011-01314,M0011-01316,M0011-01338,M0011-01344,M0011-01346,M0011-01351,M0011-01353,M0011-01355,M0011-01357,M0011-01362,M0011-01367,M0011-01377,M0011-01381,M0011-01383": [
+      "Pada menit 53, Kesterly Park terus menekan dengan 7,0 tekanan per menit."
+    ],
+    "momentum_swing:M0011-01524,M0011-01529,M0011-01530,M0011-01534,M0011-01535": [
+      "Pada menit 58, momentum berpindah ke Vorwick Albion."
+    ],
+    "goal:M0011-01616,M0011-01617,M0011-01618,M0011-01619": [
+      "Pada menit 60, Arar Talwick dari Vorwick Albion mencetak gol dari jarak 2 m, skor menjadi 1-1.",
+      "Tembakan itu melaju 107 km/jam."
+    ],
+    "sprint_burst:M0011-01737": [
+      "Pada menit 64, Loren Haltov dari Vorwick Albion berlari sampai 30 km/jam."
+    ],
+    "momentum_swing:M0011-01983,M0011-01984,M0011-01986,M0011-01987,M0011-01988": [
+      "77, momentum beralih ke Kesterly Park."
+    ],
+    "momentum_swing:M0011-02083,M0011-02085,M0011-02090,M0011-02092,M0011-02093": [
+      "Pada menit 81, momentum beralih ke Kesterly Park."
+    ],
+    "goal:M0011-02183,M0011-02184,M0011-02185,M0011-02186": [
+      "Pada menit 85, Fentan Draford dari Kesterly Park mencetak gol dari jarak 1 m, skor menjadi 1-2.",
+      "Tembakan itu melaju 107 km/jam."
+    ],
+    "momentum_swing:M0011-02264,M0011-02265,M0011-02267,M0011-02268,M0011-02269": [
+      "Pada menit 89, momentum berbalik ke Vorwick Albion."
+    ],
+    "sprint_burst:M0011-02338": [
+      "Pada menit 92, Arar Talwick dari Vorwick Albion berlari sampai 31 km/jam."
+    ]
+  }
+}

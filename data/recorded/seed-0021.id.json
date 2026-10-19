@@ -1,0 +1,83 @@
+{
+  "schema_version": "1",
+  "seed": 21,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "lang": "id",
+  "answers": {
+    "momentum_swing:M0021-00135,M0021-00140,M0021-00141,M0021-00142,M0021-00143": [
+      "Sekitar menit 6, momentum berpindah ke Telmar City."
+    ],
+    "momentum_swing:M0021-00269,M0021-00272,M0021-00276,M0021-00278,M0021-00279": [
+      "Pada menit 11, momentum berpindah ke Telmar City."
+    ],
+    "momentum_swing:M0021-00482,M0021-00483,M0021-00484,M0021-00485,M0021-00486": [
+      "Pada menit 22, momentum beralih ke Corvale FC."
+    ],
+    "momentum_swing:M0021-00632,M0021-00636,M0021-00640,M0021-00641,M0021-00643": [
+      "Momentum berbalik ke Telmar City sekitar menit 29."
+    ],
+    "momentum_swing:M0021-00749,M0021-00750,M0021-00752,M0021-00753,M0021-00755": [
+      "35: Momentum beralih ke Telmar City sekitar menit 35."
+    ],
+    "pressing_spell:M0021-00814,M0021-00831,M0021-00836,M0021-00846,M0021-00848,M0021-00860,M0021-00871,M0021-00874,M0021-00876": [
+      "Selama tiga menit terakhir, Corvale FC terus menekan dengan 4,0 tekanan per menit hingga menit 39."
+    ],
+    "sprint_burst:M0021-00895": [
+      "Pada menit 40, Othlo Draani dari Telmar City berlari sampai 26 km/jam."
+    ],
+    "pressing_spell:M0021-01181,M0021-01191,M0021-01204,M0021-01215,M0021-01218,M0021-01225,M0021-01240,M0021-01242,M0021-01244,M0021-01269": [
+      "Pada menit 54, Corvale FC terus menekan dengan 3,5 tekanan per menit selama tiga menit terakhir."
+    ],
+    "sprint_burst:M0021-01275": [
+      "Pada menit 54, Nikvin Sarford dari Telmar City berlari sampai 27 km/jam."
+    ],
+    "sprint_burst:M0021-01368": [
+      "Pada menit 57, Renmo Draley dari Telmar City berlari sampai 29 km/jam."
+    ],
+    "pressing_spell:M0021-01282,M0021-01288,M0021-01310,M0021-01312,M0021-01319,M0021-01333,M0021-01335,M0021-01346,M0021-01351,M0021-01357,M0021-01368": [
+      "57: Telmar City terus menekan, 4,5 tekanan per menit, hingga menit 57."
+    ],
+    "momentum_swing:M0021-01435,M0021-01440,M0021-01444,M0021-01445,M0021-01447": [
+      "59: Momentum beralih ke Corvale FC sekitar menit itu."
+    ],
+    "goal:M0021-01593,M0021-01594,M0021-01595,M0021-01598": [
+      "Pada menit 64, Nikdan Talndale dari Corvale FC mencetak gol dari jarak 3 m, skor menjadi 1-0.",
+      "Tembakan itu melaju 104 km/jam."
+    ],
+    "momentum_swing:M0021-01590,M0021-01591,M0021-01593,M0021-01594,M0021-01598": [
+      "Pada menit 65, momentum beralih ke Corvale FC."
+    ],
+    "pressing_spell:M0021-01543,M0021-01545,M0021-01559,M0021-01571,M0021-01573,M0021-01575,M0021-01586,M0021-01589,M0021-01596,M0021-01614": [
+      "Selama tiga menit terakhir, Telmar City terus menekan dengan 3,5 tekanan per menit hingga menit 66."
+    ],
+    "goal:M0021-01706,M0021-01707,M0021-01710,M0021-01711": [
+      "Pada menit 70, Sylek Sarani dari Corvale FC mencetak gol dari jarak 7 m, skor menjadi 2-0.",
+      "Tembakan itu melaju 86 km/jam."
+    ],
+    "goal:M0021-01727,M0021-01730,M0021-01731,M0021-01732": [
+      "Pada menit 71, Sylek Sarani dari Corvale FC mencetak gol dari jarak 8 m.",
+      "Tembakan itu melaju 75 km/jam."
+    ],
+    "sprint_burst:M0021-01738": [
+      "Pada menit 72, Nikdan Talndale dari Corvale FC berlari sampai 29 km/jam."
+    ],
+    "sprint_burst:M0021-01928": [
+      "Pada menit 79, Dalvin Sarovic dari Corvale FC berlari sampai 27 km/jam."
+    ],
+    "sprint_burst:M0021-01984": [
+      "Pada menit 81, Dalvin Sarovic dari Corvale FC berlari sampai 31 km/jam."
+    ],
+    "momentum_swing:M0021-02053,M0021-02054,M0021-02061,M0021-02062,M0021-02063": [
+      "Pada menit 84, momentum berpindah ke Telmar City."
+    ],
+    "sprint_burst:M0021-02109": [
+      "Pada menit 86, Callo Brekani dari Telmar City berlari sampai 30 km/jam."
+    ],
+    "sprint_burst:M0021-02317": [
+      "Pada menit 93, Sylek Sarani dari Corvale FC berlari sampai 26 km/jam."
+    ]
+  }
+}

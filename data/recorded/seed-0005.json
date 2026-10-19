@@ -5,6 +5,7 @@
   "model": "qwen2.5:3b",
   "server": "ollama 0.40.6",
   "recorded_at": "2026-10-19",
+  "lang": "en",
   "answers": {
     "sprint_burst:M0005-00017": [
       "In the opening minute, Fendan Ostov of Sennet Wanderers reaches a speed of 32 km/h."

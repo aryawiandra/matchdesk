@@ -35,6 +35,22 @@ SYSTEM = (
     "Input: 1. Alex Doe (Red FC) reached 31 km/h in minute 12.\n"
     "Output: 1. In minute 12 Alex Doe of Red FC hits 31 km/h on the run."
 )
+SYSTEM_ID = (
+    "Kamu penulis siaran sepak bola. Kamu menerima kalimat bernomor. Tulis ulang setiap kalimat menjadi satu kalimat "
+    "siaran yang singkat dan alami dalam bahasa Indonesia, dengan kata-kata yang berbeda: ubah struktur kalimat dan "
+    "pilihan katanya, jangan menyalin. Aturan: pertahankan setiap angka, setiap nama pemain, dan setiap nama klub "
+    "persis seperti tertulis; jangan menambah angka, nama, klub, atau fakta; jangan memakai kata hiperbola seperti "
+    "luar biasa, spektakuler, atau dramatis; jangan menjelaskan sebab. Balas dengan tepat satu baris per kalimat, "
+    "dengan urutan yang sama, berformat '1. <kalimat>'. Jangan menulis hal lain.\n"
+    "Contoh gaya (nama dan angka di bawah hanya contoh):\n"
+    "Masukan: 1. Sam Roe (Blue FC) mencetak gol pada menit 40 dari jarak 6 m, skor menjadi 1-0.\n"
+    "Keluaran: 1. Menit 40: Sam Roe dari Blue FC mencetak gol dari jarak 6 m dan skor menjadi 1-0.\n"
+    "Masukan: 1. Red FC menekan dengan 3,5 tekanan per menit selama tiga menit terakhir, hingga menit 29.\n"
+    "Keluaran: 1. Red FC terus menekan, 3,5 tekanan per menit dalam tiga menit terakhir hingga menit 29.\n"
+    "Masukan: 1. Alex Doe (Red FC) berlari hingga 31 km/jam pada menit 12.\n"
+    "Keluaran: 1. Pada menit 12, Alex Doe dari Red FC berlari sampai 31 km/jam."
+)
+SYSTEMS = {"en": SYSTEM, "id": SYSTEM_ID}
 NUMBERED_LINE = re.compile(r"^\s*(\d+)\s*[.)]\s*(.+?)\s*$")
 QUOTES = "\"'“”‘’ "
 DEFAULT_TEMPERATURE = 0.3
@@ -42,11 +58,19 @@ DEFAULT_SEED = 7
 MAX_NEW_TOKENS = 220
 
 
-def build_prompt(base: Sequence[Claim], feedback: Sequence[str]) -> str:
-    prompt = "Rewrite these sentences:\n" + "\n".join(f"{i}. {claim.text}" for i, claim in enumerate(base, start=1))
+PROMPT_WORDS = {
+    "en": ("Rewrite these sentences:",
+           "Your previous answer was rejected for these reasons: {reasons}. Rewrite again and fix exactly those problems."),
+    "id": ("Tulis ulang kalimat-kalimat ini:",
+           "Jawabanmu sebelumnya ditolak karena: {reasons}. Tulis ulang dan perbaiki tepat masalah itu."),
+}
+
+
+def build_prompt(base: Sequence[Claim], feedback: Sequence[str], lang: str = "en") -> str:
+    header, rejected = PROMPT_WORDS[lang]
+    prompt = header + "\n" + "\n".join(f"{i}. {claim.text}" for i, claim in enumerate(base, start=1))
     if feedback:
-        prompt += ("\n\nYour previous answer was rejected for these reasons: " + "; ".join(feedback)
-                   + ". Rewrite again and fix exactly those problems.")
+        prompt += "\n\n" + rejected.format(reasons="; ".join(feedback))
     return prompt
 
 
@@ -67,16 +91,19 @@ def parse_numbered(text: str, expected: int) -> tuple[str, ...]:
 class Narrator:
     """A `Model` for `explainer.explain` and the workflow: (detection, context, feedback) -> claims."""
 
-    def __init__(self, generate: Generate):
+    def __init__(self, generate: Generate, lang: str = "en"):
+        if lang not in SYSTEMS:
+            raise ValueError(f"no prompts for language {lang!r}")
         self._generate = generate
+        self._lang = lang
         self.calls = 0
         self.seconds = 0.0
 
     def __call__(self, detection: Detection, ctx: MatchContext, feedback: tuple[str, ...]) -> tuple[Claim, ...]:
-        base = template_claims(detection, ctx)
+        base = template_claims(detection, ctx, self._lang)
         started = time.perf_counter()
         try:
-            text = self._generate(SYSTEM, build_prompt(base, feedback))
+            text = self._generate(SYSTEMS[self._lang], build_prompt(base, feedback, self._lang))
         finally:
             self.calls += 1
             self.seconds += time.perf_counter() - started
@@ -84,14 +111,14 @@ class Narrator:
         return tuple(replace(claim, text=sentence) for claim, sentence in zip(base, sentences))
 
 
-def narrator_from_spec(spec: str | None, host: str | None = None) -> Narrator | None:
+def narrator_from_spec(spec: str | None, host: str | None = None, lang: str = "en") -> Narrator | None:
     """`ollama:<model>` builds a narrator on a local Ollama model; blank means no model."""
     if spec is None or not spec.strip():
         return None
     provider, _, model = spec.strip().partition(":")
     if provider != "ollama" or not model:
         raise ValueError(f"MATCHDESK_MODEL must look like 'ollama:<model>', got {spec!r}")
-    return Narrator(ollama_generate(model, host))
+    return Narrator(ollama_generate(model, host), lang)
 
 
 def ollama_generate(

@@ -101,13 +101,13 @@ def test_capabilities_say_whether_a_model_or_a_recording_is_available(client):
     assert client.get("/capabilities").json() == {"model": False, "recorded": None, "max_streams": 20}
     with_model = TestClient(create_app(model=fake_narrator(), max_streams=5))
     assert with_model.get("/capabilities").json() == {"model": True, "recorded": None, "max_streams": 5}
-    with_recording = TestClient(create_app(recordings={SEED: recording_for()}))
+    with_recording = TestClient(create_app(recordings={("en", SEED): recording_for()}))
     assert with_recording.get("/capabilities").json()["recorded"] == {
-        "seeds": [SEED], "model": "fake:1", "recorded_at": "2026-10-19", "period_s": PERIOD_S}
+        "seeds": {"en": [SEED]}, "model": "fake:1", "recorded_at": "2026-10-19", "period_s": PERIOD_S}
 
 
 def test_the_recorded_explainer_replays_a_models_sentences_through_the_verifier():
-    recorded = TestClient(create_app(recordings={SEED: recording_for()}))
+    recorded = TestClient(create_app(recordings={("en", SEED): recording_for()}))
     with recorded.stream("GET", f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=recorded") as response:
         assert response.status_code == 200
         moments = [p for p in decode_frames(response.iter_lines()) if p["type"] == "key_moment"]
@@ -118,11 +118,11 @@ def test_the_recorded_explainer_replays_a_models_sentences_through_the_verifier(
 
 
 @pytest.mark.parametrize("query, fragment", [
-    (f"seed=6&period_s={PERIOD_S}", "no recording for seed 6"),
+    (f"seed=6&period_s={PERIOD_S}", "no recording for seed 6 in language en"),
     (f"seed={SEED}&period_s=600.0", "recorded for"),
 ])
 def test_the_recorded_explainer_says_clearly_when_it_has_nothing_for_the_request(query, fragment):
-    recorded = TestClient(create_app(recordings={SEED: recording_for()}))
+    recorded = TestClient(create_app(recordings={("en", SEED): recording_for()}))
     seed = query.split("&")[0].split("=")[1]
     rest = query.split("&", 1)[1]
     response = recorded.get(f"/overlays/seed/{seed}?{rest}&speed=0&explainer=recorded")
@@ -207,3 +207,29 @@ def test_the_app_reads_its_model_from_the_environment(monkeypatch):
 
 def test_the_api_routes_still_win_over_the_static_mount(client):
     assert client.get("/healthz").json() == {"status": "ok"}
+
+
+def test_the_recorded_explainer_serves_the_requested_language():
+    from matchdesk.recorded import record_answers
+    from tests.test_recorded import indonesian_fake
+
+    match = generate_match(GeneratorConfig(seed=SEED, period_s=PERIOD_S))
+    indonesian = record_answers(match, indonesian_fake(), period_s=PERIOD_S, model="fake:1", server="test",
+                                recorded_at="2026-10-19", lang="id")
+    client_ = TestClient(create_app(recordings={("en", SEED): recording_for(), ("id", SEED): indonesian}))
+    with client_.stream("GET", f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=recorded&lang=id") as response:
+        assert response.status_code == 200
+        moments = [p for p in decode_frames(response.iter_lines()) if p["type"] == "key_moment"]
+    assert moments and {p["lang"] for p in moments} == {"id"} and {p["payload"]["source"] for p in moments} == {"model"}
+    assert client_.get("/capabilities").json()["recorded"]["seeds"] == {"en": [SEED], "id": [SEED]}
+    only_english = TestClient(create_app(recordings={("en", SEED): recording_for()}))
+    response = only_english.get(f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=recorded&lang=id")
+    assert response.status_code == 400 and "language id" in response.json()["detail"]
+
+
+def test_the_renderer_speaks_both_languages(client):
+    page, script = client.get("/").text, client.get("/app.js").text
+    assert 'id="language"' in page and 'value="id"' in page and "Bahasa Indonesia" in page
+    for phrase in ("Peluang besar", "Perubahan momentum", "Ditulis model AI, diperiksa Verifier", "km/jam"):
+        assert phrase in script
+    assert "lang: state.lang" in script  # the chosen language reaches the feed

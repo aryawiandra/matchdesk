@@ -5,6 +5,7 @@
   "model": "qwen2.5:3b",
   "server": "ollama 0.40.6",
   "recorded_at": "2026-10-19",
+  "lang": "en",
   "answers": {
     "pressing_spell:M0007-00325,M0007-00329,M0007-00337,M0007-00339,M0007-00341,M0007-00362,M0007-00370,M0007-00377,M0007-00384,M0007-00388,M0007-00390": [
       "Over the last three minutes, Ashcombe Town maintained a pressure rate of 3.5 per minute up to minute 14."

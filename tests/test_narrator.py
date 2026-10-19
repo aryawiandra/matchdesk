@@ -3,7 +3,9 @@ import pytest
 
 from matchdesk import narrator as narrator_module
 from matchdesk.explainer import explain, template_claims
-from matchdesk.narrator import SYSTEM, Narrator, build_prompt, narrator_from_spec, ollama_generate, parse_numbered
+from matchdesk.narrator import (
+    SYSTEM, SYSTEMS, Narrator, build_prompt, narrator_from_spec, ollama_generate, parse_numbered,
+)
 from matchdesk.verifier import verify_claims
 from tests.test_explainer import first_of, replay
 
@@ -184,3 +186,39 @@ def test_ollama_generate_builds_an_agent_framework_agent_and_returns_its_text(mo
     assert seen["client"] == ("http://localhost:11434", "qwen2.5:3b")
     assert seen["agent"][1] == "SYSTEM TEXT" and seen["agent"][2]["temperature"] == 0.0 and seen["agent"][2]["seed"] == 7
     assert seen["prompt"] == "PROMPT TEXT"
+
+
+# ---- Bahasa Indonesia
+def test_the_indonesian_prompt_and_system_text_are_in_indonesian(goal):
+    detection, context = goal
+    base = template_claims(detection, context, lang="id")
+    prompt = build_prompt(base, (), lang="id")
+    assert prompt.startswith("Tulis ulang") and all(f"{i}. {c.text}" in prompt for i, c in enumerate(base, start=1))
+    assert "Jawabanmu sebelumnya ditolak" in build_prompt(base, ("unsupported number 97",), lang="id")
+    assert "bahasa Indonesia" in SYSTEMS["id"] and SYSTEMS["en"] == SYSTEM
+
+
+def test_an_indonesian_narrator_rewords_the_indonesian_template_and_is_accepted(goal):
+    detection, context = goal
+    seen = {}
+
+    def model(system, prompt):
+        seen["system"] = system
+        lines = [ln.split(". ", 1) for ln in prompt.splitlines() if ln[:1].isdigit()]
+        return "\n".join(f"{n}. {text.replace('mencetak gol', 'menjebol gawang')}" for n, text in lines)
+
+    result = explain(detection, context, model=Narrator(model, lang="id"), lang="id")
+    assert result.source == "model" and all(c.lang == "id" for c in result.claims)
+    assert "bahasa Indonesia" in seen["system"] and "menjebol gawang" in result.claims[0].text
+
+
+def test_an_indonesian_narrator_that_answers_in_english_is_blocked(goal):
+    detection, context = goal
+    result = explain(detection, context, model=Narrator(lambda s, p: reword(build_prompt(
+        template_claims(detection, context), ()))), max_retries=0, lang="id")
+    assert result.source == "template"
+
+
+def test_the_spec_builds_a_narrator_for_a_language(monkeypatch):
+    monkeypatch.setattr(narrator_module, "ollama_generate", lambda model, host=None, **kw: (lambda s, p: "1. ok"))
+    assert narrator_from_spec("ollama:qwen2.5:3b", lang="id")._lang == "id"

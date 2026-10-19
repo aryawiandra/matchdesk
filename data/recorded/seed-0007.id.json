@@ -1,0 +1,69 @@
+{
+  "schema_version": "1",
+  "seed": 7,
+  "period_s": 2700.0,
+  "model": "qwen2.5:3b",
+  "server": "ollama 0.40.6",
+  "recorded_at": "2026-10-19",
+  "lang": "id",
+  "answers": {
+    "pressing_spell:M0007-00325,M0007-00329,M0007-00337,M0007-00339,M0007-00341,M0007-00362,M0007-00370,M0007-00377,M0007-00384,M0007-00388,M0007-00390": [
+      "Pada tiga menit terakhir, Ashcombe Town terus menekan dengan 3,5 tekanan per menit hingga menit 14."
+    ],
+    "momentum_swing:M0007-00858,M0007-00859,M0007-00860,M0007-00861,M0007-00862": [
+      "34 menit: Momentum beralih ke Corvale FC."
+    ],
+    "sprint_burst:M0007-00915": [
+      "Pada menit 35, Fenmo Breksen dari Ashcombe Town berlari hingga 28 km/jam."
+    ],
+    "sprint_burst:M0007-00998": [
+      "Pada menit 38, Mirtan Kolani dari Ashcombe Town berlari sampai 28 km/jam."
+    ],
+    "sprint_burst:M0007-01015": [
+      "39: Pada menit 39, Fenvin Brekmere dari Ashcombe Town berlari sampai 26 km/jam."
+    ],
+    "momentum_swing:M0007-01473,M0007-01478,M0007-01481,M0007-01486,M0007-01488": [
+      "Pada menit 58, momentum beralih ke Corvale FC."
+    ],
+    "goal:M0007-01535,M0007-01537,M0007-01541,M0007-01543": [
+      "Pada menit 60, Sylmo Ravndale dari Corvale FC mencetak gol dari jarak 4 m, skor menjadi 0-1.",
+      "Tembakan itu melaju 89 km/jam."
+    ],
+    "momentum_swing:M0007-01559,M0007-01564,M0007-01566,M0007-01568,M0007-01569": [
+      "Pada menit 62, momentum beralih ke Corvale FC."
+    ],
+    "sprint_burst:M0007-01605": [
+      "Pada menit 63, Othvin Osbrek dari Ashcombe Town berlari sampai 25 km/jam."
+    ],
+    "pressing_spell:M0007-01615,M0007-01617,M0007-01622,M0007-01629,M0007-01644,M0007-01646,M0007-01651,M0007-01653,M0007-01655,M0007-01657,M0007-01665,M0007-01667,M0007-01690": [
+      "Pada menit 66, Ashcombe Town terus menekan dengan 4,5 tekanan per menit."
+    ],
+    "momentum_swing:M0007-01687,M0007-01690,M0007-01691,M0007-01693,M0007-01695": [
+      "Pada menit 66, momentum berpindah ke Ashcombe Town."
+    ],
+    "sprint_burst:M0007-01801": [
+      "Pada menit 69, Fenmo Breksen dari Ashcombe Town berlari sampai 32 km/jam."
+    ],
+    "momentum_swing:M0007-01896,M0007-01898,M0007-01904,M0007-01907,M0007-01917": [
+      "Pada menit 74, momentum beralih ke Corvale FC."
+    ],
+    "momentum_swing:M0007-02061,M0007-02063,M0007-02066,M0007-02067,M0007-02069": [
+      "Pada menit 80, momentum beralih ke Corvale FC."
+    ],
+    "sprint_burst:M0007-02238": [
+      "Pada menit 86, Loren Halley dari Ashcombe Town berlari sampai 30 km/jam."
+    ],
+    "momentum_swing:M0007-02238,M0007-02241,M0007-02242,M0007-02244,M0007-02245": [
+      "Pada menit 87, momentum berpindah ke Ashcombe Town."
+    ],
+    "pressing_spell:M0007-02230,M0007-02238,M0007-02241,M0007-02255,M0007-02259,M0007-02265,M0007-02278,M0007-02283,M0007-02285,M0007-02288,M0007-02290,M0007-02303": [
+      "Pada menit 89, Ashcombe Town terus menekan dengan 4,0 tekanan per menit."
+    ],
+    "sprint_burst:M0007-02439": [
+      "Pada menit 93, Veldan Vashley dari Corvale FC berlari sampai 28 km/jam."
+    ],
+    "momentum_swing:M0007-02442,M0007-02444,M0007-02445,M0007-02448,M0007-02452": [
+      "Pada menit 94, momentum beralih ke Corvale FC."
+    ]
+  }
+}

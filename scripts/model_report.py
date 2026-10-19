@@ -23,16 +23,20 @@ def reason_kind(reason: str) -> str:
     return next((m.strip() for m in REASON_MARKERS if m in reason), reason[:40])
 
 
-LOOSE_SYSTEM = ("You are an excited football commentator. Rewrite each numbered sentence as one lively sentence. "
-                "Reply with one line per sentence formatted as '1. <sentence>'.")
+LOOSE_SYSTEMS = {
+    "en": ("You are an excited football commentator. Rewrite each numbered sentence as one lively sentence. "
+           "Reply with one line per sentence formatted as '1. <sentence>'."),
+    "id": ("Kamu komentator sepak bola yang bersemangat. Tulis ulang setiap kalimat bernomor menjadi satu kalimat yang "
+           "hidup. Balas satu baris per kalimat berformat '1. <kalimat>'."),
+}
 
 
-def loose(generate):
+def loose(generate, lang):
     """The same model with a careless prompt: no rules about numbers, names, pronouns or hype."""
-    return lambda system, prompt: generate(LOOSE_SYSTEM, prompt)
+    return lambda system, prompt: generate(LOOSE_SYSTEMS[lang], prompt)
 
 
-def main(seeds: int, first_seed: int, model_name: str, show: int, careless: bool) -> None:
+def main(seeds: int, first_seed: int, model_name: str, show: int, careless: bool, lang: str) -> None:
     thresholds = load_thresholds()
     sources, reasons = Counter(), Counter()
     calls = rejected_calls = explained = model_answers = reworded = 0
@@ -42,12 +46,12 @@ def main(seeds: int, first_seed: int, model_name: str, show: int, careless: bool
         match = generate_match(GeneratorConfig(seed=seed))
         ctx, analyst = MatchContext(match.info), Analyst(thresholds)
         generate = ollama_generate(model_name)
-        narrator = Narrator(loose(generate) if careless else generate)
+        narrator = Narrator(loose(generate, lang) if careless else generate, lang)
         for event in match.events:
             ctx.add(event)
             for detection in analyst.ingest(event):
                 before = narrator.seconds
-                result = explain(detection, ctx, model=narrator)
+                result = explain(detection, ctx, model=narrator, lang=lang)
                 latencies.append(narrator.seconds - before)
                 explained += 1
                 sources[result.source] += 1
@@ -57,12 +61,12 @@ def main(seeds: int, first_seed: int, model_name: str, show: int, careless: bool
                     reasons.update(reason_kind(r) for r in failure.reasons)
                 if result.source != "template":
                     model_answers += 1
-                    changed = [c.text for c in result.claims] != [c.text for c in template_claims(detection, ctx)]
+                    changed = [c.text for c in result.claims] != [c.text for c in template_claims(detection, ctx, lang)]
                     reworded += changed
                     if changed and len(examples) < show:
                         examples.append((detection.kind, result.claims[0].text, result.source))
     mode = "careless prompt (no rules)" if careless else "strict prompt"
-    print(f"model {model_name}, {mode}; seeds {first_seed}..{first_seed + seeds - 1}; {explained} detections explained")
+    print(f"model {model_name}, language {lang}, {mode}; seeds {first_seed}..{first_seed + seeds - 1}; {explained} detections explained")
     for name in ("model", "model_retry", "template"):
         print(f"  {name:12s} {sources[name]:4d}  {sources[name] / explained:6.1%}")
     print(f"  model calls {calls}, rejected {rejected_calls} ({rejected_calls / calls:.1%} of calls)")
@@ -83,5 +87,6 @@ if __name__ == "__main__":
     parser.add_argument("--model", default="qwen2.5:3b")
     parser.add_argument("--show", type=int, default=4)
     parser.add_argument("--careless", action="store_true", help="use a prompt without rules, to see the gate work")
+    parser.add_argument("--lang", choices=("en", "id"), default="en")
     args = parser.parse_args()
-    main(args.seeds, args.first_seed, args.model, args.show, args.careless)
+    main(args.seeds, args.first_seed, args.model, args.show, args.careless, args.lang)

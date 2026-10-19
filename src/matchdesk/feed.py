@@ -112,12 +112,13 @@ async def _overlay_frames(
         yield encode_frame(overlay.model_dump(mode="json"))
 
 
-def _recorded_model(recordings: Mapping[int, Recording], seed: int, period_s: float) -> Model:
+def _recorded_model(recordings: Mapping[tuple[str, int], Recording], seed: int, period_s: float, lang: str) -> Model:
     if not recordings:
         raise HTTPException(status_code=400, detail="no recordings are available on this server")
-    recording = recordings.get(seed)
+    recording = recordings.get((lang, seed))
     if recording is None:
-        raise HTTPException(status_code=400, detail=f"no recording for seed {seed}; recorded seeds: {sorted(recordings)}")
+        known = sorted(s for (language, s) in recordings if language == lang)
+        raise HTTPException(status_code=400, detail=f"no recording for seed {seed} in language {lang}; recorded seeds: {known}")
     if recording.period_s != period_s:
         raise HTTPException(status_code=400, detail=f"seed {seed} was recorded for period_s={recording.period_s}")
     return RecordedModel(recording)
@@ -127,7 +128,7 @@ def create_app(
     model: Model | None = None,
     max_streams: int = DEFAULT_MAX_STREAMS,
     max_model_streams: int = DEFAULT_MAX_MODEL_STREAMS,
-    recordings: Mapping[int, Recording] | None = None,
+    recordings: Mapping[tuple[str, int], Recording] | None = None,
 ) -> FastAPI:
     app = FastAPI(title="MatchDesk feed")
     streams, model_streams = Slots(max_streams), Slots(max_model_streams)
@@ -140,9 +141,10 @@ def create_app(
     @app.get("/capabilities")
     async def capabilities() -> dict:
         first = recordings[min(recordings)] if recordings else None
+        by_language = {lang: sorted(s for (language, s) in recordings if language == lang)
+                       for lang in sorted({language for language, _ in recordings})}
         recorded = None if first is None else {
-            "seeds": sorted(recordings), "model": first.model, "recorded_at": first.recorded_at,
-            "period_s": first.period_s}
+            "seeds": by_language, "model": first.model, "recorded_at": first.recorded_at, "period_s": first.period_s}
         return {"model": model is not None, "recorded": recorded, "max_streams": max_streams}
 
     @app.get("/feed/seed/{seed}")
@@ -175,7 +177,7 @@ def create_app(
             raise HTTPException(status_code=400, detail="no model is configured on this server (set MATCHDESK_MODEL)")
         chosen: Model | None = model if use_model else None
         if explainer == "recorded":
-            chosen = _recorded_model(recordings, seed, period_s)
+            chosen = _recorded_model(recordings, seed, period_s, lang)
         release = take_slots(streams, *([model_streams] if use_model else []))
         if release is None:
             raise HTTPException(status_code=429, detail="too many open streams, try again shortly")

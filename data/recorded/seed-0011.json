@@ -5,6 +5,7 @@
   "model": "qwen2.5:3b",
   "server": "ollama 0.40.6",
   "recorded_at": "2026-10-19",
+  "lang": "en",
   "answers": {
     "momentum_swing:M0011-00090,M0011-00091,M0011-00093,M0011-00096,M0011-00099": [
       "Around minute 4, momentum shifted in favor of Vorwick Albion."

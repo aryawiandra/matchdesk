@@ -5,6 +5,7 @@
   "model": "qwen2.5:3b",
   "server": "ollama 0.40.6",
   "recorded_at": "2026-10-19",
+  "lang": "en",
   "answers": {
     "sprint_burst:M0042-00337": [
       "In minute 13, Syltan Marovic of Marlow Athletic reached a speed of 26 km/h."
