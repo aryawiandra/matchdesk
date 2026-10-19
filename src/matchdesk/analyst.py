@@ -181,10 +181,12 @@ class Analyst:
         delta = m_now - before
         if abs(delta) < SWING_DELTA:
             return []
-        self._last_swing_s = g
         team = "H" if delta > 0 else "A"
-        return [Detection("momentum_swing", team, g - SWING_LOOKBACK_S, g,
-                          self._swing_evidence(team, g), None, min(1.0, abs(delta)), g)]
+        evidence = self._swing_evidence(team, g)
+        if not evidence:  # momentum drifted back to neutral without play: nothing to cite, so no claim
+            return []
+        self._last_swing_s = g
+        return [Detection("momentum_swing", team, g - SWING_LOOKBACK_S, g, evidence, None, min(1.0, abs(delta)), g)]
 
     def _swing_evidence(self, team: str, g: float) -> tuple[str, ...]:
         weighted = [e.event_id for e in self._events

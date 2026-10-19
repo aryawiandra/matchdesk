@@ -125,4 +125,32 @@ Matching (`src/matchdesk/matching.py`) is one-to-one per kind, same team, time-i
 | pressing_spell | 118 | 125 | 0.56 | 0.59 | 0.52 / 0.50 |
 | sprint_burst | 63 | 191 | 0.31 | 0.94 | 0.32 / 1.00 |
 
-How to read these: `goal` is trivial (the shot outcome is in the stream). `big_chance` is a consistency check (section 2b), and its truth sample is small (14-17). The other three are limited by what the stream shows. A swing or spell is a statistical inference from event rates. A sprint needs 3 s of sustained speed in the hidden tracking, while the stream shows one speed reading per event, so many single high readings are not sustained runs and precision stays near 0.3. Claims built on a `sprint_burst` therefore say "reached X km/h", which the event field proves, and never "sustained sprint". Analyst replay time: 0.06 s per full match [M: same run].
+How to read these: `goal` is trivial (the shot outcome is in the stream). `big_chance` is a consistency check (section 2b), and its truth sample is small (14-17). The other three are limited by what the stream shows. A swing or spell is a statistical inference from event rates. A sprint needs 3 s of sustained speed in the hidden tracking, while the stream shows one speed reading per event, so many single high readings are not sustained runs and precision stays near 0.3. Claims built on a `sprint_burst` therefore say "reached X km/h", which the event field proves, and never "sustained sprint". Analyst replay time: 0.06 s per full match [M: same run]. A detection with nothing to cite is never emitted (a momentum "swing" for a team with no events is dropped), so every claim can carry evidence ids.
+
+## 11. Claims and the Verifier gate (`claims.py`, `verifier.py`, `explainer.py`)
+A **claim** is a sentence, the event ids it cites, the numbers it states as **facts**, and the players it names. The Verifier is pure code (no model) and rejects a claim, with reasons, unless all of these hold:
+
+| Check | Rule |
+|---|---|
+| Evidence | At least one cited event id, and every id was already seen in the stream (invented and future ids are unknown) |
+| Facts | Each stated fact is recomputed from the events and must match within a tolerance: exact for minute and score; 0.5 for distance and speed (km/h, m); 0.05 for pressure per minute and momentum [A: display rounding] |
+| Numbers in the text | Every number in the sentence must equal some stated fact within the precision it is written at (an integer allows 0.5, one decimal allows 0.05) |
+| Players | Every named player id exists in `match_info` and appears in a cited event (actor, recipient or target) |
+
+Facts the Verifier can recompute: `minute`, `minute_at`, `shot_distance_m`, `shot_speed_kmh`, `actor_speed_kmh`, `score_home`, `score_away`, `pressure_per_min`, `momentum`.
+
+**Flow** (`explainer.explain`): a model proposes claims; if any claim is rejected the reasons go back once as feedback (`max_retries = 1`); if it still fails, or the model raises, the deterministic template is used. Templates state only numbers they also register as facts, and a template that fails the Verifier raises (it is a bug, never shipped). Answers are accepted or rejected as a whole, so a half-checked narrative is not published.
+
+### Measured block rate under fault injection [M: `uv run python scripts/verifier_report.py 30 30`, seeds 30-59, 2026-10-19]
+Faults (`faults.py`) corrupt each template claim in a known way. Clean claims wrongly rejected: 0 of 760.
+
+| Fault | Injected | Blocked | Block rate |
+|---|---|---|---|
+| `no_evidence` (citation removed) | 760 | 760 | 1.000 |
+| `fabricated_event` (id that does not exist) | 760 | 760 | 1.000 |
+| `wrong_fact` (a stated number changed, text and fact consistent) | 760 | 760 | 1.000 |
+| `unbacked_number` (extra number appended) | 760 | 758 | 0.997 |
+| `wrong_player` (a player not in the cited events) | 386 | 386 | 1.000 |
+| all | 3,426 | 3,424 | 0.999 |
+
+Limits, stated plainly. These faults are mechanical corruptions we wrote, not real model hallucinations. The two misses are `unbacked_number` faults where the appended "97" coincided with a true number (for example a shot speed near 97 km/h). The Verifier does not judge wording: "dominant", "dramatic" or a causal story ("because of the press") pass if the numbers and citations hold. The Explainer prompt must therefore forbid unsupported adjectives and causal claims, and the Producer will add the evidence chips so a viewer can check them.

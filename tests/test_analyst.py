@@ -146,6 +146,21 @@ def test_swing_compares_momentum_now_with_momentum_180_seconds_earlier():
     assert swing.magnitude == pytest.approx(min(1.0, abs(delta)))
 
 
+def test_a_swing_with_no_event_to_cite_is_not_reported():
+    # Away dominates early; with no later play the momentum mass decays below the minimum and M returns to 0.
+    # That "swing" favours the home team, which has no events, so there is nothing to cite and nothing to claim.
+    away = [mk_pass(i, 10.0 * (i + 1), team="A", player="A05", x=70, ex=95) for i in range(10)]
+    flush = [mk_pass(10, 700.0, team="A", player="A05", x=70, ex=95)]
+    _, found = run(away + flush)
+    assert all(d.event_ids for d in found)
+    assert not any(d.kind == "momentum_swing" and d.team == "H" for d in found)
+
+
+def test_every_detection_cites_at_least_one_event(short_match):
+    _, found = run(short_match.events)
+    assert found and all(d.event_ids for d in found)
+
+
 def test_steady_play_has_no_swing():
     events = [mk_pass(i, 10.0 * (i + 1), team="H" if i % 2 == 0 else "A", player="H05" if i % 2 == 0 else "A05",
                       x=70, ex=95) for i in range(80)]
