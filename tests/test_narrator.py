@@ -3,7 +3,7 @@ import pytest
 
 from matchdesk import narrator as narrator_module
 from matchdesk.explainer import explain, template_claims
-from matchdesk.narrator import SYSTEM, Narrator, build_prompt, ollama_generate, parse_numbered
+from matchdesk.narrator import SYSTEM, Narrator, build_prompt, narrator_from_spec, ollama_generate, parse_numbered
 from matchdesk.verifier import verify_claims
 from tests.test_explainer import first_of, replay
 
@@ -125,6 +125,29 @@ def test_a_model_that_raises_falls_back_to_the_template(goal):
     result = explain(detection, context, model=Narrator(down))
     assert result.source == "template"
     assert any("ollama is not running" in r for f in result.rejections for r in f.reasons)
+
+
+# ---- configuration from a spec string
+def test_a_blank_spec_means_no_model():
+    assert narrator_from_spec(None) is None and narrator_from_spec("") is None and narrator_from_spec("  ") is None
+
+
+def test_an_ollama_spec_builds_a_narrator_for_that_model_and_host(monkeypatch):
+    seen = {}
+
+    def fake_generate(model, host=None, **kwargs):
+        seen["args"] = (model, host)
+        return lambda system, prompt: "1. ok"
+
+    monkeypatch.setattr(narrator_module, "ollama_generate", fake_generate)
+    narrator = narrator_from_spec("ollama:qwen2.5:3b", host="http://127.0.0.1:11434")
+    assert isinstance(narrator, Narrator) and seen["args"] == ("qwen2.5:3b", "http://127.0.0.1:11434")
+
+
+@pytest.mark.parametrize("spec", ["openai:gpt", "qwen2.5:3b", "ollama:"])
+def test_an_unknown_provider_or_a_missing_model_name_is_a_clear_error(spec):
+    with pytest.raises(ValueError, match="MATCHDESK_MODEL"):
+        narrator_from_spec(spec)
 
 
 # ---- the Agent Framework adapter

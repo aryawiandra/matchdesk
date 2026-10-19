@@ -210,6 +210,16 @@
           "title": "Kind",
           "type": "string"
         },
+        "source": {
+          "default": "template",
+          "enum": [
+            "model",
+            "model_retry",
+            "template"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
         "team": {
           "enum": [
             "H",

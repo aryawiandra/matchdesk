@@ -6,6 +6,7 @@ from typing import Annotated, Any, Literal, Union
 
 from pydantic import Field, TypeAdapter, model_validator
 
+from .explainer import Source
 from .schema import Frozen, KeyMomentKind, Team, X, Y
 
 Lang = Literal["en", "id", "es"]
@@ -27,6 +28,7 @@ class KeyMomentPayload(Frozen):
     team: Team
     x: X | None = None
     y: Y | None = None
+    source: Source = "template"  # where the words came from; every source passed the Verifier
 
 
 class Sentence(Frozen):

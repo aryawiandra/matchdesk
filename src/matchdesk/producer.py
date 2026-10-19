@@ -58,7 +58,8 @@ class Producer:
                 overlay_id=stem.format(type="key_moment"), end_s=start + DURATION_S[detection.kind], priority=priority,
                 evidence_event_ids=evidence, a11y_text=claims[0].text, **common,
                 payload=KeyMomentPayload(kind=detection.kind, headline=claims[0].text, team=detection.team,
-                                         x=getattr(point, "x", None), y=getattr(point, "y", None)),
+                                         x=getattr(point, "x", None), y=getattr(point, "y", None),
+                                         source=explanation.source),
             ),
         ]
         if detail:

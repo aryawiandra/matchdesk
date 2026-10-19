@@ -102,6 +102,14 @@ def test_unknown_types_extra_fields_and_bad_enums_are_rejected():
             parse_overlay(bad)
 
 
+def test_a_key_moment_says_where_its_words_came_from():
+    assert KeyMomentPayload(kind="goal", headline="Goal.", team="H").source == "template"
+    for source in ("template", "model", "model_retry"):
+        assert KeyMomentPayload(kind="goal", headline="Goal.", team="H", source=source).source == source
+    with pytest.raises(ValidationError):
+        KeyMomentPayload(kind="goal", headline="Goal.", team="H", source="oracle")
+
+
 def test_pitch_coordinates_must_be_on_the_pitch():
     with pytest.raises(ValidationError):
         KeyMomentPayload(kind="goal", headline="Goal.", team="H", x=200.0, y=34.0)

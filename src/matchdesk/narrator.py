@@ -84,6 +84,16 @@ class Narrator:
         return tuple(replace(claim, text=sentence) for claim, sentence in zip(base, sentences))
 
 
+def narrator_from_spec(spec: str | None, host: str | None = None) -> Narrator | None:
+    """`ollama:<model>` builds a narrator on a local Ollama model; blank means no model."""
+    if spec is None or not spec.strip():
+        return None
+    provider, _, model = spec.strip().partition(":")
+    if provider != "ollama" or not model:
+        raise ValueError(f"MATCHDESK_MODEL must look like 'ollama:<model>', got {spec!r}")
+    return Narrator(ollama_generate(model, host))
+
+
 def ollama_generate(
     model: str,
     host: str | None = None,

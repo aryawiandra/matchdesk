@@ -1,15 +1,23 @@
-"""Live feed: replays a seeded synthetic match as Server-Sent Events. The hidden truth is never sent."""
+"""Live feed: replays a seeded synthetic match as Server-Sent Events. The hidden truth is never sent.
+
+`/overlays/seed/{seed}` runs the Agent Framework pipeline. By default the Explainer writes from templates; with
+`explainer=model` it asks the configured local model, behind the same Verifier gate. Open streams are capped (and the
+model path has its own, smaller cap) so a crawler or a crowd cannot exhaust the server."""
 import asyncio
-from collections.abc import AsyncIterator
+import os
+from collections.abc import AsyncIterator, Iterator
+from contextlib import contextmanager
 from pathlib import Path as FsPath
 from typing import Literal
 
-from fastapi import FastAPI, Path, Query
+from fastapi import FastAPI, HTTPException, Path, Query
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from .config import GeneratorConfig
+from .explainer import Model
 from .generator import GeneratedMatch, generate_match
+from .narrator import narrator_from_spec
 from .overlay import Persona
 from .sse import encode_frame
 from .workflow import overlay_stream_async
@@ -20,6 +28,47 @@ MIN_PERIOD_S = 60.0
 MAX_PERIOD_S = 2700.0
 MAX_SPEED = 600.0
 DEFAULT_SPEED = 60.0
+DEFAULT_MAX_STREAMS = 20
+DEFAULT_MAX_MODEL_STREAMS = 1
+STREAM_HEADERS = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+
+
+class Busy(Exception):
+    """Raised when a stream cannot take a slot."""
+
+
+class Slots:
+    """A counter with a limit. The event loop is single-threaded, so no lock is needed."""
+
+    def __init__(self, limit: int):
+        self.limit = limit
+        self.active = 0
+
+    def full(self) -> bool:
+        return self.active >= self.limit
+
+    def take(self) -> bool:
+        if self.full():
+            return False
+        self.active += 1
+        return True
+
+    def give(self) -> None:
+        self.active -= 1
+
+
+@contextmanager
+def hold(*slots: Slots) -> Iterator[None]:
+    taken: list[Slots] = []
+    try:
+        for slot in slots:
+            if not slot.take():
+                raise Busy
+            taken.append(slot)
+        yield
+    finally:
+        for slot in taken:
+            slot.give()
 
 
 def pace_delay(previous_s: float, current_s: float, speed: float) -> float:
@@ -29,33 +78,52 @@ def pace_delay(previous_s: float, current_s: float, speed: float) -> float:
     return max(0.0, current_s - previous_s) / speed
 
 
-async def _frames(match: GeneratedMatch, speed: float) -> AsyncIterator[str]:
-    yield encode_frame(match.info.model_dump(mode="json"))
-    previous_s = 0.0
-    for event in match.events:
-        delay = pace_delay(previous_s, event.match_s, speed)
-        if delay > 0:
-            await asyncio.sleep(delay)
-        previous_s = event.match_s
-        yield encode_frame(event.model_dump(mode="json"))
+async def _frames(match: GeneratedMatch, speed: float, streams: Slots) -> AsyncIterator[str]:
+    try:
+        with hold(streams):
+            yield encode_frame(match.info.model_dump(mode="json"))
+            previous_s = 0.0
+            for event in match.events:
+                delay = pace_delay(previous_s, event.match_s, speed)
+                if delay > 0:
+                    await asyncio.sleep(delay)
+                previous_s = event.match_s
+                yield encode_frame(event.model_dump(mode="json"))
+    except Busy:
+        return
 
 
-async def _overlay_frames(match: GeneratedMatch, persona: Persona, speed: float) -> AsyncIterator[str]:
-    previous_s = 0.0
-    async for overlay in overlay_stream_async(match.events, match.info, persona=persona):
-        delay = pace_delay(previous_s, overlay.start_s, speed)
-        if delay > 0:
-            await asyncio.sleep(delay)
-        previous_s = max(previous_s, overlay.start_s)
-        yield encode_frame(overlay.model_dump(mode="json"))
+async def _overlay_frames(
+    match: GeneratedMatch, persona: Persona, speed: float, model: Model | None, streams: Slots, model_streams: Slots,
+) -> AsyncIterator[str]:
+    try:
+        with hold(streams, *([model_streams] if model is not None else [])):
+            previous_s = 0.0
+            async for overlay in overlay_stream_async(match.events, match.info, persona=persona, model=model):
+                delay = pace_delay(previous_s, overlay.start_s, speed)
+                if delay > 0:
+                    await asyncio.sleep(delay)
+                previous_s = max(previous_s, overlay.start_s)
+                yield encode_frame(overlay.model_dump(mode="json"))
+    except Busy:
+        return
 
 
-def create_app() -> FastAPI:
+def create_app(
+    model: Model | None = None,
+    max_streams: int = DEFAULT_MAX_STREAMS,
+    max_model_streams: int = DEFAULT_MAX_MODEL_STREAMS,
+) -> FastAPI:
     app = FastAPI(title="MatchDesk feed")
+    streams, model_streams = Slots(max_streams), Slots(max_model_streams)
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
         return {"status": "ok"}
+
+    @app.get("/capabilities")
+    async def capabilities() -> dict[str, bool | int]:
+        return {"model": model is not None, "max_streams": max_streams}
 
     @app.get("/feed/seed/{seed}")
     async def feed(
@@ -63,12 +131,10 @@ def create_app() -> FastAPI:
         period_s: float = Query(MAX_PERIOD_S, ge=MIN_PERIOD_S, le=MAX_PERIOD_S),
         speed: float = Query(DEFAULT_SPEED, ge=0.0, le=MAX_SPEED),
     ) -> StreamingResponse:
+        if streams.full():
+            raise HTTPException(status_code=429, detail="too many open streams, try again shortly")
         match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
-        return StreamingResponse(
-            _frames(match, speed),
-            media_type="text/event-stream",
-            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-        )
+        return StreamingResponse(_frames(match, speed, streams), media_type="text/event-stream", headers=STREAM_HEADERS)
 
     @app.get("/overlays/seed/{seed}")
     async def overlays(
@@ -77,13 +143,21 @@ def create_app() -> FastAPI:
         speed: float = Query(DEFAULT_SPEED, ge=0.0, le=MAX_SPEED),
         persona: Persona = Query("fan"),
         lang: Literal["en"] = Query("en"),  # English only until the Localizer exists
+        explainer: Literal["template", "model"] = Query("template"),
     ) -> StreamingResponse:
+        use_model = explainer == "model"
+        if use_model and model is None:
+            raise HTTPException(status_code=400, detail="no model is configured on this server (set MATCHDESK_MODEL)")
+        if streams.full() or (use_model and model_streams.full()):
+            raise HTTPException(status_code=429, detail="too many open streams, try again shortly")
         match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
-        return StreamingResponse(
-            _overlay_frames(match, persona, speed),
-            media_type="text/event-stream",
-            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-        )
+        frames = _overlay_frames(match, persona, speed, model if use_model else None, streams, model_streams)
+        return StreamingResponse(frames, media_type="text/event-stream", headers=STREAM_HEADERS)
 
     app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="renderer")  # last: API routes win
     return app
+
+
+def create_app_from_env() -> FastAPI:
+    """uvicorn factory: `MATCHDESK_MODEL=ollama:<model>` (and optionally `OLLAMA_HOST`) enables the model explainer."""
+    return create_app(model=narrator_from_spec(os.environ.get("MATCHDESK_MODEL"), os.environ.get("OLLAMA_HOST")))

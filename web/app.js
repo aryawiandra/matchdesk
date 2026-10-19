@@ -15,11 +15,19 @@ const KIND_LABEL = {
   momentum_swing: "Momentum swing",
 };
 
+// Every sentence passed the Verifier; "source" says who wrote it.
+const SOURCE_LABEL = {
+  template: "Template, checked by the Verifier",
+  model: "Written by an AI model, checked by the Verifier",
+  model_retry: "Written by an AI model after a correction, checked by the Verifier",
+};
+
 const els = {
   form: document.getElementById("controls"),
   seed: document.getElementById("seed"),
   speed: document.getElementById("speed"),
   persona: document.getElementById("persona"),
+  explainer: document.getElementById("explainer"),
   home: document.getElementById("home"),
   away: document.getElementById("away"),
   score: document.getElementById("score"),
@@ -49,7 +57,7 @@ function reset() {
 
 function feedUrl() {
   const seed = Math.min(9999, Math.max(0, Number.parseInt(els.seed.value, 10) || 0));
-  const params = new URLSearchParams({ speed: els.speed.value, persona: els.persona.value });
+  const params = new URLSearchParams({ speed: els.speed.value, persona: els.persona.value, explainer: els.explainer.value });
   return `/overlays/seed/${seed}?${params}`;
 }
 
@@ -173,7 +181,8 @@ function buildCard(overlay) {
   const card = element("article", `card ${overlay.type}`);
   const { payload } = overlay;
   if (overlay.type === "key_moment") {
-    card.append(element("h2", "", KIND_LABEL[payload.kind] || "Moment"), evidenceButton(payload.headline, overlay.evidence_event_ids));
+    const badge = element("span", `badge ${payload.source === "template" ? "template" : "model"}`, SOURCE_LABEL[payload.source] || "");
+    card.append(element("h2", "", KIND_LABEL[payload.kind] || "Moment"), evidenceButton(payload.headline, overlay.evidence_event_ids), badge);
   } else if (overlay.type === "explanation") {
     card.appendChild(element("h2", "", "Detail"));
     const list = element("ul");
@@ -207,6 +216,21 @@ function renderMarkers(active) {
   els.markers.innerHTML = html;
 }
 
+async function enableModelChoice() {
+  try {
+    const response = await fetch("/capabilities");
+    const capabilities = await response.json();
+    const option = els.explainer.querySelector('option[value="model"]');
+    if (capabilities.model) {
+      option.disabled = false;
+      option.textContent = "AI model (local, checked)";
+    }
+  } catch (error) {
+    // Without the capabilities call the page still works with the template explainer.
+  }
+}
+
 els.form.addEventListener("submit", start);
 setInterval(render, REFRESH_MS);  // lets cards expire when the feed is quiet or has ended
+enableModelChoice();
 start();

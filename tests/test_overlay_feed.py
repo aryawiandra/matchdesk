@@ -75,5 +75,75 @@ def test_the_renderer_loads_nothing_from_other_origins(client):
         assert "http://" not in text and "https://" not in text
 
 
+# ---- the model path and the stream limits
+def fake_narrator():
+    from matchdesk.narrator import Narrator
+    from tests.test_narrator import reword
+
+    return Narrator(lambda system, prompt: reword(prompt))
+
+
+def model_frames(app_client, query=""):
+    with app_client.stream("GET", f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=model{query}") as response:
+        assert response.status_code == 200
+        return list(decode_frames(response.iter_lines()))
+
+
+def test_capabilities_say_whether_a_model_is_available(client):
+    assert client.get("/capabilities").json() == {"model": False, "max_streams": 20}
+    with_model = TestClient(create_app(model=fake_narrator(), max_streams=5))
+    assert with_model.get("/capabilities").json() == {"model": True, "max_streams": 5}
+
+
+def test_the_renderer_offers_the_model_choice_and_shows_where_words_came_from(client):
+    assert "/capabilities" in client.get("/app.js").text
+    assert 'id="explainer"' in client.get("/").text
+    assert "source" in client.get("/app.js").text
+
+
+def test_the_default_explainer_is_the_template(client):
+    moments = [p for p in frames(client) if p["type"] == "key_moment"]
+    assert moments and {p["payload"]["source"] for p in moments} == {"template"}
+
+
+def test_the_model_explainer_is_used_only_when_asked_and_says_so():
+    app_client = TestClient(create_app(model=fake_narrator()))
+    moments = [p for p in model_frames(app_client) if p["type"] == "key_moment"]
+    assert moments and {p["payload"]["source"] for p in moments} == {"model"}
+
+
+def test_asking_for_the_model_when_none_is_configured_is_a_clear_error(client):
+    response = client.get(f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=model")
+    assert response.status_code == 400 and "no model" in response.json()["detail"]
+
+
+def test_the_model_path_is_rate_limited_separately():
+    limited = TestClient(create_app(model=fake_narrator(), max_model_streams=0))
+    assert limited.get(f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0&explainer=model").status_code == 429
+    assert limited.get(f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0").status_code == 200
+
+
+def test_the_number_of_open_streams_is_capped_and_slots_are_released():
+    capped = TestClient(create_app(max_streams=0))
+    assert capped.get(f"/overlays/seed/{SEED}?period_s={PERIOD_S}&speed=0").status_code == 429
+    assert capped.get(f"/feed/seed/{SEED}?period_s={PERIOD_S}&speed=0").status_code == 429
+    one_at_a_time = TestClient(create_app(max_streams=1))
+    for _ in range(3):  # each finished stream must free its slot
+        with one_at_a_time.stream("GET", f"/overlays/seed/{SEED}?period_s=60&speed=0") as response:
+            assert response.status_code == 200
+            list(response.iter_lines())
+
+
+def test_the_app_reads_its_model_from_the_environment(monkeypatch):
+    from matchdesk.feed import create_app_from_env
+
+    monkeypatch.delenv("MATCHDESK_MODEL", raising=False)
+    assert TestClient(create_app_from_env()).get(
+        f"/overlays/seed/{SEED}?period_s=60&speed=0&explainer=model").status_code == 400
+    monkeypatch.setenv("MATCHDESK_MODEL", "ollama:qwen2.5:3b")
+    configured = TestClient(create_app_from_env())
+    assert configured.get("/healthz").status_code == 200  # builds the narrator without calling the model
+
+
 def test_the_api_routes_still_win_over_the_static_mount(client):
     assert client.get("/healthz").json() == {"status": "ok"}

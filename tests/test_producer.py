@@ -3,8 +3,9 @@ import json
 
 import pytest
 
+from matchdesk.claims import Claim
 from matchdesk.config import GeneratorConfig, Thresholds
-from matchdesk.explainer import explain
+from matchdesk.explainer import explain, template_claims
 from matchdesk.generator import generate_match
 from matchdesk.overlay import parse_overlay
 from matchdesk.pipeline import overlay_stream
@@ -92,6 +93,17 @@ def test_key_moment_evidence_is_the_unique_union_of_the_claims_evidence(replayed
     moment = producer.for_explanation(explanation)[0]
     expected = tuple(dict.fromkeys(eid for claim in explanation.claims for eid in claim.evidence_ids))
     assert moment.evidence_event_ids == expected
+
+
+def test_the_key_moment_says_where_its_words_came_from(replayed, producer):
+    context, found = replayed
+    goal = first_of(found, "goal")
+    from_template = producer.for_explanation(explain(goal, context))[0]
+    from_model = producer.for_explanation(explain(goal, context, model=lambda d, c, f: template_claims(d, c)))[0]
+    retried = producer.for_explanation(explain(goal, context, model=lambda d, c, f: template_claims(d, c) if f else [
+        Claim("Nothing.", (), ())]))[0]
+    assert [from_template.payload.source, from_model.payload.source, retried.payload.source] == [
+        "template", "model", "model_retry"]
 
 
 # ---- other kinds

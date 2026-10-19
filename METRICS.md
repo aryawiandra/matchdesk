@@ -136,6 +136,8 @@ A **claim** is a sentence, the event ids it cites, the numbers it states as **fa
 | Facts | Each stated fact is recomputed from the events and must match within a tolerance: exact for minute and score; 0.5 for distance and speed (km/h, m); 0.05 for pressure per minute and momentum [A: display rounding] |
 | Numbers in the text | Every number in the sentence must equal some stated fact within the precision it is written at (an integer allows 0.5, one decimal allows 0.05) |
 | Players | Every named player id exists in `match_info` and appears in a cited event (actor, recipient or target) |
+| Names in the text | A player named in the sentence (full name or a name part of 4+ letters) must be one the claim cites; a club named must be one the cited events involve |
+| Wording | Deterministic lexical rules [A]. Rejected: gendered pronouns (he, she, him, his, her ...) because the data has no gender; hype stems (brilliant, stunning, incredible, dominant, dramatic, spectacular, decisive ... including adverb forms such as "dramatically"); causal phrases (because, due to, thanks to, as a result, caused by, led to) |
 
 Facts the Verifier can recompute: `minute`, `minute_at`, `shot_distance_m`, `shot_speed_kmh`, `actor_speed_kmh`, `score_home`, `score_away`, `pressure_per_min`, `momentum`.
 
@@ -153,4 +155,18 @@ Faults (`faults.py`) corrupt each template claim in a known way. Clean claims wr
 | `wrong_player` (a player not in the cited events) | 386 | 386 | 1.000 |
 | all | 3,426 | 3,424 | 0.999 |
 
-Limits, stated plainly. These faults are mechanical corruptions we wrote, not real model hallucinations. The two misses are `unbacked_number` faults where the appended "97" coincided with a true number (for example a shot speed near 97 km/h). The Verifier does not judge wording: "dominant", "dramatic" or a causal story ("because of the press") pass if the numbers and citations hold. The Explainer prompt must therefore forbid unsupported adjectives and causal claims, and the Producer will add the evidence chips so a viewer can check them.
+Limits, stated plainly. These faults are mechanical corruptions we wrote, not real model hallucinations. The two misses are `unbacked_number` faults where the appended "97" coincided with a true number (for example a shot speed near 97 km/h). The Verifier judges wording only with the lexical rules in the table above (pronouns, hype stems, causal phrases); a sentence can still be vague, odd or subtly misleading without using a banned word. The Explainer prompt forbids the same things, and the overlay shows the evidence ids so a viewer can check each sentence.
+
+## 12. A real model behind the gate (`narrator.py`, `scripts/model_report.py`)
+Model: `qwen2.5:3b` (1.9 GB) on a local Ollama 0.40.6 server, Apple M2 with 8 GB, called through a Microsoft Agent Framework `Agent` with `OllamaChatClient` (temperature 0.3, seed 7). The model only rewrites the template sentences. Facts, cited events and named players are copied from the template claim, so the Verifier judges the model's wording against them. A wrong shape, an invented number, a wrong or uncited name, a guessed gender, or hype is rejected with reasons, the model gets one retry with those reasons, and then the template is used.
+
+[M: `uv run python scripts/model_report.py --seeds 10 --first-seed 30` with and without `--careless`, 210 detections from 10 generated matches, 2026-10-19]
+
+| Prompt | Accepted first try | Accepted after retry | Template fallback | Rejected calls | Latency per detection |
+|---|---|---|---|---|---|
+| Strict (rules and three examples) | 210 (100%) | 0 | 0 | 0 of 210 | mean 0.93 s, p95 1.52 s |
+| Careless (one line, no rules) | 112 (53.3%) | 1 (0.5%) | 97 (46.2%) | 195 of 308 (63.3%) | mean 1.29 s, p95 3.00 s |
+
+Careless-prompt rejection reasons: unsupported wording 149, wrong format 44, gendered pronoun 3, unsupported number 1. Every accepted answer differs from the template (an earlier prompt that told the model to keep everything made it copy the template in 37 of 37 cases [M: same script, 2 matches]).
+
+How to read this. The careless run shows the gate catching real model mistakes, not only the mechanical faults of section 11: nearly half of careless answers were replaced by the template. The strict run has no rejections, so it gives no real-model evidence of retry recovery; the one recovery seen came from the careless prompt. Limits: one small model, one range of seeds, synthetic English data. The wording rules are lexical, not semantic. A model call takes about a second on this machine, so the model path is capped at one open stream (`DEFAULT_MAX_MODEL_STREAMS`), and the public default is the template path.

@@ -8,6 +8,7 @@ model is supplied. `pipeline.overlay_stream` is the synchronous reference this w
 One workflow run handles one event; the executors keep their state for the whole match (verified in
 20-build/sponsor-digest.md section 5), so build one `MatchDeskPipeline` per match."""
 import asyncio
+import logging
 from collections.abc import AsyncIterator, Callable, Iterable
 from dataclasses import dataclass
 from typing import Never
@@ -25,6 +26,7 @@ from .schema import Event, MatchInfo
 from .verifier import verify_claims
 
 DEFAULT_MAX_RETRIES = 1
+logger = logging.getLogger("matchdesk")
 
 
 # ---- messages between executors
@@ -128,6 +130,7 @@ class VerifierExecutor(Executor):
         super().__init__(id="verifier")
         self._ctx = ctx
         self._max_retries = max_retries
+        self.suppressed: list[str] = []
 
     @handler
     async def verify(self, drafts: Drafts, wf: WorkflowContext[Round]) -> None:
@@ -137,17 +140,21 @@ class VerifierExecutor(Executor):
             outcome = self._judge(draft)
             if isinstance(outcome, Pending):
                 retry.append(outcome)
-            else:
+            elif outcome is not None:
                 resolved.append((draft.pending.order, outcome))
         await wf.send_message(Round(drafts.event_s, tuple(resolved), tuple(retry)))
 
-    def _judge(self, draft: Draft) -> Explanation | Pending:
+    def _judge(self, draft: Draft) -> Explanation | Pending | None:
         pending = draft.pending
         if draft.source == "template":
             check = verify_claims(draft.claims, self._ctx)
             if not check.ok:
+                # A bug, never a reason to stop the match: drop this insight, say so loudly, keep streaming.
                 reasons = [r for rejection in check.rejected for r in rejection.reasons]
-                raise RuntimeError(f"template claims failed verification for {pending.detection.kind}: {reasons}")
+                message = f"template claims failed verification for {pending.detection.kind}: {reasons}"
+                logger.error(message)
+                self.suppressed.append(message)
+                return None
             return Explanation(pending.detection, draft.claims, "template", draft.attempts, pending.failures)
         if draft.error is not None:
             feedback, rejected = (draft.error,), 0
@@ -222,7 +229,13 @@ class MatchDeskPipeline:
             .build()
         )
         self.invocations: list[str] = []
+        self._verifier = verifier
         self._last_s = 0.0
+
+    @property
+    def suppressed(self) -> list[str]:
+        """Insights dropped because even the template failed the Verifier (a bug; empty in a healthy run)."""
+        return self._verifier.suppressed
 
     async def feed(self, event: Event) -> tuple[Overlay, ...]:
         overlays = await self._run(event)

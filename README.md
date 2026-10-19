@@ -49,6 +49,18 @@ Event -> Analyst -> Explainer <-> Verifier -> Producer -> overlays
 
 Edges are conditional. A detection goes to the Explainer; if the Verifier rejects the answer, the reasons travel back to the Explainer on a retry edge; when retries run out the Explainer hands over a deterministic template, which the Verifier checks like any other answer. A quiet event skips the Explainer and the Verifier entirely (on a full match they ran 22 times in 2,381 events). No model is required: the Explainer uses templates unless you pass a model, and the Verifier gate is the same either way. The workflow produces exactly the same overlays and explanations as the synchronous reference `pipeline.overlay_stream`, including when a model raises, answers badly, or recovers on retry (`tests/test_workflow.py`).
 
+### An AI model behind the gate (optional)
+
+The Explainer can ask a local model to reword each template sentence. The model never supplies facts: the facts, the cited events and the named players come from the template, and the Verifier checks the model's wording against them. A wrong number, an uncited or wrong name, a guessed gender, hype, a causal story or a wrong format is rejected with reasons, the model retries once, and then the template is used. Every key-moment card says which it was ("Template" or "Written by an AI model", both "checked by the Verifier").
+
+```bash
+brew install ollama && ollama serve &          # once, in its own terminal
+ollama pull qwen2.5:3b                         # about 1.9 GB
+MATCHDESK_MODEL=ollama:qwen2.5:3b uv run uvicorn --factory matchdesk.feed:create_app_from_env --port 8000
+```
+
+Then choose **Explainer: AI model** on the page, or call `/overlays/seed/42?explainer=model`. Measured on 210 detections with `qwen2.5:3b` on an M2 with 8 GB (`scripts/model_report.py`, METRICS.md section 12): with the strict prompt every answer was accepted first try (0.93 s mean); with a careless prompt 63% of calls were rejected and 46% of explanations fell back to the template, so the gate is doing real work. The public default is the template path; the model path is capped at one open stream.
+
 The feed never sends the truth. The Analyst (`src/matchdesk/analyst.py`) computes every number from the stream alone; detection rules and measured quality are in `METRICS.md` section 10.
 
 Check from a clean clone: `scripts/fresh_clone_check.sh .`

@@ -144,17 +144,24 @@ def test_a_quiet_event_skips_the_explainer_and_the_verifier(short_match):
     assert run_async(go()) == ["analyst", "producer"]
 
 
-def test_a_template_that_fails_verification_is_a_bug_and_stops_the_workflow(full_match, monkeypatch):
+def test_a_template_that_fails_verification_is_suppressed_and_logged_not_fatal(full_match, monkeypatch, caplog):
     from matchdesk import workflow as workflow_module
 
     monkeypatch.setattr(workflow_module, "template_claims", bad)
 
     async def go():
-        async for _ in overlay_stream_async(full_match.events, full_match.info):
-            pass
+        pipeline = MatchDeskPipeline(full_match.info)
+        overlays = []
+        for event in full_match.events:
+            overlays += await pipeline.feed(event)
+        overlays += await pipeline.finish()
+        return overlays, pipeline.suppressed
 
-    with pytest.raises(Exception, match="template"):
-        run_async(go())
+    with caplog.at_level("ERROR", logger="matchdesk"):
+        overlays, suppressed = run_async(go())
+    assert suppressed and all("template claims failed verification" in reason for reason in suppressed)
+    assert overlays and all(o.type == "scoreboard" for o in overlays)  # the match played on; only the bad insights were dropped
+    assert "template claims failed verification" in caplog.text
 
 
 # ---- lifecycle
