@@ -38,6 +38,17 @@ uv run python scripts/analyst_report.py 30 30                          # Analyst
 
 Open `http://localhost:8000/` for the reference renderer: a live scoreboard, a pitch with a marker at each key moment, and insight cards. Click a sentence to see the event ids behind it. Fan and analyst views differ; the feed itself is `GET /overlays/seed/{seed}?speed=120&persona=fan` (SSE, JSON overlays that validate against `schema/overlay.schema.json`).
 
+### The pipeline is a Microsoft Agent Framework workflow
+
+`src/matchdesk/workflow.py` builds the pipeline as a graph of custom `Executor`s with the framework's `WorkflowBuilder`:
+
+```
+Event -> Analyst -> Explainer <-> Verifier -> Producer -> overlays
+              \_____________(nothing to explain)_____________/^
+```
+
+Edges are conditional. A detection goes to the Explainer; if the Verifier rejects the answer, the reasons travel back to the Explainer on a retry edge; when retries run out the Explainer hands over a deterministic template, which the Verifier checks like any other answer. A quiet event skips the Explainer and the Verifier entirely (on a full match they ran 22 times in 2,381 events). No model is required: the Explainer uses templates unless you pass a model, and the Verifier gate is the same either way. The workflow produces exactly the same overlays and explanations as the synchronous reference `pipeline.overlay_stream`, including when a model raises, answers badly, or recovers on retry (`tests/test_workflow.py`).
+
 The feed never sends the truth. The Analyst (`src/matchdesk/analyst.py`) computes every number from the stream alone; detection rules and measured quality are in `METRICS.md` section 10.
 
 Check from a clean clone: `scripts/fresh_clone_check.sh .`

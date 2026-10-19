@@ -19,6 +19,7 @@ def overlay_stream(
     lang: Lang = "en",
     tick_s: float = TICK_S,
     on_explanation: Callable[[Explanation], None] | None = None,
+    max_retries: int = 1,
 ) -> Iterator[Overlay]:
     if lang != "en":
         raise ValueError("only English is produced until the Localizer exists")
@@ -33,7 +34,7 @@ def overlay_stream(
             batch.append(producer.scoreboard(next_tick, tick_s, lang, persona))
             next_tick += tick_s
         for detection in analyst.ingest(event):
-            explanation = explain(detection, ctx, model)
+            explanation = explain(detection, ctx, model, max_retries)
             if on_explanation is not None:
                 on_explanation(explanation)
             batch.extend(producer.for_explanation(explanation, lang, persona))

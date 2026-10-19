@@ -11,8 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from .config import GeneratorConfig
 from .generator import GeneratedMatch, generate_match
 from .overlay import Persona
-from .pipeline import overlay_stream
 from .sse import encode_frame
+from .workflow import overlay_stream_async
 
 WEB_DIR = FsPath(__file__).resolve().parents[2] / "web"
 MAX_SEED = 9999
@@ -42,7 +42,7 @@ async def _frames(match: GeneratedMatch, speed: float) -> AsyncIterator[str]:
 
 async def _overlay_frames(match: GeneratedMatch, persona: Persona, speed: float) -> AsyncIterator[str]:
     previous_s = 0.0
-    for overlay in overlay_stream(match.events, match.info, persona=persona):
+    async for overlay in overlay_stream_async(match.events, match.info, persona=persona):
         delay = pace_delay(previous_s, overlay.start_s, speed)
         if delay > 0:
             await asyncio.sleep(delay)
