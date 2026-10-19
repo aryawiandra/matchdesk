@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from typing import Sequence
 
 from .config import Thresholds
-from .geometry import HALF_X, PITCH_L, in_box
+from .geometry import HALF_X, PITCH_L, goal_angle, in_box, sigmoid
 
+XG_INTERCEPT, XG_PER_METRE, XG_PER_RADIAN = -2.0, -0.14, 3.0
 HALF_LIFE_S = 120.0
 MIN_MASS = 1.0
 PRESSED_WINDOW_S = 4.0
@@ -56,8 +57,15 @@ def pass_over_performance(passes: Sequence, pressures: Sequence) -> float:
     return sum((p.outcome == "complete") - (1.0 - pass_difficulty(p, pressures)) for p in passes)
 
 
+# ---- section 2b: observable shot quality
+def xg_estimate(x: float, y: float) -> float:
+    """Shot quality from position alone (METRICS.md 2b). The true xG is hidden; this is the Analyst's stand-in."""
+    d = math.hypot(PITCH_L - x, y - 34.0)
+    return sigmoid(XG_INTERCEPT + XG_PER_METRE * d + XG_PER_RADIAN * goal_angle(x, y))
+
+
 # ---- section 3: momentum
-def _weight(e) -> float:
+def event_weight(e) -> float:
     if e.type == "pass":
         return 0.2 + 0.8 * (e.end_x / PITCH_L) ** 2 if e.outcome == "complete" else 0.0
     if e.type == "shot":
@@ -74,7 +82,7 @@ def momentum_at(events: Sequence, t: float) -> float:
     for e in events:
         if e.match_s > t:
             continue
-        w = _weight(e)
+        w = event_weight(e)
         if w:
             mass[e.team] += w * 0.5 ** ((t - e.match_s) / HALF_LIFE_S)
     total = mass["H"] + mass["A"]

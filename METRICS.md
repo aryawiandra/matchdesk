@@ -22,6 +22,14 @@ Worked examples: 10 m sideways, unpressed: z = -1.70, D = 0.154 (easy). 40 m, 30
 Pass over-performance (PAX) for a set of passes = sum over passes of `(1[complete] - (1 - D))`. Positive means the player completed more than difficulty predicts.
 Honesty note: the generator draws completion from a logit that uses the same four features as D (distance, forward metres, pressure, into-box) with different coefficients, plus player skill, match dominance and tracking geometry that the stream does not expose. D is a transparent observable rating, so the AUC of D against incompletion is a consistency check against the generator, not independent validation.
 
+## 2b. Observable shot quality (xG estimate)
+The true xG is hidden in the truth file. The Analyst scores a shot from its position alone (`metrics.xg_estimate`):
+```
+d = hypot(105 - x, y - 34);  theta = goal_angle(x, y)                  # angle the goal mouth subtends, radians
+xg_est = sigmoid(-2.0 - 0.14 * d + 3.0 * theta)                        # [A: same features as the generator's xG, different coefficients]
+```
+A shot that is not a goal is a big chance when `xg_est >= big_chance_xg` (0.30, `config/thresholds.toml`). Honesty note: the generator's true xG uses the same two features, so the big-chance score in section 10 checks consistency, not independent validity.
+
 ## 3. Momentum M(t) in [-1, 1] (positive favours home)
 ```
 w(e) for an event e of team T:
@@ -92,3 +100,29 @@ Reproduce with `uv run python scripts/tuning_report.py 40` (seeds 0-39, full-len
 | Momentum vs truth dominance, per-match Pearson r | 0.73 (0.61 - 0.87) | Target for the Analyst: mean r >= 0.6 [A] |
 | Pass difficulty AUC against incompletion | 0.64 (0.58 - 0.69) | Consistency check against the generator only |
 | Planted key moments per match | goal 3.15, momentum_swing 4.17, pressing_spell 3.75, sprint_burst 1.88, big_chance 0.5 | `big_chance` is rare; the evaluation reports it separately |
+
+## 10. Analyst detection rules (`src/matchdesk/analyst.py`)
+The Analyst reads events one at a time and uses no look-ahead and no truth. Each rule fires when it becomes detectable; `detected_at_s` is never later than the current event time.
+
+| Kind | Rule | Evidence |
+|---|---|---|
+| `goal` | A `shot` with `outcome = goal`. Also increments the score | the shot plus up to the 3 previous events of that team |
+| `big_chance` | A non-goal shot with `xg_est >= big_chance_xg` (section 2b) | the shot |
+| `sprint_burst` | An event whose `actor_speed_kmh >= sprint_speed_kmh`, at most once per player per `speed_chip_cooldown_s` | that event |
+| `pressing_spell` | On a 10 s grid, per team, `P_T(t)` (section 5). Points with `P >= 3.0` [A] count; the run survives while `P >= 2.5` [A: P_HI] and resets below it. Fires once per run after 19 counted points (a 180 s span) | the team's pressure events in the span |
+| `momentum_swing` | Every 30 s, `delta = M(t) - M(t - 180 s)` (section 3). Fires when `abs(delta) >= 0.4` [A], for the team that gained, at most once per 240 s [A] | the last 5 events of that team that carry momentum weight |
+
+Parameters marked [A] were swept on seeds 0-29 (`P_SPELL_ON`, `P_HI` hysteresis, swing lookback, delta and refractory, sprint threshold and cooldown) and then scored on held-out seeds 30-59 with no further tuning.
+
+### Measured quality against the planted truth [M: `uv run python scripts/analyst_report.py 30 30`, seeds 30-59, 2026-10-19]
+Matching (`src/matchdesk/matching.py`) is one-to-one per kind, same team, time-interval overlap (tolerance: 2 s goals and big chances, 5 s sprints, none for spans); sprints also need the same player.
+
+| Kind | Truth | Detected | Precision | Recall | Tuning seeds 0-29 (P / R) |
+|---|---|---|---|---|---|
+| goal | 90 | 90 | 1.00 | 1.00 | 1.00 / 1.00 |
+| big_chance | 14 | 15 | 0.93 | 1.00 | 1.00 / 1.00 |
+| momentum_swing | 137 | 249 | 0.39 | 0.72 | 0.31 / 0.69 |
+| pressing_spell | 118 | 125 | 0.56 | 0.59 | 0.52 / 0.50 |
+| sprint_burst | 63 | 191 | 0.31 | 0.94 | 0.32 / 1.00 |
+
+How to read these: `goal` is trivial (the shot outcome is in the stream). `big_chance` is a consistency check (section 2b), and its truth sample is small (14-17). The other three are limited by what the stream shows. A swing or spell is a statistical inference from event rates. A sprint needs 3 s of sustained speed in the hidden tracking, while the stream shows one speed reading per event, so many single high readings are not sustained runs and precision stays near 0.3. Claims built on a `sprint_burst` therefore say "reached X km/h", which the event field proves, and never "sustained sprint". Analyst replay time: 0.06 s per full match [M: same run].

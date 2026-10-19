@@ -5,10 +5,20 @@ description = "Synthetic football match generator with hidden truth, and evidenc
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12"
-dependencies = ["pydantic>=2.7"]
+dependencies = [
+    "fastapi>=0.147.0",
+    "pydantic>=2.7",
+    "uvicorn>=0.54.0",
+]
 
 [dependency-groups]
-dev = ["pytest>=8", "pytest-cov>=5", "hypothesis>=6.100", "scipy>=1.13"]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "hypothesis>=6.100",
+    "scipy>=1.13",
+    "httpx>=0.28.1",
+]
 agents = ["agent-framework-foundry>=1.10", "azure-identity>=1.17"]
 
 [build-system]
