@@ -13,9 +13,8 @@ SAVED_ID = "M0001-00002"
 PASS_ID = "M0001-00000"
 
 
-@pytest.fixture()
-def ctx(short_match):
-    context = MatchContext(short_match.info)
+def build_context(info):
+    context = MatchContext(info)
     for e in (
         mk_pass(0, 10.0, team="H", player="H05"),
         mk_shot(1, 125.0, team="H", x=95.0, y=34.0, outcome="goal", player="H09", speed=27.0),
@@ -25,6 +24,11 @@ def ctx(short_match):
     for i in range(12):  # 12 pressures by A in the 120 s up to t=300 -> 6.0 per minute
         context.add(mk_pressure(3 + i, 185.0 + 10.0 * i, team="A"))
     return context
+
+
+@pytest.fixture()
+def ctx(short_match):
+    return build_context(short_match.info)
 
 
 def goal_claim(**overrides):
@@ -172,6 +176,21 @@ def test_hype_the_data_cannot_support_is_rejected(ctx, word):
 def test_more_embellishment_is_rejected(ctx, word):
     claim = goal_claim(text=f"A {word} effort in minute 3 from 10 m.")
     assert any("unsupported wording" in r for r in reasons(verify_claims([claim], ctx)))
+
+
+@pytest.mark.parametrize("word", ["tying", "tied", "equaliser", "equalizing", "lead", "leading", "ahead", "behind",
+                                  "comeback", "winner", "winning", "level"])
+def test_interpreting_the_score_is_rejected_because_the_data_only_has_the_numbers(ctx, word):
+    claim = goal_claim(text=f"Scored in minute 3 from 10 m, {word} the game at 1-0.")
+    assert any("unsupported score interpretation" in r for r in reasons(verify_claims([claim], ctx)))
+
+
+def test_a_club_whose_name_starts_like_a_banned_word_is_not_rejected_for_it(short_match):
+    club = short_match.info.clubs["H"].model_copy(update={"name": "Leadvale Town"})
+    info = short_match.info.model_copy(update={"clubs": {**short_match.info.clubs, "H": club}})
+    context = build_context(info)
+    claim = goal_claim(text="Leadvale Town scored in minute 3 from 10 m.")
+    assert verify_claims([claim], context).ok
 
 
 def test_a_claim_that_must_say_what_happened_is_rejected_when_it_does_not(ctx):

@@ -96,7 +96,7 @@ Common rules: `end_s > start_s`; times are match seconds; `priority` 1-5; `lang`
 | `player_tag` | `{name, shirt, team, speed_chip_kmh?, distance_chip_km?}`; chips appear only when a threshold rule fired on that event (METRICS section 7) | built | no |
 | `stat` | named stat with value | not built | no |
 | `metric_tick` | `{metric, value, label}` for one metric in {pass_difficulty, momentum, control, pressure, ball_speed, shot_speed} | not built | no (deterministic, feeds single-metric mode) |
-| `recap` | sections, each claim sentence with evidence ids | not built | yes, via Verifier (claims only; connective words pass) |
+| `recap` | `{sections: [{title, sentences: [{text, evidence_event_ids}]}]}` at full time (priority 5, 60 s). Result sentence proved by the final score and events of both clubs; goals (up to 6); analyst view adds the strongest swing, pressing spell and sprint. Sentences reuse the verified match sentences, and every sentence is verified again before it is shown | built | the match sentences may be model-written; the result sentence is a template |
 
 Overlay ids are deterministic: `OV-<match>-<type>-<kind>-<start*10>-<first evidence seq>-<lang>-<persona>`. A key moment lasts 4-8 s of match time by kind (`producer.DURATION_S`); the reference renderer also holds a card for at least 7 real seconds so replays faster than real time stay readable.
 

@@ -1,5 +1,5 @@
 """Record a real model's accepted answers for some matches, to replay on servers that have no model:
-`uv run python scripts/record_model.py --seeds 42 7 11 --model qwen2.5:3b --out data/recorded`.
+`uv run python scripts/record_model.py --seeds 42 7 11 --model phi4-mini --out data/recorded`.
 
 Needs Ollama running with the model pulled. Each match is run through the Analyst and the Explainer with the model,
 behind the Verifier gate; the answers the model wrote and the Verifier accepted are saved. Replaying them later still
@@ -41,7 +41,7 @@ def main(seeds: list[int], model: str, out: Path, host: str, lang: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--seeds", type=int, nargs="+", required=True)
-    parser.add_argument("--model", default="qwen2.5:3b")
+    parser.add_argument("--model", default="phi4-mini")
     parser.add_argument("--out", type=Path, default=Path("data/recorded"))
     parser.add_argument("--host", default=OLLAMA_URL)
     parser.add_argument("--lang", choices=("en", "id"), default="en")

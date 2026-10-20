@@ -2,92 +2,86 @@
   "schema_version": "1",
   "seed": 5,
   "period_s": 2700.0,
-  "model": "qwen2.5:3b",
+  "model": "phi4-mini",
   "server": "ollama 0.40.6",
-  "recorded_at": "2026-10-19",
+  "recorded_at": "2026-10-20",
   "lang": "id",
   "answers": {
     "sprint_burst:M0005-00017": [
-      "Pada menit 1, Fendan Ostov dari Sennet Wanderers berlari sampai 32 km/jam."
+      "Pada menit 1, Fendan Ostov dari Sennet Wanderers berlari hingga 32 km/jam."
     ],
     "momentum_swing:M0005-00117,M0005-00120,M0005-00121,M0005-00123,M0005-00124": [
-      "Pada menit 5, momentum berbalik ke Sennet Wanderers."
+      "Momentum berubah ke Sennet Wanderers sekitar menit 5."
     ],
     "pressing_spell:M0005-00074,M0005-00087,M0005-00089,M0005-00104,M0005-00129,M0005-00132,M0005-00136,M0005-00145,M0005-00153": [
-      "Dalam tiga menit terakhir, Dunmere Argyle terus menekan dengan 3,0 tekanan per menit hingga menit 6."
+      "Dunmere Argyle terus menekan, 3,0 tekanan per menit selama tiga menit terakhir hingga menit 6."
     ],
     "momentum_swing:M0005-00207,M0005-00209,M0005-00210,M0005-00213,M0005-00214": [
-      "Pada menit 9, momentum berbalik ke Dunmere Argyle."
-    ],
-    "big_chance:M0005-00333": [
-      "Pada menit 13, Fendan Ostov dari Sennet Wanderers mendapat peluang besar dengan tembakan dari jarak 6 m yang melebar."
+      "Momentum berubah ke Dunmere Argyle sekitar menit 9."
     ],
     "momentum_swing:M0005-00333,M0005-00335,M0005-00337,M0005-00339,M0005-00340": [
-      "Pada menit 14, momentum berbalik ke Sennet Wanderers."
+      "Momentum berubah ke Sennet Wanderers sekitar menit 14."
     ],
     "sprint_burst:M0005-00464": [
-      "Pada menit 19, Fenric Ravovic dari Dunmere Argyle berlari sampai 28 km/jam."
+      "Pada menit 19, Fenric Ravovic dari Dunmere Argyle berlari hingga 28 km/jam."
     ],
     "momentum_swing:M0005-00493,M0005-00494,M0005-00495,M0005-00496,M0005-00498": [
-      "Pada menit 21, momentum berpindah ke Dunmere Argyle."
+      "Momentum berubah ke Dunmere Argyle sekitar menit 21."
     ],
     "pressing_spell:M0005-00693,M0005-00696,M0005-00699,M0005-00702,M0005-00710,M0005-00731,M0005-00735,M0005-00740,M0005-00745,M0005-00747,M0005-00750,M0005-00768,M0005-00770": [
-      "30: Sennet Wanderers terus menekan, 4,0 tekanan per menit hingga menit 30."
+      "Sennet Wanderers terus menekan, 4,0 tekanan per menit selama tiga menit terakhir hingga menit 30."
     ],
     "momentum_swing:M0005-00832,M0005-00834,M0005-00837,M0005-00838,M0005-00840": [
-      "33, momentum beralih ke Dunmere Argyle sekitar itu."
+      "Momentum berubah ke Dunmere Argyle sekitar menit 33."
     ],
     "momentum_swing:M0005-01209,M0005-01210,M0005-01211,M0005-01212,M0005-01216": [
-      "Pada menit 47, momentum berpindah ke Sennet Wanderers."
+      "Momentum berubah ke Sennet Wanderers sekitar menit 47."
     ],
     "sprint_burst:M0005-01239": [
-      "47: Renius Drasen dari Sennet Wanderers mencapai kecepatan 26 km/jam."
+      "Pada menit 47, Renius Drasen dari Sennet Wanderers berlari hingga 26 km/jam."
     ],
     "sprint_burst:M0005-01319": [
-      "50: Pada menit 50, Lorvin Marford dari Dunmere Argyle berlari sampai 29 km/jam."
+      "Pada menit 50, Lorvin Marford dari Dunmere Argyle berlari hingga 29 km/jam."
     ],
     "sprint_burst:M0005-01327": [
-      "50: Torlo Osani dari Dunmere Argyle mencapai kecepatan 26 km/jam."
+      "Pada menit 50, Torlo Osani dari Dunmere Argyle berlari hingga 26 km/jam."
     ],
     "momentum_swing:M0005-01358,M0005-01362,M0005-01364,M0005-01365,M0005-01367": [
-      "Pada menit 51, momentum berpindah ke Dunmere Argyle."
+      "Momentum berubah ke Dunmere Argyle sekitar menit 51."
     ],
     "pressing_spell:M0005-01271,M0005-01282,M0005-01288,M0005-01292,M0005-01308,M0005-01319,M0005-01325,M0005-01331,M0005-01337,M0005-01339,M0005-01341,M0005-01347,M0005-01354,M0005-01362,M0005-01364,M0005-01371,M0005-01373": [
-      "Pada tiga menit terakhir, Dunmere Argyle terus menekan dengan 6,5 tekanan per menit hingga menit 51."
+      "Dunmere Argyle terus menekan, 6,5 tekanan per menit selama tiga menit terakhir hingga menit 51."
     ],
     "pressing_spell:M0005-01747,M0005-01756,M0005-01758,M0005-01771,M0005-01773,M0005-01784,M0005-01788,M0005-01790,M0005-01793,M0005-01795,M0005-01800,M0005-01804,M0005-01813": [
-      "Dalam tiga menit terakhir, Dunmere Argyle terus menekan dengan 5,0 tekanan per menit hingga menit 67."
+      "Dunmere Argyle terus menekan, 5,0 tekanan per menit selama tiga menit terakhir hingga menit 67."
     ],
     "momentum_swing:M0005-01836,M0005-01838,M0005-01840,M0005-01842,M0005-01844": [
-      "Pada menit 68, momentum berpindah ke Sennet Wanderers."
+      "Momentum berubah ke Sennet Wanderers sekitar menit 68."
     ],
     "momentum_swing:M0005-02136,M0005-02145,M0005-02147,M0005-02149,M0005-02151": [
-      "Pada menit 81, momentum beralih ke Sennet Wanderers."
+      "Momentum berubah ke Sennet Wanderers sekitar menit 81."
     ],
     "pressing_spell:M0005-02136,M0005-02149,M0005-02151,M0005-02160,M0005-02162,M0005-02167,M0005-02169,M0005-02172,M0005-02175,M0005-02184,M0005-02192,M0005-02201,M0005-02203,M0005-02210,M0005-02219,M0005-02221": [
-      "Pada menit 83, Sennet Wanderers terus menekan dengan 6,5 tekanan per menit."
-    ],
-    "big_chance:M0005-02224": [
-      "Pada menit 83, Renius Drasen dari Sennet Wanderers mendapat peluang besar dengan tembakan dari jarak 8 m yang melebar."
+      "Sennet Wanderers terus menekan, 6,5 tekanan per menit selama tiga menit terakhir hingga menit 83."
     ],
     "sprint_burst:M0005-02229": [
-      "Pada menit 84, Fendan Ostov dari Sennet Wanderers berlari sampai 29 km/jam."
+      "Pada menit 84, Fendan Ostov dari Sennet Wanderers berlari hingga 29 km/jam."
     ],
     "sprint_burst:M0005-02298": [
-      "Pada menit 86, Fendan Ostov dari Sennet Wanderers berlari sampai 27 km/jam."
+      "Pada menit 86, Fendan Ostov dari Sennet Wanderers berlari hingga 27 km/jam."
     ],
     "goal:M0005-02300,M0005-02301,M0005-02302,M0005-02303": [
-      "Pada menit 86, Renius Drasen dari Sennet Wanderers mencetak gol dari jarak 10 m, skor tetap 0-1.",
+      "Pada menit 86, Renius Drasen dari Sennet Wanderers mencetak gol dari jarak 10 m dan skor menjadi 0-1.",
       "Tembakan itu melaju 97 km/jam."
     ],
     "momentum_swing:M0005-02379,M0005-02380,M0005-02386,M0005-02388,M0005-02390": [
-      "Pada menit 90, momentum berpindah ke Dunmere Argyle."
+      "Momentum berubah ke Dunmere Argyle sekitar menit 90."
     ],
     "sprint_burst:M0005-02431": [
-      "Pada menit 91, Fenric Ravovic dari Dunmere Argyle berlari sampai 26 km/jam."
+      "Pada menit 91, Fenric Ravovic dari Dunmere Argyle berlari hingga 26 km/jam."
     ],
     "momentum_swing:M0005-02481,M0005-02482,M0005-02483,M0005-02484,M0005-02487": [
-      "Pada menit 94, momentum berpindah ke Dunmere Argyle."
+      "Momentum berubah ke Dunmere Argyle pada menit 94."
     ]
   }
 }

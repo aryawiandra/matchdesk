@@ -25,7 +25,7 @@ const I18N = {
     recordedStatus: (model, date) => `Live. Replaying sentences a real model wrote (${model}, recorded ${date}); the Verifier checks every one again now.`,
     fullTime: "Full time. Click a sentence to see the events behind it, or replay another seed.",
     stopped: (why) => `The feed stopped: ${why}`, recordedSeeds: (seeds) => `Recorded seeds: ${seeds}`,
-    detail: "Detail", moment: "Moment", kmh: "km/h", covered: "km covered",
+    detail: "Detail", moment: "Moment", recap: "Full-time recap", kmh: "km/h", covered: "km covered",
     kinds: { goal: "Goal", big_chance: "Big chance", sprint_burst: "Sprint", pressing_spell: "Pressing spell", momentum_swing: "Momentum swing" },
     sources: {
       template: "Template, checked by the Verifier",
@@ -45,7 +45,7 @@ const I18N = {
     recordedStatus: (model, date) => `Langsung. Memutar kalimat yang ditulis model sungguhan (${model}, direkam ${date}); Verifier memeriksa setiap kalimat lagi sekarang.`,
     fullTime: "Peluit akhir. Klik sebuah kalimat untuk melihat kejadian di baliknya, atau putar seed lain.",
     stopped: (why) => `Siaran berhenti: ${why}`, recordedSeeds: (seeds) => `Seed yang direkam: ${seeds}`,
-    detail: "Rincian", moment: "Momen", kmh: "km/jam", covered: "km ditempuh",
+    detail: "Rincian", moment: "Momen", recap: "Ringkasan akhir", kmh: "km/jam", covered: "km ditempuh",
     kinds: { goal: "Gol", big_chance: "Peluang besar", sprint_burst: "Lari cepat", pressing_spell: "Tekanan", momentum_swing: "Perubahan momentum" },
     sources: {
       template: "Templat, diperiksa Verifier",
@@ -252,6 +252,18 @@ function buildCard(overlay) {
       list.appendChild(item);
     }
     card.appendChild(list);
+  } else if (overlay.type === "recap") {
+    card.appendChild(element("h2", "", words.recap));
+    for (const section of payload.sections) {
+      card.appendChild(element("h3", "", section.title));
+      const list = element("ul");
+      for (const sentence of section.sentences) {
+        const item = element("li");
+        item.appendChild(evidenceButton(sentence.text, sentence.evidence_event_ids));
+        list.appendChild(item);
+      }
+      card.appendChild(list);
+    }
   } else if (overlay.type === "player_tag") {
     card.appendChild(element("h2", "", `#${payload.shirt} ${payload.name}`));
     const chips = element("div", "chips");

@@ -1,5 +1,6 @@
 """Producer: verified explanations become timed overlays (SCHEMA.md section 7). No model is involved here; every
 sentence already passed the Verifier, and every overlay that makes a claim cites event ids."""
+import logging
 import math
 
 from . import metrics
@@ -9,10 +10,16 @@ from .context import MatchContext
 from .explainer import Explanation
 from .overlay import (
     ExplanationOverlay, ExplanationPayload, KeyMomentOverlay, KeyMomentPayload, Lang, Overlay, Persona,
-    PlayerTagOverlay, PlayerTagPayload, ScoreboardOverlay, ScoreboardPayload, Sentence,
+    PlayerTagOverlay, PlayerTagPayload, RecapOverlay, RecapPayload, RecapSectionPayload, ScoreboardOverlay,
+    ScoreboardPayload, Sentence,
 )
+from .recap import RecapSection, recap_sections
+from .verifier import verify_claims
 
+logger = logging.getLogger("matchdesk")
 TICK_S = 10.0
+RECAP_DURATION_S = 60.0
+RECAP_PRIORITY = 5
 TAG_DURATION_S = 6.0
 TAG_PRIORITY = 2
 # How long each kind stays on screen and how much it matters (1-5) [A: design choices].
@@ -48,6 +55,30 @@ class Producer:
             persona=persona, evidence_event_ids=(),
             a11y_text=f"{home} {score['H']}, {away} {score['A']}, {clock(at_s)}.",
             payload=ScoreboardPayload(score=score, clock=clock(at_s), home=home, away=away),
+        )
+
+    def recap(self, explanations, lang: Lang = "en", persona: Persona = "fan") -> RecapOverlay | None:
+        """The full-time recap, with every sentence verified once more. A sentence that fails is dropped and logged."""
+        kept: list[RecapSection] = []
+        for section in recap_sections(explanations, self._ctx, lang, persona):
+            result = verify_claims(section.claims, self._ctx, lang)
+            for rejection in result.rejected:
+                logger.error("recap sentence failed verification: %s", rejection.reasons)
+            if result.accepted:
+                kept.append(RecapSection(section.key, section.title, result.accepted))
+        if not kept:
+            return None
+        start = self._ctx.events()[-1].match_s
+        claims = [claim for section in kept for claim in section.claims]
+        evidence = tuple(dict.fromkeys(eid for claim in claims for eid in claim.evidence_ids))
+        return RecapOverlay(
+            overlay_id=f"OV-{self._ctx.info.match_id}-recap-{lang}-{persona}",
+            match_id=self._ctx.info.match_id, start_s=start, end_s=start + RECAP_DURATION_S, priority=RECAP_PRIORITY,
+            lang=lang, persona=persona, evidence_event_ids=evidence, a11y_text=" ".join(c.text for c in claims),
+            payload=RecapPayload(sections=tuple(
+                RecapSectionPayload(title=section.title, sentences=tuple(
+                    Sentence(text=c.text, evidence_event_ids=c.evidence_ids) for c in section.claims))
+                for section in kept)),
         )
 
     def for_explanation(self, explanation: Explanation, lang: Lang = "en", persona: Persona = "fan") -> tuple[Overlay, ...]:

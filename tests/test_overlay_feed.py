@@ -200,7 +200,7 @@ def test_the_app_reads_its_model_from_the_environment(monkeypatch):
     monkeypatch.delenv("MATCHDESK_MODEL", raising=False)
     assert TestClient(create_app_from_env()).get(
         f"/overlays/seed/{SEED}?period_s=60&speed=0&explainer=model").status_code == 400
-    monkeypatch.setenv("MATCHDESK_MODEL", "ollama:qwen2.5:3b")
+    monkeypatch.setenv("MATCHDESK_MODEL", "ollama:phi4-mini")
     configured = TestClient(create_app_from_env())
     assert configured.get("/healthz").status_code == 200  # builds the narrator without calling the model
 
@@ -230,6 +230,6 @@ def test_the_recorded_explainer_serves_the_requested_language():
 def test_the_renderer_speaks_both_languages(client):
     page, script = client.get("/").text, client.get("/app.js").text
     assert 'id="language"' in page and 'value="id"' in page and "Bahasa Indonesia" in page
-    for phrase in ("Peluang besar", "Perubahan momentum", "Ditulis model AI, diperiksa Verifier", "km/jam"):
+    for phrase in ("Peluang besar", "Perubahan momentum", "Ditulis model AI, diperiksa Verifier", "km/jam", "Ringkasan akhir", "Full-time recap"):
         assert phrase in script
     assert "lang: state.lang" in script  # the chosen language reaches the feed

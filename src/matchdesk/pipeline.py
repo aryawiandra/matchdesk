@@ -27,6 +27,7 @@ def overlay_stream(
     ctx = MatchContext(info)
     analyst, producer = Analyst(thresholds), Producer(ctx, thresholds)
     next_tick, last_s = tick_s, 0.0
+    explanations: list[Explanation] = []
     for event in events:
         ctx.add(event)
         batch: list[Overlay] = []
@@ -35,6 +36,7 @@ def overlay_stream(
             next_tick += tick_s
         for detection in analyst.ingest(event):
             explanation = explain(detection, ctx, model, max_retries, lang)
+            explanations.append(explanation)
             if on_explanation is not None:
                 on_explanation(explanation)
             batch.extend(producer.for_explanation(explanation, lang, persona))
@@ -42,3 +44,6 @@ def overlay_stream(
         yield from batch
         last_s = event.match_s
     yield producer.scoreboard(last_s, tick_s, lang, persona)
+    recap = producer.recap(explanations, lang, persona)
+    if recap is not None:
+        yield recap

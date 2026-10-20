@@ -59,13 +59,13 @@ The Explainer can ask a local model to reword each template sentence. The model 
 
 ```bash
 brew install ollama && ollama serve &          # once, in its own terminal
-ollama pull qwen2.5:3b                         # about 1.9 GB
-MATCHDESK_MODEL=ollama:qwen2.5:3b uv run uvicorn --factory matchdesk.feed:create_app_from_env --port 8000
+ollama pull phi4-mini                          # about 2.5 GB, MIT licence
+MATCHDESK_MODEL=ollama:phi4-mini uv run uvicorn --factory matchdesk.feed:create_app_from_env --port 8000
 ```
 
-Then choose **Explainer: AI model** on the page, or call `/overlays/seed/42?explainer=model`. Measured on 210 detections with `qwen2.5:3b` on an M2 with 8 GB (`scripts/model_report.py`, METRICS.md section 12): with the strict prompt 94% of answers were accepted first try, 5% after a retry with the reasons, and 0.5% fell back to the template (0.91 s mean); with a careless prompt 68% of calls were rejected and 49% of explanations fell back to the template. The gate does real work on a real model. The live model path is capped at one open stream.
+Then choose **Explainer: AI model** on the page, or call `/overlays/seed/42?explainer=model`. Measured on 210 detections with `phi4-mini` on an M2 with 8 GB (`scripts/model_report.py`, METRICS.md section 12): with the strict prompt 210 of 210 English answers and 209 of 210 Indonesian answers were accepted first try (mean about 1 s); with a careless prompt, 37% of English calls and 9% of Indonesian calls were rejected, and 14% and 3% of explanations fell back to the template. "0 rejected" means no listed word, not perfect prose: the wording rules are lexical. The live model path is capped at one open stream.
 
-**A server with no model can still show the AI.** `scripts/record_model.py` records the sentences a real model wrote (and the Verifier accepted) for a match; the repo ships recordings for eight seeds, in English and in Indonesian, in `data/recorded/` (made with `qwen2.5:3b` on Ollama 0.40.6, 2026-10-19). `explainer=recorded` replays them. A recording is only data: every replayed sentence goes through the Verifier again, now, so a tampered or stale recording falls back to the template (`tests/test_recorded.py`). The page says plainly that it is a recorded run. This is what the public link uses, because a judge cannot reach a model on a laptop. Run the server with `uvicorn --factory matchdesk.feed:create_app_from_env`; set `MATCHDESK_MODEL` as well to add the live model.
+**A server with no model can still show the AI.** `scripts/record_model.py` records the sentences a real model wrote (and the Verifier accepted) for a match; the repo ships recordings for eight seeds, in English and in Indonesian, in `data/recorded/` (made with `phi4-mini` on Ollama 0.40.6, 2026-10-20). `explainer=recorded` replays them. A recording is only data: every replayed sentence goes through the Verifier again, now, so a tampered or stale recording falls back to the template (`tests/test_recorded.py`). The page says plainly that it is a recorded run. This is what the public link uses, because a judge cannot reach a model on a laptop. Run the server with `uvicorn --factory matchdesk.feed:create_app_from_env`; set `MATCHDESK_MODEL` as well to add the live model.
 
 The feed never sends the truth. The Analyst (`src/matchdesk/analyst.py`) computes every number from the stream alone; detection rules and measured quality are in `METRICS.md` section 10.
 

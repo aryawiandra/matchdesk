@@ -2,80 +2,80 @@
   "schema_version": "1",
   "seed": 32,
   "period_s": 2700.0,
-  "model": "qwen2.5:3b",
+  "model": "phi4-mini",
   "server": "ollama 0.40.6",
-  "recorded_at": "2026-10-19",
+  "recorded_at": "2026-10-20",
   "lang": "en",
   "answers": {
     "momentum_swing:M0032-00138,M0032-00140,M0032-00141,M0032-00143,M0032-00146": [
-      "Around minute 7, momentum shifted in favor of Marlow Athletic."
+      "Momentum shifted to Marlow Athletic at minute 7."
     ],
     "momentum_swing:M0032-00489,M0032-00493,M0032-00494,M0032-00498,M0032-00499": [
-      "Around minute 22, momentum shifted in favor of Marlow Athletic."
+      "Momentum shifted to Marlow Athletic at minute 22."
     ],
     "momentum_swing:M0032-00663,M0032-00666,M0032-00668,M0032-00674,M0032-00676": [
-      "By minute 29, momentum shifted in favor of Marlow Athletic."
+      "Momentum shifted to Marlow Athletic at minute 29."
     ],
     "pressing_spell:M0032-01039,M0032-01044,M0032-01046,M0032-01069,M0032-01077,M0032-01079,M0032-01082,M0032-01085,M0032-01095,M0032-01097,M0032-01119,M0032-01125": [
-      "Over the last three minutes, Marlow Athletic maintained a pressure rate of 4.5 per minute up to minute 46."
+      "Over the last three minutes, up to minute 46, Marlow Athletic kept up 4.5 pressures per minute."
     ],
     "sprint_burst:M0032-01137": [
-      "Mirius Haltov of Marlow Athletic reaches 26 km/h in minute 46."
+      "Minute 46: Mirius Haltov of Marlow Athletic hits 26 km/h."
     ],
     "momentum_swing:M0032-01157,M0032-01160,M0032-01161,M0032-01162,M0032-01164": [
-      "Around minute 48, momentum shifted in favor of Marlow Athletic."
+      "Momentum shifted to Marlow Athletic at minute 48."
     ],
     "momentum_swing:M0032-01315,M0032-01317,M0032-01324,M0032-01328,M0032-01332": [
-      "By minute 54, momentum shifted in favor of Brightmoor United."
+      "Brightmoor United gained momentum around minute 54."
     ],
     "sprint_burst:M0032-01458": [
-      "Minute 58: Othvin Osley of Brightmoor United reaches 28 km/h."
+      "Othvin Osley of Brightmoor United hits 28 km/h in minute 58."
     ],
     "sprint_burst:M0032-01605": [
-      "Othvin Osley of Brightmoor United reaches 29 km/h in minute 64."
+      "Othvin Osley of Brightmoor United hits 29 km/h in minute 64."
     ],
     "goal:M0032-01749,M0032-01750,M0032-01751,M0032-01753": [
-      "Othvin Osley of Brightmoor United scores in minute 70 from 2 m, giving them a 0-1 lead.",
-      "The shot was clocked at 104 km/h."
+      "Othvin Osley of Brightmoor United scores in minute 70 from 2 m, making it 0-1.",
+      "The shot traveled at 104 km/h."
     ],
     "pressing_spell:M0032-01757,M0032-01767,M0032-01778,M0032-01784,M0032-01787,M0032-01807,M0032-01810,M0032-01813,M0032-01816,M0032-01824": [
-      "Brightmoor United exert 4.0 pressures per minute in the last three minutes, reaching up to minute 73."
+      "Brightmoor United maintained 4.0 pressures per minute over the last three minutes, reaching minute 73."
     ],
     "sprint_burst:M0032-01827": [
-      "Brightmoor United's Othvin Osley reaches 27 km/h in the 73rd minute."
+      "Othvin Osley of Brightmoor United hits 27 km/h in minute 73."
     ],
     "goal:M0032-01827,M0032-01829,M0032-01830,M0032-01833": [
-      "In minute 73, Othvin Osley of Brightmoor United scores from 3 m, giving the score 0-2.",
-      "The shot travels at 100 km/h."
+      "Othvin Osley of Brightmoor United scores in minute 73 from 3 m, making it 0-2.",
+      "The shot traveled at 100 km/h."
     ],
     "sprint_burst:M0032-01945": [
-      "Minute 78: Othvin Osley of Brightmoor United reaches 27 km/h."
+      "Othvin Osley of Brightmoor United hits 27 km/h in minute 78."
     ],
     "goal:M0032-01964,M0032-01966,M0032-01967,M0032-01969": [
-      "In minute 78, Othvin Osley of Brightmoor United scores from 3 m, increasing the score to 0-3.",
-      "The shot leaves at 90 km/h."
+      "Othvin Osley of Brightmoor United scores in minute 78 from 3 m, making it 0-3.",
+      "The shot traveled at 90 km/h."
     ],
     "goal:M0032-01981,M0032-01983,M0032-01984,M0032-01985": [
-      "In minute 79, Othvin Osley of Brightmoor United scores from 7 m, extending their deficit to 0-4.",
-      "The shot left at 100 km/h and finds the back of the net."
+      "Brightmoor United's Othvin Osley scores in minute 79 from 7 m, resulting in a 0-4 score.",
+      "The shot reached a speed of 100 km/h."
     ],
     "big_chance:M0032-02033": [
-      "In minute 81, Fentan Ostov of Marlow Athletic had a golden opportunity with a shot from 6 m that was saved."
+      "Fentan Ostov of Marlow Athletic had a significant opportunity in minute 81, with a 6 m shot that was saved."
     ],
     "momentum_swing:M0032-02031,M0032-02032,M0032-02033,M0032-02035,M0032-02036": [
-      "By minute 82, momentum shifted in favor of Marlow Athletic."
+      "Momentum shifted to Marlow Athletic at minute 82."
     ],
     "big_chance:M0032-02041": [
-      "In minute 82, Renlo Martov of Marlow Athletic had a big chance with a shot from 4 m but it was off target."
+      "Renlo Martov of Marlow Athletic missed a big chance in minute 82 with a 4 m shot."
     ],
     "pressing_spell:M0032-02101,M0032-02106,M0032-02108,M0032-02110,M0032-02112,M0032-02115,M0032-02117,M0032-02125,M0032-02127,M0032-02135,M0032-02152,M0032-02157,M0032-02164,M0032-02174,M0032-02186,M0032-02188,M0032-02197,M0032-02199": [
-      "Over the last three minutes, Marlow Athletic maintained a pressure rate of 4.0 per minute up to minute 87."
+      "Over the last three minutes up to minute 87, Marlow Athletic maintained 4.0 pressures per minute."
     ],
     "sprint_burst:M0032-02202": [
-      "Nikvin Ravbrek of Marlow Athletic reaches 28 km/h in the 87th minute."
+      "Minute 87: Nikvin Ravbrek of Marlow Athletic hits 28 km/h."
     ],
     "momentum_swing:M0032-02318,M0032-02319,M0032-02320,M0032-02325,M0032-02328": [
-      "By minute 92, momentum shifted in favor of Brightmoor United."
+      "Brightmoor United gained momentum around minute 92."
     ]
   }
 }

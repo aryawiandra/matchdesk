@@ -407,6 +407,135 @@
       "title": "PlayerTagPayload",
       "type": "object"
     },
+    "RecapOverlay": {
+      "additionalProperties": false,
+      "properties": {
+        "a11y_text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "A11Y Text",
+          "type": "string"
+        },
+        "end_s": {
+          "title": "End S",
+          "type": "number"
+        },
+        "evidence_event_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Event Ids",
+          "type": "array"
+        },
+        "lang": {
+          "enum": [
+            "en",
+            "id",
+            "es"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "overlay_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Overlay Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/RecapPayload"
+        },
+        "persona": {
+          "enum": [
+            "fan",
+            "analyst"
+          ],
+          "title": "Persona",
+          "type": "string"
+        },
+        "priority": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "start_s": {
+          "minimum": 0.0,
+          "title": "Start S",
+          "type": "number"
+        },
+        "type": {
+          "const": "recap",
+          "default": "recap",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "overlay_id",
+        "match_id",
+        "start_s",
+        "end_s",
+        "priority",
+        "lang",
+        "persona",
+        "evidence_event_ids",
+        "a11y_text",
+        "payload"
+      ],
+      "title": "RecapOverlay",
+      "type": "object"
+    },
+    "RecapPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/RecapSectionPayload"
+          },
+          "minItems": 1,
+          "title": "Sections",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sections"
+      ],
+      "title": "RecapPayload",
+      "type": "object"
+    },
+    "RecapSectionPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "sentences": {
+          "items": {
+            "$ref": "#/$defs/Sentence"
+          },
+          "minItems": 1,
+          "title": "Sentences",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "sentences"
+      ],
+      "title": "RecapSectionPayload",
+      "type": "object"
+    },
     "ScoreboardOverlay": {
       "additionalProperties": false,
       "properties": {
@@ -560,6 +689,7 @@
       "explanation": "#/$defs/ExplanationOverlay",
       "key_moment": "#/$defs/KeyMomentOverlay",
       "player_tag": "#/$defs/PlayerTagOverlay",
+      "recap": "#/$defs/RecapOverlay",
       "scoreboard": "#/$defs/ScoreboardOverlay"
     },
     "propertyName": "type"
@@ -576,6 +706,9 @@
     },
     {
       "$ref": "#/$defs/PlayerTagOverlay"
+    },
+    {
+      "$ref": "#/$defs/RecapOverlay"
     }
   ]
 }

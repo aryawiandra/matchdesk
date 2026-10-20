@@ -80,6 +80,8 @@ figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
 .card p { margin: 0 0 6px; }
 .card.key_moment { border-left: 5px solid var(--accent); }
 .card.player_tag { border-left: 5px solid var(--muted); }
+.card.recap { border-left: 5px solid var(--accent); }
+.card.recap h3 { margin: 10px 0 4px; font-size: 0.95rem; }
 .card ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
 .sentence {
   all: unset; display: block; cursor: pointer; width: 100%; padding: 2px 0; text-decoration: underline dotted;

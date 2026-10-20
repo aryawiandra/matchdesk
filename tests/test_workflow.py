@@ -160,7 +160,7 @@ def test_a_template_that_fails_verification_is_suppressed_and_logged_not_fatal(f
     with caplog.at_level("ERROR", logger="matchdesk"):
         overlays, suppressed = run_async(go())
     assert suppressed and all("template claims failed verification" in reason for reason in suppressed)
-    assert overlays and all(o.type == "scoreboard" for o in overlays)  # the match played on; only the bad insights were dropped
+    assert overlays and {o.type for o in overlays} == {"scoreboard", "recap"}  # the match played on; only the bad insights were dropped
     assert "template claims failed verification" in caplog.text
 
 
@@ -173,7 +173,7 @@ def test_finish_adds_the_final_scoreboard_with_the_true_score(full_match):
         return await pipeline.finish()
 
     final = run_async(go())
-    assert len(final) == 1 and final[0].type == "scoreboard"
+    assert [o.type for o in final] == ["scoreboard", "recap"]
     assert final[0].payload.score == full_match.truth.score
 
 

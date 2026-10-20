@@ -2,49 +2,49 @@
   "schema_version": "1",
   "seed": 31,
   "period_s": 2700.0,
-  "model": "qwen2.5:3b",
+  "model": "phi4-mini",
   "server": "ollama 0.40.6",
-  "recorded_at": "2026-10-19",
+  "recorded_at": "2026-10-20",
   "lang": "en",
   "answers": {
     "momentum_swing:M0031-00468,M0031-00470,M0031-00473,M0031-00474,M0031-00475": [
-      "By minute 20, momentum shifted in favor of Vorwick Albion."
+      "Vorwick Albion gained momentum around minute 20."
     ],
     "pressing_spell:M0031-00497,M0031-00505,M0031-00511,M0031-00513,M0031-00517,M0031-00525,M0031-00532,M0031-00534,M0031-00540": [
-      "Over the last three minutes, Vorwick Albion maintained a pressure rate of 3.0 per minute, reaching up to minute 24."
+      "Over the last three minutes, up to minute 24, Vorwick Albion applied 3.0 pressures per minute."
     ],
     "sprint_burst:M0031-00863": [
-      "In minute 35, Ardan Halmere of Halden Rovers reaches a speed of 30 km/h."
+      "In minute 35, Ardan Halmere of Halden Rovers reached 30 km/h."
     ],
     "momentum_swing:M0031-00971,M0031-00973,M0031-00977,M0031-00978,M0031-00980": [
-      "Around minute 40, the momentum shifted in favor of Halden Rovers."
+      "Around minute 40, Halden Rovers gained momentum."
     ],
     "sprint_burst:M0031-01240": [
-      "At minute 51, Fenlo Kolley of Halden Rovers reaches a speed of 30 km/h."
+      "Minute 51: Fenlo Kolley of Halden Rovers hits 30 km/h."
     ],
     "pressing_spell:M0031-01269,M0031-01271,M0031-01273,M0031-01293,M0031-01307,M0031-01313,M0031-01318,M0031-01329,M0031-01331,M0031-01342,M0031-01345,M0031-01354": [
-      "Over the last three minutes, Halden Rovers maintained a pressure rate of 4.0 per minute up to minute 55."
+      "Minute 55: Halden Rovers maintain 4.0 pressures per minute over the last three minutes."
     ],
     "sprint_burst:M0031-01496": [
-      "In the 60th minute, Ardan Halmere of Halden Rovers reaches a speed of 31 km/h."
+      "In minute 60, Ardan Halmere of Halden Rovers hits 31 km/h."
     ],
     "pressing_spell:M0031-01491,M0031-01494,M0031-01496,M0031-01499,M0031-01501,M0031-01528,M0031-01530,M0031-01532,M0031-01539,M0031-01541,M0031-01556": [
-      "Over the last three minutes, Halden Rovers maintained a pressure rate of 5.0 per minute up to minute 62."
+      "Minute 62: Halden Rovers keep the pressure on, 5.0 pressures per minute across the last three minutes."
     ],
     "sprint_burst:M0031-01610": [
-      "Mirlo Marmere of Halden Rovers reaches 26 km/h in minute 63."
+      "In minute 63, Mirlo Marmere of Halden Rovers hits 26 km/h."
     ],
     "sprint_burst:M0031-01634": [
-      "Minute 64 saw Othtan Wenovic of Vorwick Albion hit 30 km/h."
+      "Minute 64: Othtan Wenovic of Vorwick Albion hits 30 km/h."
     ],
     "momentum_swing:M0031-01696,M0031-01697,M0031-01701,M0031-01704,M0031-01705": [
-      "By minute 68, momentum shifted in favor of Vorwick Albion."
+      "Vorwick Albion gained momentum around minute 68."
     ],
     "momentum_swing:M0031-01856,M0031-01858,M0031-01862,M0031-01863,M0031-01865": [
-      "Around minute 75, momentum shifted in favor of Halden Rovers."
+      "Around minute 75, Halden Rovers gained momentum."
     ],
     "momentum_swing:M0031-02067,M0031-02068,M0031-02070,M0031-02077,M0031-02081": [
-      "Around minute 83, momentum shifted in favor of Vorwick Albion."
+      "Vorwick Albion gained momentum around minute 83."
     ]
   }
 }

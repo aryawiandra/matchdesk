@@ -2,75 +2,79 @@
   "schema_version": "1",
   "seed": 42,
   "period_s": 2700.0,
-  "model": "qwen2.5:3b",
+  "model": "phi4-mini",
   "server": "ollama 0.40.6",
-  "recorded_at": "2026-10-19",
+  "recorded_at": "2026-10-20",
   "lang": "id",
   "answers": {
     "sprint_burst:M0042-00337": [
-      "Pada menit 13, Syltan Marovic dari Marlow Athletic berlari sampai 26 km/jam."
+      "Pada menit 13, Syltan Marovic dari Marlow Athletic berlari hingga 26 km/jam."
     ],
     "momentum_swing:M0042-00343,M0042-00346,M0042-00348,M0042-00349,M0042-00352": [
-      "Pada menit 13, momentum berpindah ke Marlow Athletic."
+      "Momentum berubah ke Marlow Athletic pada menit 13."
     ],
     "sprint_burst:M0042-00712": [
-      "Pada menit 28, Kesmo Draley dari Marlow Athletic berlari sampai 31 km/jam."
+      "Pada menit 28, Kesmo Draley dari Marlow Athletic berlari hingga 31 km/jam."
     ],
     "sprint_burst:M0042-00738": [
-      "Pada menit 28, Javlo Sarley dari Marlow Athletic berlari sampai 30 km/jam."
+      "Pada menit 28, Javlo Sarley dari Marlow Athletic berlari hingga 30 km/jam."
     ],
     "pressing_spell:M0042-00684,M0042-00686,M0042-00688,M0042-00690,M0042-00696,M0042-00712,M0042-00723,M0042-00739,M0042-00747,M0042-00750,M0042-00757,M0042-00763": [
-      "Marlow Athletic terus menekan, dengan 3,5 tekanan per menit selama tiga menit terakhir hingga menit 29."
+      "Marlow Athletic terus menekan, 3,5 tekanan per menit selama tiga menit terakhir hingga menit 29."
     ],
     "sprint_burst:M0042-00780": [
-      "30: Pada menit 30, Brenvin Marmere dari Marlow Athletic berlari sampai 25 km/jam."
+      "Pada menit 30, Brenvin Marmere dari Marlow Athletic berlari hingga 25 km/jam."
     ],
     "momentum_swing:M0042-00805,M0042-00807,M0042-00810,M0042-00812,M0042-00814": [
-      "Pada menit 31, momentum berpindah ke Marlow Athletic."
+      "Momentum berubah ke Marlow Athletic pada menit 31."
+    ],
+    "goal:M0042-01027,M0042-01029,M0042-01030,M0042-01032": [
+      "Pada menit 40, Brenvin Ravtov dari Marlow Athletic mencetak gol dari jarak 6 m dan skor menjadi 1-0.",
+      "Tembakan itu melaju 73 km/jam."
     ],
     "momentum_swing:M0042-01077,M0042-01079,M0042-01080,M0042-01081,M0042-01082": [
-      "43: Momentum beralih ke Halden Rovers sekitar menit 43."
+      "Momentum berubah ke Halden Rovers sekitar menit 43."
     ],
     "goal:M0042-01142,M0042-01144,M0042-01145,M0042-01146": [
       "Pada menit 46, Othtan Brekovic dari Halden Rovers mencetak gol dari jarak 5 m, skor menjadi 1-1.",
       "Tembakan itu melaju 100 km/jam."
     ],
     "momentum_swing:M0042-01160,M0042-01166,M0042-01171,M0042-01177,M0042-01183": [
-      "48: Momentum beralih ke Halden Rovers sekitar menit itu."
+      "Momentum berubah ke Halden Rovers sekitar menit 48."
     ],
     "sprint_burst:M0042-01503": [
-      "Pada menit 60, Kesmo Draley dari Marlow Athletic berlari sampai 31 km/jam."
+      "Pada menit 60, Kesmo Draley dari Marlow Athletic berlari hingga 31 km/jam."
     ],
     "sprint_burst:M0042-01505": [
-      "Pada menit 60, Syltan Marovic dari Marlow Athletic berlari sampai 26 km/jam."
+      "Pada menit 60, Syltan Marovic dari Marlow Athletic berlari hingga 26 km/jam."
     ],
     "goal:M0042-01511,M0042-01512,M0042-01513,M0042-01514": [
-      "Pada menit 61, Syltan Marovic dari Marlow Athletic mencetak gol dari jarak 5 m, skor menjadi 2-1.",
+      "Menit 61: Syltan Marovic dari Marlow Athletic mencetak gol dari jarak 5 m dan skor menjadi 2-1.",
       "Tembakan itu melaju 83 km/jam."
     ],
     "sprint_burst:M0042-01535": [
-      "Pada menit 62, Othtan Brekovic dari Halden Rovers berlari sampai 30 km/jam."
+      "Pada menit 62, Othtan Brekovic dari Halden Rovers berlari hingga 30 km/jam."
     ],
     "momentum_swing:M0042-01569,M0042-01571,M0042-01572,M0042-01573,M0042-01575": [
-      "Pada menit 63, momentum berpindah ke Marlow Athletic."
+      "Momentum berubah ke Marlow Athletic pada menit 63."
     ],
     "sprint_burst:M0042-01597": [
-      "Pada menit 63, Brenvin Ravtov dari Marlow Athletic berlari sampai 27 km/jam."
+      "Pada menit 63, Brenvin Ravtov dari Marlow Athletic berlari hingga 27 km/jam."
     ],
     "pressing_spell:M0042-01565,M0042-01567,M0042-01570,M0042-01579,M0042-01588,M0042-01617,M0042-01623,M0042-01625,M0042-01627,M0042-01629,M0042-01631,M0042-01645,M0042-01647,M0042-01649,M0042-01655,M0042-01664": [
-      "Pada menit 65, Halden Rovers terus menekan dengan 6,5 tekanan per menit."
+      "Halden Rovers terus menekan, 6,5 tekanan per menit selama tiga menit terakhir hingga menit 65."
     ],
     "pressing_spell:M0042-01614,M0042-01620,M0042-01640,M0042-01652,M0042-01667,M0042-01676,M0042-01682,M0042-01684,M0042-01692,M0042-01697,M0042-01714": [
-      "Pada menit 66, Marlow Athletic terus menekan dengan 4,0 tekanan per menit."
+      "Marlow Athletic terus menekan, 4,0 tekanan per menit selama tiga menit terakhir hingga menit 66."
     ],
     "momentum_swing:M0042-01901,M0042-01906,M0042-01912,M0042-01917,M0042-01919": [
-      "Pada menit 75, momentum berpindah ke Halden Rovers."
+      "Momentum berubah ke Halden Rovers sekitar menit 75."
     ],
     "pressing_spell:M0042-01945,M0042-01962,M0042-01966,M0042-01992,M0042-01994,M0042-02002,M0042-02004,M0042-02022,M0042-02030": [
-      "Pada menit 79, Marlow Athletic terus menekan, 3,0 tekanan per menit selama tiga menit terakhir."
+      "Marlow Athletic terus menekan, 3,0 tekanan per menit selama tiga menit terakhir hingga menit 79."
     ],
     "sprint_burst:M0042-02157": [
-      "Pada menit 84, Brendan Quinani dari Halden Rovers berlari sampai 28 km/jam."
+      "Pada menit 84, Brendan Quinani dari Halden Rovers berlari hingga 28 km/jam."
     ]
   }
 }

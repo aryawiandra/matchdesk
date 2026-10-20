@@ -2,78 +2,82 @@
   "schema_version": "1",
   "seed": 11,
   "period_s": 2700.0,
-  "model": "qwen2.5:3b",
+  "model": "phi4-mini",
   "server": "ollama 0.40.6",
-  "recorded_at": "2026-10-19",
+  "recorded_at": "2026-10-20",
   "lang": "en",
   "answers": {
     "momentum_swing:M0011-00090,M0011-00091,M0011-00093,M0011-00096,M0011-00099": [
-      "Around minute 4, momentum shifted in favor of Vorwick Albion."
+      "Momentum shifted to Vorwick Albion at minute 4."
     ],
     "momentum_swing:M0011-00300,M0011-00301,M0011-00303,M0011-00304,M0011-00306": [
-      "Around minute 13, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 13."
     ],
     "big_chance:M0011-00364": [
-      "In minute 15, Kesric Osford of Kesterly Park had a significant chance with a shot from 7 m that was saved."
+      "Minute 15: Kesric Osford of Kesterly Park had a significant opportunity, a 7 m shot that was saved."
     ],
     "pressing_spell:M0011-00306,M0011-00313,M0011-00319,M0011-00331,M0011-00344,M0011-00354,M0011-00366,M0011-00368,M0011-00370,M0011-00382,M0011-00385": [
-      "Over the last three minutes, Kesterly Park maintained a pressure rate of 4.0 per minute, reaching up to minute 16."
+      "Over the last three minutes, up to minute 16, Kesterly Park maintained 4.0 pressures per minute."
     ],
     "sprint_burst:M0011-00437": [
-      "Minute 17 saw Torvin Sartov of Kesterly Park clocking 26 km/h."
+      "Torvin Sartov of Kesterly Park hits 26 km/h in minute 17."
     ],
     "sprint_burst:M0011-00694": [
-      "Dalen Halsen of Vorwick Albion reaches 25 km/h in minute 27."
+      "In minute 27, Dalen Halsen of Vorwick Albion hits 25 km/h."
     ],
     "momentum_swing:M0011-00718,M0011-00721,M0011-00724,M0011-00726,M0011-00727": [
-      "By minute 29, momentum shifted in favor of Vorwick Albion."
+      "Vorwick Albion gained momentum around minute 29."
     ],
     "momentum_swing:M0011-00905,M0011-00909,M0011-00912,M0011-00917,M0011-00920": [
-      "By minute 36, momentum shifted in favor of Vorwick Albion."
+      "Vorwick Albion gained momentum around minute 36."
     ],
     "pressing_spell:M0011-00946,M0011-00956,M0011-00962,M0011-00969,M0011-00971,M0011-00976,M0011-00997,M0011-01005": [
-      "Over the last three minutes, Vorwick Albion maintained a pressure rate of 3.0 per minute, reaching up to minute 40."
+      "Over the last three minutes, up to minute 40, Vorwick Albion maintained 3.0 pressures per minute."
     ],
     "goal:M0011-01240,M0011-01241,M0011-01242,M0011-01244": [
-      "Minute 48: Kesric Osford of Kesterly Park scores from 2 m, and it's 0-1.",
-      "The shot flies at 90 km/h."
+      "Minute 48: Kesric Osford of Kesterly Park scores from 2 m and it is 0-1.",
+      "The shot traveled at 90 km/h."
     ],
     "momentum_swing:M0011-01236,M0011-01238,M0011-01240,M0011-01242,M0011-01244": [
-      "Around minute 49, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 49."
     ],
     "sprint_burst:M0011-01250": [
-      "Tordan Quinford of Kesterly Park reaches 26 km/h in minute 49."
+      "In minute 49, Tordan Quinford of Kesterly Park hits 26 km/h."
     ],
     "sprint_burst:M0011-01344": [
-      "In minute 52, Arvin Talbrek of Kesterly Park reaches a speed of 28 km/h."
+      "Arvin Talbrek of Kesterly Park hits 28 km/h in minute 52."
     ],
     "sprint_burst:M0011-01357": [
-      "At minute 52, Syllo Vashwick of Kesterly Park reaches a speed of 27 km/h."
+      "In minute 52, Syllo Vashwick of Kesterly Park hits 27 km/h."
     ],
     "pressing_spell:M0011-01282,M0011-01285,M0011-01312,M0011-01314,M0011-01316,M0011-01338,M0011-01344,M0011-01346,M0011-01351,M0011-01353,M0011-01355,M0011-01357,M0011-01362,M0011-01367,M0011-01377,M0011-01381,M0011-01383": [
-      "Over the last three minutes, Kesterly Park maintained a pressure rate of 7.0 per minute up to minute 53."
+      "Over the last three minutes, up to minute 53, Kesterly Park maintained 7.0 pressures per minute."
     ],
     "momentum_swing:M0011-01524,M0011-01529,M0011-01530,M0011-01534,M0011-01535": [
-      "Around minute 58, momentum shifted in favor of Vorwick Albion."
+      "Vorwick Albion gained momentum around minute 58."
     ],
     "goal:M0011-01616,M0011-01617,M0011-01618,M0011-01619": [
-      "In minute 60, Arar Talwick of Vorwick Albion scores from 2 m, tying the score 1-1.",
-      "The shot left at 107 km/h and goes past the goalkeeper."
+      "Arar Talwick of Vorwick Albion scores in minute 60 from 2 m, resulting in a 1-1 score.",
+      "The shot reached a speed of 107 km/h."
     ],
     "sprint_burst:M0011-01737": [
-      "In minute 64, Loren Haltov of Vorwick Albion reaches a speed of 30 km/h."
+      "In minute 64, Loren Haltov of Vorwick Albion hits 30 km/h."
     ],
     "momentum_swing:M0011-01983,M0011-01984,M0011-01986,M0011-01987,M0011-01988": [
-      "By minute 77, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 77."
     ],
     "momentum_swing:M0011-02083,M0011-02085,M0011-02090,M0011-02092,M0011-02093": [
-      "By minute 81, momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 81."
+    ],
+    "goal:M0011-02183,M0011-02184,M0011-02185,M0011-02186": [
+      "Minute 85: Fentan Draford of Kesterly Park scores from 1 m, making it 1-2.",
+      "The shot reached 107 km/h."
     ],
     "momentum_swing:M0011-02264,M0011-02265,M0011-02267,M0011-02268,M0011-02269": [
-      "Around minute 89, momentum shifted in favor of Vorwick Albion."
+      "Vorwick Albion gained momentum around minute 89."
     ],
     "sprint_burst:M0011-02338": [
-      "In the 92nd minute, Arar Talwick of Vorwick Albion reaches a speed of 31 km/h."
+      "Arar Talwick of Vorwick Albion hits 31 km/h in minute 92."
     ]
   }
 }

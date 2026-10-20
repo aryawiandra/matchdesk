@@ -1,5 +1,5 @@
 """How a real local model behaves behind the Verifier gate:
-`uv run python scripts/model_report.py --seeds 2 --first-seed 30 --model qwen2.5:3b --show 4`.
+`uv run python scripts/model_report.py --seeds 2 --first-seed 30 --model phi4-mini --show 4`.
 
 Needs Ollama running with the model pulled. For every detection in each generated match the model is asked to reword
 the template sentences; the Verifier gate decides. Prints the share accepted first try, after a retry, or replaced by the
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--seeds", type=int, default=2)
     parser.add_argument("--first-seed", type=int, default=30)
-    parser.add_argument("--model", default="qwen2.5:3b")
+    parser.add_argument("--model", default="phi4-mini")
     parser.add_argument("--show", type=int, default=4)
     parser.add_argument("--careless", action="store_true", help="use a prompt without rules, to see the gate work")
     parser.add_argument("--lang", choices=("en", "id"), default="en")

@@ -210,3 +210,9 @@ def test_the_server_accepts_lang_id_and_rejects_other_languages():
         frames = list(decode_frames(response.iter_lines()))
     assert frames and {f["lang"] for f in frames} == {"id"}
     assert client.get("/overlays/seed/5?period_s=300&speed=0&lang=es").status_code == 422
+
+
+@pytest.mark.parametrize("word", ["menyamakan", "imbang", "unggul", "memimpin", "kemenangan", "tertinggal"])
+def test_indonesian_score_interpretation_is_rejected(ctx, word):
+    claim = id_claim(f"Mencetak gol pada menit 3 dari jarak 10 m, {word} pada skor 1-0.")
+    assert any("unsupported score interpretation" in r for r in reasons(verify_claims([claim], ctx)))

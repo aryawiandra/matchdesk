@@ -2,86 +2,86 @@
   "schema_version": "1",
   "seed": 30,
   "period_s": 2700.0,
-  "model": "qwen2.5:3b",
+  "model": "phi4-mini",
   "server": "ollama 0.40.6",
-  "recorded_at": "2026-10-19",
+  "recorded_at": "2026-10-20",
   "lang": "en",
   "answers": {
     "momentum_swing:M0030-00082,M0030-00084,M0030-00088,M0030-00094,M0030-00096": [
-      "By minute 4, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 4."
     ],
     "momentum_swing:M0030-00182,M0030-00185,M0030-00186,M0030-00187,M0030-00188": [
-      "By minute 8, the momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 8."
     ],
     "momentum_swing:M0030-00313,M0030-00315,M0030-00317,M0030-00319,M0030-00322": [
-      "Around minute 13, the momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 13."
     ],
     "sprint_burst:M0030-00412": [
-      "Minute 17 saw Calric Vashani of Sennet Wanderers hit 30 km/h."
+      "In minute 17, Calric Vashani of Sennet Wanderers hits 30 km/h."
     ],
     "sprint_burst:M0030-00520": [
-      "Caltan Vashford of Kesterly Park reaches 28 km/h in minute 20."
+      "In minute 20, Caltan Vashford of Kesterly Park hits 28 km/h."
     ],
     "pressing_spell:M0030-00461,M0030-00464,M0030-00471,M0030-00477,M0030-00485,M0030-00487,M0030-00489,M0030-00497,M0030-00507": [
-      "Sennet Wanderers apply pressure, 3.0 pressures per minute, in the last three minutes, up to minute 21."
+      "Minute 21: Sennet Wanderers keep the pressure on, 3.0 pressures per minute over the last three minutes."
     ],
     "momentum_swing:M0030-00563,M0030-00571,M0030-00574,M0030-00586,M0030-00591": [
-      "Around minute 24, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 24."
     ],
     "momentum_swing:M0030-00830,M0030-00836,M0030-00838,M0030-00844,M0030-00848": [
-      "Around minute 33, the momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 33."
     ],
     "momentum_swing:M0030-00952,M0030-00954,M0030-00957,M0030-00959,M0030-00961": [
-      "By minute 38, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 38."
     ],
     "sprint_burst:M0030-00994": [
-      "Javen Wensen of Sennet Wanderers reaches 27 km/h in minute 39."
+      "Javen Wensen of Sennet Wanderers hits 27 km/h in minute 39."
     ],
     "momentum_swing:M0030-01043,M0030-01045,M0030-01049,M0030-01051,M0030-01057": [
-      "Around minute 42, the momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 42."
     ],
     "sprint_burst:M0030-01095": [
-      "In minute 43, Brenric Talani of Sennet Wanderers reaches a speed of 29 km/h."
+      "In minute 43, Brenric Talani of Sennet Wanderers hits 29 km/h."
     ],
     "pressing_spell:M0030-01049,M0030-01051,M0030-01057,M0030-01067,M0030-01082,M0030-01084,M0030-01086,M0030-01093,M0030-01095,M0030-01108,M0030-01110,M0030-01115,M0030-01117,M0030-01119,M0030-01126": [
-      "Sennet Wanderers apply 5.5 pressures per minute in the last three minutes, reaching up to minute 44."
+      "Minute 44: Sennet Wanderers keep the pressure on, 5.5 pressures per minute over the last three minutes."
     ],
     "sprint_burst:M0030-01305": [
-      "In minute 50, Dalius Wenmere of Sennet Wanderers reaches a speed of 27 km/h."
+      "In minute 50, Dalius Wenmere of Sennet Wanderers reached 27 km/h."
     ],
     "goal:M0030-01305,M0030-01306,M0030-01307,M0030-01309": [
-      "Minute 51: Dalius Wenmere of Sennet Wanderers scores from 2 m, tying the score at 0-1.",
-      "The shot whizzes past at 110 km/h."
+      "Minute 51: Dalius Wenmere of Sennet Wanderers scores from 2 m and it becomes 0-1.",
+      "The shot travels at 110 km/h."
     ],
     "sprint_burst:M0030-01322": [
-      "Minute 51 saw Brenric Talani of Sennet Wanderers hit 32 km/h."
+      "In minute 51, Brenric Talani of Sennet Wanderers hits 32 km/h."
     ],
     "momentum_swing:M0030-01371,M0030-01373,M0030-01376,M0030-01378,M0030-01386": [
-      "Around minute 54, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 54."
     ],
     "sprint_burst:M0030-01527": [
-      "Minute 59: Brenric Talani of Sennet Wanderers hits 27 km/h."
+      "In minute 59, Brenric Talani of Sennet Wanderers hits 27 km/h."
     ],
     "momentum_swing:M0030-01527,M0030-01528,M0030-01533,M0030-01535,M0030-01538": [
-      "Around minute 60, momentum shifted in favor of Sennet Wanderers."
+      "Around minute 60, the momentum shifted to Sennet Wanderers."
     ],
     "momentum_swing:M0030-01754,M0030-01757,M0030-01763,M0030-01765,M0030-01768": [
-      "By minute 68, the momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 68."
     ],
     "pressing_spell:M0030-01694,M0030-01700,M0030-01703,M0030-01708,M0030-01710,M0030-01712,M0030-01726,M0030-01732,M0030-01744,M0030-01746,M0030-01757,M0030-01763,M0030-01765": [
-      "Over the last three minutes, Kesterly Park maintained a pressure rate of 4.5 per minute up to minute 68."
+      "Over the last three minutes, up to minute 68, Kesterly Park maintained 4.5 pressures per minute."
     ],
     "sprint_burst:M0030-01837": [
-      "In minute 71, Javen Wensen of Sennet Wanderers reaches a speed of 27 km/h."
+      "Javen Wensen of Sennet Wanderers hits 27 km/h in minute 71."
     ],
     "momentum_swing:M0030-01894,M0030-01895,M0030-01896,M0030-01898,M0030-01900": [
-      "By minute 74, momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 74."
     ],
     "momentum_swing:M0030-02099,M0030-02105,M0030-02115,M0030-02116,M0030-02119": [
-      "By minute 83, momentum shifted in favor of Kesterly Park."
+      "Kesterly Park gained momentum around minute 83."
     ],
     "momentum_swing:M0030-02394,M0030-02395,M0030-02401,M0030-02402,M0030-02404": [
-      "By minute 93, momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers at minute 93."
     ]
   }
 }

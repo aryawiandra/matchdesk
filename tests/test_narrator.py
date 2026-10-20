@@ -150,11 +150,11 @@ def test_an_ollama_spec_builds_a_narrator_for_that_model_and_host(monkeypatch):
         return lambda system, prompt: "1. ok"
 
     monkeypatch.setattr(narrator_module, "ollama_generate", fake_generate)
-    narrator = narrator_from_spec("ollama:qwen2.5:3b", host="http://127.0.0.1:11434")
-    assert isinstance(narrator, Narrator) and seen["args"] == ("qwen2.5:3b", "http://127.0.0.1:11434")
+    narrator = narrator_from_spec("ollama:phi4-mini", host="http://127.0.0.1:11434")
+    assert isinstance(narrator, Narrator) and seen["args"] == ("phi4-mini", "http://127.0.0.1:11434")
 
 
-@pytest.mark.parametrize("spec", ["openai:gpt", "qwen2.5:3b", "ollama:"])
+@pytest.mark.parametrize("spec", ["openai:gpt", "phi4-mini", "ollama:"])
 def test_an_unknown_provider_or_a_missing_model_name_is_a_clear_error(spec):
     with pytest.raises(ValueError, match="MATCHDESK_MODEL"):
         narrator_from_spec(spec)
@@ -181,9 +181,9 @@ def test_ollama_generate_builds_an_agent_framework_agent_and_returns_its_text(mo
 
     monkeypatch.setattr(narrator_module, "OllamaChatClient", FakeClient)
     monkeypatch.setattr(narrator_module, "Agent", FakeAgent)
-    generate = ollama_generate("qwen2.5:3b", host="http://localhost:11434", temperature=0.0, seed=7)
+    generate = ollama_generate("phi4-mini", host="http://localhost:11434", temperature=0.0, seed=7)
     assert generate("SYSTEM TEXT", "PROMPT TEXT") == "1. Fine."
-    assert seen["client"] == ("http://localhost:11434", "qwen2.5:3b")
+    assert seen["client"] == ("http://localhost:11434", "phi4-mini")
     assert seen["agent"][1] == "SYSTEM TEXT" and seen["agent"][2]["temperature"] == 0.0 and seen["agent"][2]["seed"] == 7
     assert seen["prompt"] == "PROMPT TEXT"
 
@@ -221,4 +221,4 @@ def test_an_indonesian_narrator_that_answers_in_english_is_blocked(goal):
 
 def test_the_spec_builds_a_narrator_for_a_language(monkeypatch):
     monkeypatch.setattr(narrator_module, "ollama_generate", lambda model, host=None, **kw: (lambda s, p: "1. ok"))
-    assert narrator_from_spec("ollama:qwen2.5:3b", lang="id")._lang == "id"
+    assert narrator_from_spec("ollama:phi4-mini", lang="id")._lang == "id"

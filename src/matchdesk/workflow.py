@@ -182,17 +182,21 @@ class ProducerExecutor(Executor):
         self._tick_s = tick_s
         self._next_tick = tick_s
         self._on_explanation = on_explanation
+        self._explanations: list[Explanation] = []
 
     @handler
     async def produce(self, round_: Round, wf: WorkflowContext[Never, tuple]) -> None:
         if round_.end:
-            await wf.yield_output((self._producer.scoreboard(round_.event_s, self._tick_s, self._lang, self._persona),))
+            final = (self._producer.scoreboard(round_.event_s, self._tick_s, self._lang, self._persona),)
+            recap = self._producer.recap(self._explanations, self._lang, self._persona)
+            await wf.yield_output(final + ((recap,) if recap is not None else ()))
             return
         batch: list[Overlay] = []
         while self._next_tick < round_.event_s:
             batch.append(self._producer.scoreboard(self._next_tick, self._tick_s, self._lang, self._persona))
             self._next_tick += self._tick_s
         for _, explanation in sorted(round_.resolved, key=lambda pair: pair[0]):
+            self._explanations.append(explanation)
             if self._on_explanation is not None:
                 self._on_explanation(explanation)
             batch.extend(self._producer.for_explanation(explanation, self._lang, self._persona))

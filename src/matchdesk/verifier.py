@@ -22,6 +22,7 @@ class Lexicon:
     hype_stems: tuple[str, ...]
     causal: tuple[str, ...]
     foreign: frozenset[str]
+    inference: tuple[str, ...]  # stems that read the score ("tying", "lead"): the data has the numbers, not the story
 
 
 ENGLISH = Lexicon(
@@ -33,6 +34,7 @@ ENGLISH = Lexicon(
     ),
     causal=("because", "due to", "thanks to", "as a result", "caused by", "led to"),
     foreign=frozenset({"yang", "dengan", "pada", "dari", "dan", "untuk", "dalam", "adalah", "hingga", "selama"}),
+    inference=("tying", "tied", "equali", "level", "lead", "ahead", "behind", "comeback", "winn", "draw", "drew", "clinch"),
 )
 INDONESIAN = Lexicon(
     pronouns=ENGLISH.pronouns,  # Indonesian "dia" and "ia" carry no gender; only an English slip-through is caught
@@ -42,6 +44,8 @@ INDONESIAN = Lexicon(
     ),
     causal=("karena", "sebab", "berkat", "akibat", "sehingga", "gara-gara", "disebabkan"),
     foreign=frozenset({"the", "of", "and", "with", "from", "scored", "minute", "after", "into", "during", "while"}),
+    inference=("menyamak", "imbang", "unggul", "memimpin", "pemimpin", "menang", "kemenangan", "kalah", "tertinggal",
+               "penyama", "comeback"),
 )
 LEXICONS = {"en": ENGLISH, "id": INDONESIAN}
 
@@ -142,15 +146,26 @@ def _hype_hits(words: set[str], text: str, stems: tuple[str, ...]) -> list[str]:
     return hits
 
 
-def _wording_reasons(claim: Claim) -> list[str]:
+def _all_name_parts(ctx: MatchContext) -> set[str]:
+    parts: set[str] = set()
+    for player in ctx.info.players:
+        parts |= _name_parts(player.name)
+    for club in ctx.info.clubs.values():
+        parts |= _name_parts(club.name)
+    return parts
+
+
+def _wording_reasons(claim: Claim, ctx: MatchContext) -> list[str]:
     lexicon = LEXICONS.get(claim.lang)
     if lexicon is None:
         return [f"no wording rules for language {claim.lang!r}"]
     text = claim.text.lower()
-    words = set(WORD.findall(text))
+    words = set(WORD.findall(text)) - _all_name_parts(ctx)  # a name that starts like a banned word is still a name
     reasons = [f"gendered pronoun '{w}' (the data does not give players' gender)" for w in sorted(words & lexicon.pronouns)]
     reasons += [f"unsupported wording '{w}'" for w in _hype_hits(words, text, lexicon.hype_stems)]
     reasons += [f"unsupported causal wording '{p}'" for p in lexicon.causal if re.search(rf"\b{re.escape(p)}\b", text)]
+    reasons += [f"unsupported score interpretation '{w}' (the data has the score, not what it means)"
+                for w in sorted(words) if w.startswith(lexicon.inference)]
     reasons += [f"wrong language: '{w}' is not {claim.lang}" for w in sorted(words & lexicon.foreign)]
     return reasons
 
@@ -178,7 +193,7 @@ def check_claim(claim: Claim, ctx: MatchContext, lang: str | None = None) -> lis
     reasons += _number_reasons(claim)
     reasons += _player_reasons(claim, ctx)
     reasons += _name_reasons(claim, ctx)
-    reasons += _wording_reasons(claim)
+    reasons += _wording_reasons(claim, ctx)
     reasons += _meaning_reasons(claim)
     return reasons
 

@@ -2,88 +2,92 @@
   "schema_version": "1",
   "seed": 5,
   "period_s": 2700.0,
-  "model": "qwen2.5:3b",
+  "model": "phi4-mini",
   "server": "ollama 0.40.6",
-  "recorded_at": "2026-10-19",
+  "recorded_at": "2026-10-20",
   "lang": "en",
   "answers": {
     "sprint_burst:M0005-00017": [
-      "In the opening minute, Fendan Ostov of Sennet Wanderers reaches a speed of 32 km/h."
+      "In minute 1, Fendan Ostov of Sennet Wanderers hits 32 km/h."
     ],
     "momentum_swing:M0005-00117,M0005-00120,M0005-00121,M0005-00123,M0005-00124": [
-      "By minute 5, momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 5."
     ],
     "pressing_spell:M0005-00074,M0005-00087,M0005-00089,M0005-00104,M0005-00129,M0005-00132,M0005-00136,M0005-00145,M0005-00153": [
-      "Over the last three minutes, Dunmere Argyle maintained a pressure rate of 3.0 per minute up to minute 6."
+      "Over the last three minutes, up to minute 6, Dunmere Argyle maintained 3.0 pressures per minute."
     ],
     "momentum_swing:M0005-00207,M0005-00209,M0005-00210,M0005-00213,M0005-00214": [
-      "Around minute 9, momentum shifted in favor of Dunmere Argyle."
+      "Momentum shifted to Dunmere Argyle at minute 9."
     ],
     "big_chance:M0005-00333": [
-      "In minute 13, Fendan Ostov of Sennet Wanderers had a big chance with a shot from 6 m but it was off target."
+      "Fendan Ostov of Sennet Wanderers missed a big chance in minute 13 with a shot from 6 m."
     ],
     "momentum_swing:M0005-00333,M0005-00335,M0005-00337,M0005-00339,M0005-00340": [
-      "Around minute 14, the momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers at minute 14."
     ],
     "sprint_burst:M0005-00464": [
-      "In minute 19, Fenric Ravovic of Dunmere Argyle reaches a speed of 28 km/h."
+      "In minute 19, Fenric Ravovic of Dunmere Argyle hits 28 km/h."
     ],
     "momentum_swing:M0005-00493,M0005-00494,M0005-00495,M0005-00496,M0005-00498": [
-      "Around minute 21, momentum shifted in favor of Dunmere Argyle."
+      "Momentum shifted to Dunmere Argyle around minute 21."
     ],
     "pressing_spell:M0005-00693,M0005-00696,M0005-00699,M0005-00702,M0005-00710,M0005-00731,M0005-00735,M0005-00740,M0005-00745,M0005-00747,M0005-00750,M0005-00768,M0005-00770": [
-      "Sennet Wanderers apply pressure, 4.0 per minute, in the last three minutes up to minute 30."
+      "Minute 30: Sennet Wanderers keep the pressure on, 4.0 pressures per minute over the last three minutes."
     ],
     "momentum_swing:M0005-00832,M0005-00834,M0005-00837,M0005-00838,M0005-00840": [
-      "Around minute 33, momentum shifted in favor of Dunmere Argyle."
+      "Momentum shifted to Dunmere Argyle at minute 33."
     ],
     "momentum_swing:M0005-01209,M0005-01210,M0005-01211,M0005-01212,M0005-01216": [
-      "Around minute 47, the momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 47."
     ],
     "sprint_burst:M0005-01239": [
-      "Renius Drasen of Sennet Wanderers reaches 26 km/h in minute 47."
+      "In minute 47, Renius Drasen of Sennet Wanderers hits 26 km/h."
     ],
     "sprint_burst:M0005-01319": [
-      "Minute 50 saw Lorvin Marford of Dunmere Argyle hit 29 km/h."
+      "Minute 50: Lorvin Marford of Dunmere Argyle hits 29 km/h."
     ],
     "sprint_burst:M0005-01327": [
-      "At minute 50, Torlo Osani of Dunmere Argyle reaches a speed of 26 km/h."
+      "Torlo Osani of Dunmere Argyle hits 26 km/h in minute 50."
     ],
     "momentum_swing:M0005-01358,M0005-01362,M0005-01364,M0005-01365,M0005-01367": [
-      "Around minute 51, momentum shifted in favor of Dunmere Argyle."
+      "Momentum shifted to Dunmere Argyle at minute 51."
     ],
     "pressing_spell:M0005-01271,M0005-01282,M0005-01288,M0005-01292,M0005-01308,M0005-01319,M0005-01325,M0005-01331,M0005-01337,M0005-01339,M0005-01341,M0005-01347,M0005-01354,M0005-01362,M0005-01364,M0005-01371,M0005-01373": [
-      "Over the last three minutes, Dunmere Argyle maintained a pressure rate of 6.5 per minute up to minute 51."
+      "Over the last three minutes, up to minute 51, Dunmere Argyle maintained 6.5 pressures per minute."
     ],
     "pressing_spell:M0005-01747,M0005-01756,M0005-01758,M0005-01771,M0005-01773,M0005-01784,M0005-01788,M0005-01790,M0005-01793,M0005-01795,M0005-01800,M0005-01804,M0005-01813": [
-      "Over the last three minutes, Dunmere Argyle maintained a pressure rate of 5.0 per minute up to minute 67."
+      "Over the last three minutes, up to minute 67, Dunmere Argyle maintained 5.0 pressures per minute."
     ],
     "momentum_swing:M0005-01836,M0005-01838,M0005-01840,M0005-01842,M0005-01844": [
-      "By minute 68, momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers around minute 68."
     ],
     "momentum_swing:M0005-02136,M0005-02145,M0005-02147,M0005-02149,M0005-02151": [
-      "By minute 81, momentum shifted in favor of Sennet Wanderers."
+      "Momentum shifted to Sennet Wanderers at minute 81."
     ],
     "pressing_spell:M0005-02136,M0005-02149,M0005-02151,M0005-02160,M0005-02162,M0005-02167,M0005-02169,M0005-02172,M0005-02175,M0005-02184,M0005-02192,M0005-02201,M0005-02203,M0005-02210,M0005-02219,M0005-02221": [
-      "Sennet Wanderers apply pressure, 6.5 per minute, throughout the last three minutes up to minute 83."
+      "Minute 83: Sennet Wanderers keep the pressure on, 6.5 pressures per minute across the last three minutes."
     ],
     "big_chance:M0005-02224": [
-      "In the 83rd minute, Renius Drasen of Sennet Wanderers had a significant chance with a shot from 8 m, but it was off target."
+      "In minute 83, Renius Drasen of Sennet Wanderers had a big chance with a shot from 8 m that missed the target."
     ],
     "sprint_burst:M0005-02229": [
-      "In the 84th minute, Fendan Ostov of Sennet Wanderers reaches a speed of 29 km/h."
+      "Fendan Ostov of Sennet Wanderers hits 29 km/h in minute 84."
     ],
     "sprint_burst:M0005-02298": [
-      "Fendan Ostov of Sennet Wanderers hits 27 km/h in the 86th minute."
+      "In minute 86, Fendan Ostov of Sennet Wanderers hits 27 km/h."
+    ],
+    "goal:M0005-02300,M0005-02301,M0005-02302,M0005-02303": [
+      "Renius Drasen of Sennet Wanderers scores in minute 86 from 10 m, making it 0-1.",
+      "The shot traveled at 97 km/h."
     ],
     "momentum_swing:M0005-02379,M0005-02380,M0005-02386,M0005-02388,M0005-02390": [
-      "Around minute 90, momentum shifted in favor of Dunmere Argyle."
+      "Dunmere Argyle gained momentum around minute 90."
     ],
     "sprint_burst:M0005-02431": [
-      "In the final minute, Fenric Ravovic of Dunmere Argyle reaches 26 km/h."
+      "In minute 91, Fenric Ravovic of Dunmere Argyle hits 26 km/h."
     ],
     "momentum_swing:M0005-02481,M0005-02482,M0005-02483,M0005-02484,M0005-02487": [
-      "By minute 94, momentum shifted in favor of Dunmere Argyle."
+      "Momentum shifted to Dunmere Argyle at minute 94."
     ]
   }
 }

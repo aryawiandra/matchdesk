@@ -1,6 +1,6 @@
 """Overlay contract v1 (SCHEMA.md section 7): timed, typed, schema-validated JSON for a renderer.
 
-Implemented types: scoreboard, key_moment, explanation, player_tag. The committed JSON Schema
+Implemented types: scoreboard, key_moment, explanation, player_tag, recap. The committed JSON Schema
 (`schema/overlay.schema.json`) is generated from these models and a test keeps the two identical."""
 from typing import Annotated, Any, Literal, Union
 
@@ -39,6 +39,15 @@ class Sentence(Frozen):
 
 class ExplanationPayload(Frozen):
     sentences: Annotated[tuple[Sentence, ...], Field(min_length=1)]
+
+
+class RecapSectionPayload(Frozen):
+    title: NonBlank
+    sentences: Annotated[tuple[Sentence, ...], Field(min_length=1)]
+
+
+class RecapPayload(Frozen):
+    sections: Annotated[tuple[RecapSectionPayload, ...], Field(min_length=1)]
 
 
 class PlayerTagPayload(Frozen):
@@ -90,7 +99,13 @@ class PlayerTagOverlay(OverlayBase):
     payload: PlayerTagPayload
 
 
-Overlay = Union[ScoreboardOverlay, KeyMomentOverlay, ExplanationOverlay, PlayerTagOverlay]
+class RecapOverlay(OverlayBase):
+    type: Literal["recap"] = "recap"
+    evidence_event_ids: EventIds
+    payload: RecapPayload
+
+
+Overlay = Union[ScoreboardOverlay, KeyMomentOverlay, ExplanationOverlay, PlayerTagOverlay, RecapOverlay]
 _ADAPTER = TypeAdapter(Annotated[Overlay, Field(discriminator="type")])
 
 
