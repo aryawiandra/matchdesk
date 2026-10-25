@@ -92,7 +92,7 @@ Common rules: `end_s > start_s`; times are match seconds; `priority` 1-5; `lang`
 |---|---|---|---|
 | `scoreboard` | `{score: {H, A}, clock "MM:SS", home, away}`; one every 10 s of match time, which also serves as the renderer's clock | built | no |
 | `key_moment` | `{kind, headline, team, x?, y?, source}`; `x, y` is the event position in the team-relative frame when the moment has one point; `source` is `template`, `model` or `model_retry` (who wrote the words; every source passed the Verifier) | built | headline: a local model (optional) or the template, via the Verifier |
-| `explanation` | `{sentences: [{text, evidence_event_ids}]}`; the detail beyond the headline, analyst view only, and only when there is any | built | Foundry or template, via Verifier |
+| `explanation` | `{sentences: [{text, evidence_event_ids}]}`; the detail beyond the headline, analyst view only, and only when there is any | built | a local model or template, via Verifier |
 | `player_tag` | `{name, shirt, team, speed_chip_kmh?, distance_chip_km?}`; chips appear only when a threshold rule fired on that event (METRICS section 7) | built | no |
 | `stat` | named stat with value | not built | no |
 | `metric_tick` | `{metric, value, label, team?}` for one metric in {momentum, control, pressure, tempo}; one every 10 s (pressure: one per club); cites the latest event already seen. Not built: pass_difficulty, ball_speed, shot_speed | built | no (deterministic, feeds single-metric mode `?metric=`) |
