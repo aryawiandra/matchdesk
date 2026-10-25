@@ -1,6 +1,6 @@
 """Overlay contract v1 (SCHEMA.md section 7): timed, typed, schema-validated JSON for a renderer.
 
-Implemented types: scoreboard, key_moment, explanation, player_tag, recap. The committed JSON Schema
+Implemented types: scoreboard, key_moment, explanation, player_tag, recap, metric_tick. The committed JSON Schema
 (`schema/overlay.schema.json`) is generated from these models and a test keeps the two identical."""
 from typing import Annotated, Any, Literal, Union
 
@@ -58,6 +58,13 @@ class PlayerTagPayload(Frozen):
     distance_chip_km: float | None = None
 
 
+class MetricTickPayload(Frozen):
+    metric: Literal["momentum", "control", "pressure", "tempo"]
+    value: float
+    label: NonBlank
+    team: Team | None = None  # the club the value is about, when it is about one club
+
+
 class OverlayBase(Frozen):
     overlay_id: NonBlank
     match_id: NonBlank
@@ -105,7 +112,14 @@ class RecapOverlay(OverlayBase):
     payload: RecapPayload
 
 
-Overlay = Union[ScoreboardOverlay, KeyMomentOverlay, ExplanationOverlay, PlayerTagOverlay, RecapOverlay]
+class MetricTickOverlay(OverlayBase):
+    type: Literal["metric_tick"] = "metric_tick"
+    evidence_event_ids: EventIds
+    payload: MetricTickPayload
+
+
+Overlay = Union[ScoreboardOverlay, KeyMomentOverlay, ExplanationOverlay, PlayerTagOverlay, RecapOverlay,
+                MetricTickOverlay]
 _ADAPTER = TypeAdapter(Annotated[Overlay, Field(discriminator="type")])
 
 

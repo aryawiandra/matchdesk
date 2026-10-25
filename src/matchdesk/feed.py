@@ -16,8 +16,10 @@ from fastapi.staticfiles import StaticFiles
 from .config import GeneratorConfig
 from .explainer import Model
 from .generator import GeneratedMatch, generate_match
+from .modes import focus_player, metric_overlays
 from .narrator import narrator_from_spec
-from .overlay import Lang, Persona
+from .overlay import Lang, Overlay, Persona
+from .pipeline import overlay_stream
 from .recorded import RecordedModel, Recording, load_directory
 from .sse import encode_frame
 from .workflow import overlay_stream_async
@@ -100,11 +102,33 @@ async def _frames(match: GeneratedMatch, speed: float) -> AsyncIterator[str]:
         yield encode_frame(event.model_dump(mode="json"))
 
 
+async def _mode_overlays(
+    match: GeneratedMatch, persona: Persona, model: Model | None, lang: Lang, metric: str | None, player: str | None,
+) -> AsyncIterator[Overlay]:
+    """The normal overlays, or (single-metric mode) only the scoreboard plus one metric, or (player focus) only what
+    involves one player."""
+    if metric is not None:
+        ticks = list(metric_overlays(match.events, match.info, metric, lang, persona))
+        board = [o for o in overlay_stream(match.events, match.info, persona=persona, lang=lang) if o.type == "scoreboard"]
+        for overlay in sorted([*board, *ticks], key=lambda o: o.start_s):
+            yield overlay
+        return
+    stream = overlay_stream_async(match.events, match.info, persona=persona, model=model, lang=lang)
+    if player is None:
+        async for overlay in stream:
+            yield overlay
+        return
+    async for overlay in stream:
+        for kept in focus_player([overlay], match.events, player):
+            yield kept
+
+
 async def _overlay_frames(
     match: GeneratedMatch, persona: Persona, speed: float, model: Model | None, lang: Lang,
+    metric: str | None = None, player: str | None = None,
 ) -> AsyncIterator[str]:
     previous_s = 0.0
-    async for overlay in overlay_stream_async(match.events, match.info, persona=persona, model=model, lang=lang):
+    async for overlay in _mode_overlays(match, persona, model, lang, metric, player):
         delay = pace_delay(previous_s, overlay.start_s, speed)
         if delay > 0:
             await asyncio.sleep(delay)
@@ -171,6 +195,8 @@ def create_app(
         persona: Persona = Query("fan"),
         lang: Literal["en", "id"] = Query("en"),
         explainer: Literal["template", "model", "recorded"] = Query("template"),
+        metric: Literal["momentum", "control", "pressure", "tempo"] | None = Query(None),
+        player: str | None = Query(None, pattern=r"^[HA]\d{2}$"),
     ) -> StreamingResponse:
         use_model = explainer == "model"
         if use_model and model is None:
@@ -183,10 +209,12 @@ def create_app(
             raise HTTPException(status_code=429, detail="too many open streams, try again shortly")
         try:
             match = await asyncio.to_thread(generate_match, GeneratorConfig(seed=seed, period_s=period_s))
+            if player is not None and all(p.player_id != player for p in match.info.players):
+                raise HTTPException(status_code=400, detail=f"player {player} is not in this match")
         except BaseException:
             release()
             raise
-        return GuardedStream(_overlay_frames(match, persona, speed, chosen, lang), release)
+        return GuardedStream(_overlay_frames(match, persona, speed, chosen, lang, metric, player), release)
 
     app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="renderer")  # last: API routes win
     return app

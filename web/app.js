@@ -16,6 +16,9 @@ const I18N = {
   en: {
     subtitle: "Evidence-cited match insight on a synthetic feed",
     seed: "Match seed", speed: "Speed", explainer: "Explainer", view: "View", language: "Language", replay: "Replay",
+    mode: "Mode", allInsights: "All insights", m_momentum: "Momentum only", m_control: "Control only",
+    m_pressure: "Pressure only", m_tempo: "Tempo only", player: "Player",
+    home: "Home", away: "Away",
     instant: "Instant", fan: "Fan", analyst: "Analyst", template: "Template",
     live: "AI model, live (checked)", liveNA: "AI model, live (not available here)",
     recorded: (model) => `AI model, recorded run (${model})`, recordedNA: "AI model, recorded run (not available here)",
@@ -36,6 +39,9 @@ const I18N = {
   id: {
     subtitle: "Wawasan pertandingan beserta buktinya, dari data sintetis",
     seed: "Seed pertandingan", speed: "Kecepatan", explainer: "Penulis", view: "Tampilan", language: "Bahasa", replay: "Putar ulang",
+    mode: "Mode", allInsights: "Semua wawasan", m_momentum: "Momentum saja", m_control: "Penguasaan saja",
+    m_pressure: "Tekanan saja", m_tempo: "Tempo saja", player: "Pemain",
+    home: "Tuan rumah", away: "Tamu",
     instant: "Langsung", fan: "Penggemar", analyst: "Analis", template: "Templat",
     live: "Model AI, langsung (diperiksa)", liveNA: "Model AI, langsung (tidak tersedia di sini)",
     recorded: (model) => `Model AI, hasil rekaman (${model})`, recordedNA: "Model AI, hasil rekaman (tidak tersedia di sini)",
@@ -62,6 +68,9 @@ const els = {
   persona: document.getElementById("persona"),
   explainer: document.getElementById("explainer"),
   language: document.getElementById("language"),
+  metric: document.getElementById("metric"),
+  player: document.getElementById("player"),
+  meters: document.getElementById("meters"),
   home: document.getElementById("home"),
   away: document.getElementById("away"),
   score: document.getElementById("score"),
@@ -101,6 +110,7 @@ function reset() {
   state.cards.clear();
   els.cards.textContent = "";
   els.markers.innerHTML = "";
+  els.meters.textContent = "";
   els.score.textContent = "0 - 0";
   els.clock.textContent = "00:00";
 }
@@ -110,6 +120,9 @@ function feedUrl() {
   const params = new URLSearchParams({
     speed: els.speed.value, persona: els.persona.value, explainer: els.explainer.value, lang: state.lang,
   });
+  if (els.metric.value) params.set("metric", els.metric.value);
+  const player = els.player.value.trim().toUpperCase();
+  if (/^[HA]\d{2}$/.test(player) && !els.metric.value) params.set("player", player);
   return `/overlays/seed/${seed}?${params}`;
 }
 
@@ -160,11 +173,36 @@ function handleOverlay(overlay) {
   state.now = Math.max(state.now, overlay.start_s);
   if (overlay.type === "scoreboard") {
     state.scoreboard = overlay;
+  } else if (overlay.type === "metric_tick") {
+    renderMeter(overlay);
   } else {
     state.items.push({ overlay, shownAt: performance.now() });
     if (overlay.type === "key_moment") els.live.textContent = overlay.a11y_text;
   }
   render();
+}
+
+// Single-metric mode: ticks arrive every 10 match seconds, so each metric (and club) keeps one live meter
+// instead of a card per tick. The label and number are inserted with textContent; only a clamped number sets the bar.
+function renderMeter(overlay) {
+  const { payload } = overlay;
+  const words = I18N[overlay.lang] || t();
+  const key = `${payload.metric}-${payload.team || "all"}`;
+  let meter = els.meters.querySelector(`[data-key="${key}"]`);
+  if (!meter) {
+    meter = element("div", "meter");
+    meter.dataset.key = key;
+    meter.append(element("span", "meter-label"), element("div", "bar"), element("span", "meter-value"));
+    meter.querySelector(".bar").appendChild(element("div", "fill"));
+    els.meters.appendChild(meter);
+  }
+  const club = payload.team === "H" ? words.home : payload.team === "A" ? words.away : "";
+  meter.querySelector(".meter-label").textContent = club ? `${payload.label} - ${club}` : payload.label;
+  meter.querySelector(".meter-value").textContent = payload.value.toFixed(2);
+  const share = payload.metric === "momentum" ? (payload.value + 1) / 2 : payload.metric === "control" ? payload.value
+    : Math.min(1, payload.value / 20);
+  meter.querySelector(".fill").style.width = `${(Math.max(0, Math.min(1, share)) * 100).toFixed(1)}%`;
+  els.live.textContent = overlay.a11y_text;
 }
 
 function isActive(item, realNow) {

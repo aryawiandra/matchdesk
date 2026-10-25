@@ -41,6 +41,18 @@
         <option value="id">Bahasa Indonesia</option>
       </select>
     </label>
+    <label><span data-i18n="mode">Mode</span>
+      <select id="metric">
+        <option value="" selected data-i18n="allInsights">All insights</option>
+        <option value="momentum" data-i18n="m_momentum">Momentum only</option>
+        <option value="control" data-i18n="m_control">Control only</option>
+        <option value="pressure" data-i18n="m_pressure">Pressure only</option>
+        <option value="tempo" data-i18n="m_tempo">Tempo only</option>
+      </select>
+    </label>
+    <label><span data-i18n="player">Player</span>
+      <input id="player" type="text" maxlength="3" size="4" placeholder="H09" pattern="[HAha]\d{2}" title="H01-H11, A01-A11">
+    </label>
     <button type="submit" data-i18n="replay">Replay</button>
   </form>
 </header>
@@ -71,6 +83,7 @@
       <figcaption data-i18n="caption">Home attacks right. A filled marker is the home team, a ring is the away team.</figcaption>
     </figure>
     <div id="cards" aria-label="Insights"></div>
+    <div id="meters" aria-label="Metric"></div>
   </section>
 
   <p id="status" role="status">Ready.</p>

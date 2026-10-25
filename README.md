@@ -2,23 +2,23 @@
 
 Evidence-cited, overlay-ready football match intelligence built on a synthetic event stream, with accuracy measured against the simulator's hidden ground truth.
 
-> Status: work in progress for the Microsoft + Premier League "Inside the Game" Developer Hackathon 2026. This README is a stub; the full version (architecture, results, prize mapping, "Not built") lands before submission.
+Built solo for the Microsoft + Premier League "Inside the Game" Developer Hackathon 2026. A seeded simulator produces a football match as an event stream with a hidden ground truth. An Analyst finds key moments from the stream alone, an Explainer writes about them, a Verifier gate recomputes every number and checks every name before anything is shown, and a Producer turns the result into timed JSON overlays that a plain HTML renderer draws. The point is not the model; it is that nothing reaches the screen unless it can be proved from cited events.
 
 **Synthetic data only.** Every club, player, event and statistic in this repository is generated. No real club, player, crest or broadcast footage is used.
 
-## Layout (planned)
+## Layout
 
 | Path | What |
 |---|---|
 | `SCHEMA.md` | Event, truth and overlay contracts, v1 |
 | `METRICS.md` | Exact formulas for every metric |
-| `src/matchdesk/` | Generator (with hidden truth), metrics, SSE feed, Analyst, Verifier and Explainer, Producer (overlays) |
+| `src/matchdesk/` | Generator (with hidden truth), metrics, SSE feed, Analyst, Verifier and Explainer, Producer (overlays), viewer modes, Agent Framework workflow |
 | `web/` | Reference overlay renderer (plain HTML, CSS and JS; no libraries, no other origins) |
 | `schema/overlay.schema.json` | JSON Schema for overlays, generated from the models |
 | `tests/` | Unit and property tests (80%+ coverage gate) |
 | `config/thresholds.toml` | Speed and distance indicator thresholds (assumptions, labelled) |
 
-## Run (generator, available now)
+## Run
 
 ```bash
 uv sync
@@ -70,6 +70,45 @@ Then choose **Explainer: AI model** on the page, or call `/overlays/seed/42?expl
 The feed never sends the truth. The Analyst (`src/matchdesk/analyst.py`) computes every number from the stream alone; detection rules and measured quality are in `METRICS.md` section 10.
 
 Check from a clean clone: `scripts/fresh_clone_check.sh .`
+
+### Viewer modes
+
+`GET /overlays/seed/{seed}` also takes `metric=momentum|control|pressure|tempo` (single-metric mode: the scoreboard plus one metric as `metric_tick` overlays, deterministic, formulas in METRICS.md sections 3-6) and `player=H09` (player focus: the scoreboard, the recap and only the moments whose cited events involve that player). Each metric tick cites the latest event already seen, never a later one (`tests/test_modes.py`). The page has a Mode selector and a Player box.
+
+## Results
+
+All numbers are measured, on synthetic data, with the commands shown; limits are in the METRICS.md section named.
+
+| What | Result | Where |
+|---|---|---|
+| Analyst against the hidden truth (seeds 30-59) | goal 1.00 precision / 1.00 recall; big chance 0.93 / 1.00; momentum swing 0.39 / 0.72; pressing spell 0.56 / 0.59; sprint 0.31 / 0.94 | METRICS.md section 10 |
+| Verifier under fault injection (3,426 corrupted claims, 760 clean claims) | 3,424 blocked (99.9%); 0 clean claims wrongly rejected. The 2 misses were an appended number that happened to equal a true one | METRICS.md section 11, `scripts/verifier_report.py 30 30` |
+| Real model behind the gate (Phi-4-mini, 210 detections per run) | strict prompt: 210 of 210 English and 209 of 210 Indonesian first try; careless prompt: 37% of English and 9% of Indonesian calls rejected, 14% and 3% of explanations fell back to the template | METRICS.md section 12, `scripts/model_report.py` |
+| Tests | 395 passing, 98% coverage, also in a clean clone (`scripts/fresh_clone_check.sh .`) | `tests/` |
+
+Read these with their caveats. The Analyst's swing, spell and sprint detectors are statistical inferences and are far from perfect, and the claims written from them are worded to match (a sprint is "reached X km/h", never "sustained"). The Verifier's wording and meaning rules are lexical, so "0 rejected" means no listed word, not perfect prose.
+
+## Microsoft stack
+
+| Piece | Used for |
+|---|---|
+| Microsoft Agent Framework (`agent-framework-core`) | The pipeline is a `WorkflowBuilder` graph of custom `Executor`s with conditional edges and a retry loop (`workflow.py`) |
+| Agent Framework `Agent` + `OllamaChatClient` | The optional live model call (`narrator.py`) |
+| Phi-4-mini (MIT licence, Microsoft), run locally with Ollama | The model whose wording the Verifier checks |
+| Azure App Service (free tier) | The public link; it replays recorded Phi-4-mini answers, since a laptop model is not reachable from the internet (`scripts/deploy_appservice.sh`) |
+
+Not used: Azure AI Foundry. The hackathon rules do not require it, and a free deployment was not possible on the student subscription (region policy). Azure Container Apps was also tried and is blocked there (no image builds), which is why the deploy script targets App Service.
+
+## Not built
+
+- A live model on the public link (recorded answers only; the live path needs a model server).
+- Spanish (in the overlay contract, refused until it has templates and rules).
+- The `stat` overlay type, and `metric_tick` for pass difficulty, ball speed and shot speed (the other four metrics are built).
+- Real football data: everything is synthetic by design.
+- A semantic check of wording: the Verifier's wording and meaning rules are lexical.
+- Reliable momentum-swing, pressing-spell and sprint detection (see Results).
+
+See `THIRD_PARTY.md` for dependencies and the model licence.
 
 ## Licence
 
