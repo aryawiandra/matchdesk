@@ -32,3 +32,6 @@ data/truth/
 .vscode/
 brag-output/composition/node_modules/
 brag-output/composition/.hyperframes/
+brag-output/final/node_modules/
+brag-output/final/.hyperframes/
+brag-output/final/assets/

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+:root{--purple:#37003c;--deep:#1a0720;--magenta:#e90052;--cyan:#04f5ff;--green:#00ff85;--white:#ffffff;--font:"Helvetica Neue",-apple-system,"SF Pro Display",Arial,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--deep)}
+#root{position:relative;width:1920px;height:1080px;font-family:var(--font);color:var(--white);overflow:hidden;background:radial-gradient(1200px 800px at 70% 20%,#5a0a5e 0%,var(--purple) 45%,var(--deep) 100%)}
+.bgbar{position:absolute;width:420px;height:1500px;transform:skewX(-18deg);opacity:.9}
+#b1{left:-300px;top:-200px;background:linear-gradient(180deg,var(--magenta),#7a0a60);opacity:.35}
+#b2{left:1500px;top:-250px;width:260px;background:linear-gradient(180deg,var(--cyan),#0a7a90);opacity:.22}
+#b3{left:1700px;top:-250px;width:90px;background:var(--green);opacity:.30}
+.scene{position:absolute;inset:0}
+.title{position:absolute;left:0;right:0;text-align:center;font-weight:900;letter-spacing:-0.035em;text-transform:none}
+.l1{top:330px;font-size:132px}.l2{top:480px;font-size:132px;color:var(--green)}
+#brand{top:360px;font-size:230px;letter-spacing:-0.05em}
+#brand span{display:inline-block}
+#tag{top:640px;font-size:46px;font-weight:600;color:var(--cyan);letter-spacing:.02em}
+#event{top:260px;font-size:30px;font-weight:700;letter-spacing:.28em;color:#fff;opacity:.9}
+#frame{opacity:0;position:absolute;left:160px;top:70px;width:1600px;height:900px;border-radius:34px;overflow:hidden;background:#0f1216;box-shadow:0 0 0 4px var(--magenta),0 0 0 10px rgba(4,245,255,.55),0 40px 120px rgba(0,0,0,.65)}
+#frame video{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:78% 45%}
+.lt{position:absolute;left:120px;bottom:44px;height:116px;display:flex;align-items:stretch;filter:drop-shadow(0 14px 30px rgba(0,0,0,.55))}
+.lt .num{width:116px;display:flex;align-items:center;justify-content:center;background:var(--magenta);font-size:54px;font-weight:900;clip-path:polygon(0 0,100% 0,82% 100%,0 100%)}
+.lt .ttl{display:flex;align-items:center;padding:0 38px 0 26px;margin-left:-26px;background:var(--white);color:var(--purple);font-size:46px;font-weight:900;letter-spacing:-.01em;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+.lt .sub{display:flex;align-items:center;padding:0 40px 0 36px;background:var(--purple);border:3px solid var(--cyan);font-size:36px;font-weight:600;color:var(--white);clip-path:polygon(0 0,100% 0,96% 100%,0 100%)}
+#big{top:250px;font-size:300px;font-weight:900;letter-spacing:-.05em;font-variant-numeric:tabular-nums;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;color:transparent}
+.cap{position:absolute;left:0;right:0;text-align:center;font-weight:800}
+#pc1{top:200px;font-size:48px;letter-spacing:.2em;color:var(--cyan)}
+#pc2{top:610px;font-size:62px;letter-spacing:-.02em}
+#pc3{top:720px;font-size:58px;color:var(--green);letter-spacing:-.02em}
+#ticker{position:absolute;left:-100px;bottom:70px;white-space:nowrap;font-size:44px;font-weight:900;letter-spacing:.2em;color:rgba(255,255,255,.14)}
+#hw{top:120px;font-size:86px;font-weight:900;letter-spacing:-.04em;text-align:center}
+#flow{position:absolute;left:0;right:0;top:300px;display:flex;justify-content:center;align-items:center;gap:12px}
+.bx{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.28);border-radius:24px;padding:26px 22px;text-align:center;font-size:36px;font-weight:800;min-width:0;backdrop-filter:blur(6px)}
+.bx small{display:block;margin-top:10px;font-size:24px;font-weight:600;color:#d8c8e0}
+.bx.v{border-color:var(--green);color:var(--green);box-shadow:0 0 50px rgba(0,255,133,.35)}
+.ar{font-size:40px;color:var(--cyan);font-weight:900}
+.chip{position:absolute;left:0;right:0;text-align:center;font-size:42px;font-weight:700}
+#c1{top:560px}#c1 b{color:var(--cyan)}
+#c2{top:650px;color:#e9dff0}#c2 b{color:var(--green)}
+#end{position:absolute;inset:0;background:linear-gradient(120deg,var(--magenta),var(--purple) 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#end .e1{font-size:170px;font-weight:900;letter-spacing:-.05em}
+#end .e2{margin-top:12px;font-size:70px;font-weight:800;color:var(--green);letter-spacing:-.02em}
+#end .e3{margin-top:50px;font-size:44px;font-weight:700;color:var(--white);background:rgba(0,0,0,.35);padding:16px 40px;border-radius:60px}
+#wipe{position:absolute;top:-100px;left:-700px;width:560px;height:1300px;background:linear-gradient(90deg,var(--magenta),var(--cyan));transform:skewX(-18deg);z-index:50}
+#wipe2{position:absolute;top:-100px;left:-700px;width:200px;height:1300px;background:var(--green);transform:skewX(-18deg);z-index:49}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="87.24000000000001" data-width="1920" data-height="1080">
+<div class="bgbar" id="b1"></div><div class="bgbar" id="b2"></div><div class="bgbar" id="b3"></div>
+
+<div class="scene clip" id="intro" data-start="0" data-duration="7.6" data-track-index="0">
+  <div class="title" id="event">INSIDE THE GAME  ·  DEVELOPER HACKATHON 2026</div>
+  <div class="title l1" id="i1">Every number on screen.</div>
+  <div class="title l2" id="i2">Had to prove itself.</div>
+  <div class="title" id="brand"><span>Match</span><span style="color:var(--cyan)">Desk</span></div>
+  <div class="title" id="tag">Football match insight. Every claim cited.</div>
+</div>
+
+<div class="scene" id="demo">
+  <div id="frame"><video id="vid" class="clip" data-start="7.6" data-duration="53.34" data-track-index="1" muted playsinline src="assets/demo.mp4"></video></div>
+</div>
+<div class="lt clip" id="lt0" data-start="8.10" data-duration="6.80" data-track-index="2"><span class="num">01</span><span class="ttl">STREAMING</span><span class="sub">Synthetic match, live feed</span></div>
+<div class="lt clip" id="lt1" data-start="15.30" data-duration="4.10" data-track-index="2"><span class="num">02</span><span class="ttl">EVIDENCE</span><span class="sub">Click a sentence, see the event IDs</span></div>
+<div class="lt clip" id="lt2" data-start="19.60" data-duration="6.40" data-track-index="2"><span class="num">03</span><span class="ttl">VERIFIED</span><span class="sub">An AI model wrote it. The Verifier checked it.</span></div>
+<div class="lt clip" id="lt3" data-start="26.20" data-duration="7.40" data-track-index="2"><span class="num">04</span><span class="ttl">FULL-TIME RECAP</span><span class="sub">Every sentence verified once more</span></div>
+<div class="lt clip" id="lt4" data-start="34.00" data-duration="9.60" data-track-index="2"><span class="num">05</span><span class="ttl">BAHASA INDONESIA</span><span class="sub">Templates, prompts and rules, end to end</span></div>
+<div class="lt clip" id="lt5" data-start="43.90" data-duration="8.70" data-track-index="2"><span class="num">06</span><span class="ttl">SINGLE METRIC</span><span class="sub">One number, followed live</span></div>
+<div class="lt clip" id="lt6" data-start="53.00" data-duration="7.60" data-track-index="2"><span class="num">07</span><span class="ttl">PLAYER FOCUS</span><span class="sub">Only what involves one player</span></div>
+
+<div class="scene clip" id="proof" data-start="60.940000000000005" data-duration="10.30" data-track-index="0">
+  <div class="cap" id="pc1">CORRUPTED CLAIMS BLOCKED</div>
+  <div class="title" id="big">0</div>
+  <div class="cap" id="pc2">of 3,426</div>
+  <div class="cap" id="pc3">0 clean claims wrongly rejected</div>
+  <div id="ticker">VERIFIED · VERIFIED · VERIFIED · VERIFIED · VERIFIED · VERIFIED · VERIFIED · VERIFIED</div>
+</div>
+
+<div class="scene clip" id="arch" data-start="71.24000000000001" data-duration="12.0" data-track-index="0">
+  <div class="title" id="hw">How it works</div>
+  <div id="flow">
+    <div class="bx" id="x1">Match events<small>synthetic stream</small></div><div class="ar" id="a1">→</div>
+    <div class="bx" id="x2">Analyst<small>finds key moments</small></div><div class="ar" id="a2">→</div>
+    <div class="bx" id="x3">Explainer<small>template or AI model</small></div><div class="ar" id="a3">⇄</div>
+    <div class="bx v" id="x4">Verifier<small>recomputes every number</small></div><div class="ar" id="a4">→</div>
+    <div class="bx" id="x5">Producer<small>timed JSON overlays</small></div>
+  </div>
+  <div class="chip" id="c1"><b>Microsoft Agent Framework</b> workflow with custom executors</div>
+  <div class="chip" id="c2">Words from a local <b>Phi-4-mini</b> model, replayed through the live Verifier</div>
+</div>
+<div class="scene clip" id="endc" data-start="83.24000000000001" data-duration="4.00" data-track-index="3">
+  <div id="end"><div class="e1">MatchDesk</div><div class="e2">Nothing on screen without proof.</div><div class="e3">matchdesk-7ae079.azurewebsites.net</div></div>
+</div>
+<div id="wipe"></div><div id="wipe2"></div>
+</div>
+<script>
+window.__timelines=window.__timelines||{};
+const tl=gsap.timeline({paused:true});
+const D0=7.6,P0=60.940000000000005,A0=71.24000000000001;
+const pop=(s,at,d=.6)=>tl.fromTo(s,{opacity:0,y:50,scale:.92},{opacity:1,y:0,scale:1,duration:d,ease:"back.out(1.6)"},at);
+let sw=0;const sweep=(at)=>{const ir=sw++===0;tl.fromTo("#wipe",{x:0,immediateRender:ir},{x:3400,duration:.75,ease:"power2.inOut"},at);tl.fromTo("#wipe2",{x:0,immediateRender:ir},{x:3300,duration:.75,ease:"power2.inOut"},at+.08)};
+// background drift
+tl.to("#b1",{x:260,duration:87.24000000000001,ease:"none"},0);tl.to("#b2",{x:-160,duration:87.24000000000001,ease:"none"},0);tl.to("#b3",{x:-120,duration:87.24000000000001,ease:"none"},0);
+// intro
+tl.fromTo("#event",{opacity:0},{opacity:.9,duration:.8},0);
+tl.fromTo("#i1",{opacity:1,x:-60},{x:0,duration:.9,ease:"power3.out"},0);
+pop("#i2",1.7);
+tl.to("#i1,#i2",{opacity:0,y:-40,duration:.4,ease:"power2.in"},4.0);
+tl.fromTo("#brand span",{opacity:0,y:120,rotate:-4},{opacity:1,y:0,rotate:0,duration:.7,ease:"back.out(1.8)",stagger:.12},4.5);
+tl.fromTo("#brand",{scale:1.15},{scale:1,duration:1.2,ease:"power3.out"},4.5);
+tl.fromTo("#tag",{opacity:0,y:30},{opacity:1,y:0,duration:.7},5.4);
+sweep(6.7);
+tl.set("#intro",{opacity:1},0);
+// demo
+tl.fromTo("#frame",{scale:.86,opacity:0,y:60},{scale:1,opacity:1,y:0,duration:.8,ease:"power3.out"},D0+.3);
+const zoom=(a,b,s,o)=>{tl.to("#vid",{scale:s,transformOrigin:o,duration:.8,ease:"power2.inOut"},D0+a);tl.to("#vid",{scale:1,duration:.8,ease:"power2.inOut"},D0+b)};
+zoom(7.6,15.2,1.55,"80% 40%");zoom(16.2,25.0,1.5,"80% 38%");zoom(27.0,34.5,1.5,"80% 40%");zoom(37.0,44.0,1.55,"76% 62%");zoom(46.0,52.0,1.5,"80% 40%");
+document.querySelectorAll(".lt").forEach((el,i)=>{const st=parseFloat(el.dataset.start),du=parseFloat(el.dataset.duration);
+  tl.fromTo(el,{x:-700,opacity:0},{x:0,opacity:1,duration:.55,ease:"power3.out"},st);
+  tl.to(el,{x:-700,opacity:0,duration:.4,ease:"power2.in"},st+du-.4);});
+tl.to("#frame",{scale:.9,opacity:0,duration:.5,ease:"power2.in"},P0-.55);
+sweep(P0-.7);
+// proof
+pop("#pc1",P0+.2);
+const c={v:0};
+tl.fromTo("#big",{opacity:0,scale:.8},{opacity:1,scale:1,duration:.5,ease:"back.out(2)"},P0+.5);
+tl.to(c,{v:3424,duration:2.6,ease:"power3.out",onUpdate:()=>{document.getElementById("big").textContent=Math.round(c.v).toLocaleString("en-US")}},P0+1.0);
+pop("#pc2",P0+3.9);pop("#pc3",P0+5.6);
+tl.fromTo("#ticker",{x:0},{x:-900,duration:10.300000000000004,ease:"none"},P0);
+tl.to("#pc1,#big,#pc2,#pc3,#ticker",{opacity:0,duration:.4,ease:"power2.in"},70.54);
+sweep(70.44000000000001);
+// architecture
+pop("#hw",A0+.2);
+[["#x1",.9],["#x2",1.8],["#x3",2.7],["#x4",3.7],["#x5",4.7]].forEach(([s,t])=>pop(s,A0+t,.5));
+[["#a1",1.4],["#a2",2.3],["#a3",3.2],["#a4",4.2]].forEach(([s,t])=>tl.fromTo(s,{opacity:0,x:-14},{opacity:1,x:0,duration:.35},A0+t));
+tl.fromTo("#x4",{scale:1},{scale:1.07,duration:.5,yoyo:true,repeat:1,ease:"power2.inOut"},A0+5.0);
+pop("#c1",A0+6.2);pop("#c2",A0+8.4);
+tl.fromTo("#endc",{opacity:0},{opacity:1,duration:.12},A0+12.0);
+tl.fromTo("#end .e1",{scale:.7,opacity:0},{scale:1,opacity:1,duration:.7,ease:"back.out(2)"},A0+12.0);
+pop("#end .e2",A0+12.8);pop("#end .e3",A0+13.5);
+window.__timelines["main"]=tl;tl.seek(0);
+</script></body></html>
