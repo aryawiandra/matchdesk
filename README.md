@@ -4,7 +4,7 @@ Evidence-cited, overlay-ready football match intelligence built on a synthetic e
 
 Built solo for the Microsoft + Premier League "Inside the Game" Developer Hackathon 2026. A seeded simulator produces a football match as an event stream with a hidden ground truth. An Analyst finds key moments from the stream alone, an Explainer writes about them, a Verifier gate recomputes every number and checks every name before anything is shown, and a Producer turns the result into timed JSON overlays that a plain HTML renderer draws. The point is not the model; it is that nothing reaches the screen unless it can be proved from cited events.
 
-**Demo video (1:27):** [demo/matchdesk-demo.mp4](demo/matchdesk-demo.mp4)
+**Demo video (1:27):** [YouTube](https://youtu.be/cg7YA-KdHGk) · [MP4 in the repo](demo/matchdesk-demo.mp4)
 
 **Try it:** https://matchdesk-7ae079.azurewebsites.net (choose "AI model, recorded run"). It replays sentences a real model wrote, re-checked by the Verifier on every request. The first load can take up to about 30 seconds (free hosting tier wakes from idle); after that it is fast.
 
