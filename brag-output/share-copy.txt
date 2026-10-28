@@ -1,0 +1,1 @@
+MatchDesk: football match insight where every sentence cites its evidence and a Verifier blocks what it cannot prove. Try it: https://matchdesk-7ae079.azurewebsites.net

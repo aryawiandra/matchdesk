@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #000000;
+        --ink: #f5f5f7;
+        --muted: #86868b;
+        --accent: #6aa5ff;
+        --card: #171b21;
+        --font: -apple-system, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 1920px; height: 1080px; font-family: var(--font); color: var(--ink); }
+      .scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+      .big { font-size: 120px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; }
+      .mid { font-size: 56px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+      .muted { color: var(--muted); }
+      .accent { color: var(--accent); }
+      .line { opacity: 0; }
+      #card { width: 1320px; padding: 56px 64px; background: var(--card); border-radius: 36px; text-align: left; border: 1px solid #2b323c; opacity: 0; }
+      #card .kind { font-size: 28px; font-weight: 600; color: var(--accent); letter-spacing: 0.04em; text-transform: uppercase; }
+      #sentence { margin-top: 20px; font-size: 54px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.22; min-height: 135px; }
+      #badge { margin-top: 28px; font-size: 28px; color: var(--accent); font-weight: 600; opacity: 0; }
+      #chips { margin-top: 28px; display: flex; gap: 14px; }
+      .chip { font-family: ui-monospace, Menlo, monospace; font-size: 28px; padding: 8px 18px; background: #e8eefb22; border-radius: 10px; color: var(--ink); opacity: 0; }
+      #count { font-size: 220px; font-weight: 700; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20.4" data-width="1920" data-height="1080">
+      <div id="s1" class="scene clip" data-start="0" data-duration="3.6" data-track-index="0">
+        <div class="big" id="h1">Every number on screen.</div>
+        <div class="big line muted" id="h2">Had to prove itself.</div>
+      </div>
+
+      <div id="s2" class="scene clip" data-start="3.6" data-duration="3.4" data-track-index="0">
+        <div class="big line" id="name">MatchDesk</div>
+        <div class="mid line muted" id="sub" style="margin-top:28px">Football match insight. Every claim cited.</div>
+      </div>
+
+      <div id="s3" class="scene clip" data-start="7" data-duration="5.9" data-track-index="0">
+        <div id="card">
+          <div class="kind">Goal</div>
+          <div id="sentence"></div>
+          <div id="badge">Written by an AI model, checked by the Verifier</div>
+          <div id="chips">
+            <span class="chip">M0042-01027</span><span class="chip">M0042-01029</span><span class="chip">M0042-01030</span><span class="chip">M0042-01032</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="s4" class="scene clip" data-start="12.9" data-track-index="0" data-duration="4.3">
+        <div class="mid muted line" id="p1">Corrupted claims blocked</div>
+        <div id="count" class="line">0</div>
+        <div class="mid line" id="p2">of 3,426. <span class="accent">0 clean claims wrongly rejected.</span></div>
+      </div>
+
+      <div id="s5" class="scene clip" data-start="17.2" data-duration="3.2" data-track-index="0">
+        <div class="mid muted line" id="o1">English. Bahasa Indonesia.</div>
+        <div class="big line" id="o2" style="margin-top:24px">Nothing on screen<br />without proof.</div>
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const rise = (sel, at, dur = 0.9) =>
+        tl.fromTo(sel, { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: dur, ease: "power3.out" }, at);
+      const fall = (sel, at) => tl.to(sel, { opacity: 0, duration: 0.5, ease: "power2.in" }, at);
+
+      // Scene 1 (the first line is already on screen at frame 0)
+      tl.fromTo("#h1", { y: 14 }, { y: 0, duration: 1.2, ease: "power3.out" }, 0);
+      rise("#h2", 1.4); fall("#h1,#h2", 3.0);
+      // Scene 2
+      rise("#name", 3.8, 1.1); rise("#sub", 4.7); fall("#name,#sub", 6.5);
+      // Scene 3: the card, sentence typed in
+      tl.fromTo("#card", { opacity: 0, y: 40, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "power3.out" }, 7.1);
+      const text = "Brenvin Ravtov of Marlow Athletic scores in minute 40 from 6 m, making it 1-0.";
+      const typed = { n: 0 };
+      tl.to(typed, { n: text.length, duration: 1.5, ease: "none", onUpdate: () => {
+        document.getElementById("sentence").textContent = text.slice(0, Math.round(typed.n));
+      } }, 7.5);
+      tl.to("#badge", { opacity: 1, duration: 0.6 }, 9.1);
+      document.querySelectorAll(".chip").forEach((chip, i) => tl.fromTo(chip, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 9.5 + i * 0.25));
+      fall("#card", 12.4);
+      // Scene 4: the proof
+      rise("#p1", 13.1); tl.to("#count", { opacity: 1, duration: 0.4 }, 13.3);
+      const counter = { v: 0 };
+      tl.to(counter, { v: 3424, duration: 1.7, ease: "power2.out", onUpdate: () => {
+        document.getElementById("count").textContent = Math.round(counter.v).toLocaleString("en-US");
+      } }, 13.3);
+      rise("#p2", 14.1); fall("#p1,#count,#p2", 17.05);
+      // Scene 5
+      rise("#o1", 17.4); rise("#o2", 18.2, 1.1);
+      tl.to("#o1,#o2", { opacity: 0, duration: 0.3, ease: "power2.in" }, 20.05);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
