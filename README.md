@@ -6,7 +6,7 @@ Built solo for the Microsoft + Premier League "Inside the Game" Developer Hackat
 
 **Demo video (1:27):** [demo/matchdesk-demo.mp4](demo/matchdesk-demo.mp4)
 
-**Try it:** https://matchdesk-7ae079.azurewebsites.net (choose "AI model, recorded run"). It replays sentences a real model wrote, re-checked by the Verifier on every request.
+**Try it:** https://matchdesk-7ae079.azurewebsites.net (choose "AI model, recorded run"). It replays sentences a real model wrote, re-checked by the Verifier on every request. The first load can take up to about 30 seconds (free hosting tier wakes from idle); after that it is fast.
 
 **Synthetic data only.** Every club, player, event and statistic in this repository is generated. No real club, player, crest or broadcast footage is used.
 
